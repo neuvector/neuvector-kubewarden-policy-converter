@@ -1,0 +1,36 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: usergroup-contains-any
+spec:
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+  settings:
+    variables:
+    - name: userConfig
+      expression: '["^supergroup$","^supergroup2$"]'
+    - name: hasGroup
+      expression: 'has(request.userInfo.groups)'
+    validations:
+    - expression: '!variables.hasGroup || 
+                !variables.userConfig.all(pattern, 
+                    request.userInfo.groups.exists(group, group.matches(pattern) )
+                )'
+      message: 'The group in the request is not allowed.'
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["cronjobs"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  mutating: false
+  backgroundAudit: false

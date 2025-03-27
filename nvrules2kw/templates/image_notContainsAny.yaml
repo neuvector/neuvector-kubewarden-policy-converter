@@ -1,0 +1,13 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: image-not-contains-any
+spec:
+  module: registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0
+  settings:
+    images:
+      allow:
+      - TODO

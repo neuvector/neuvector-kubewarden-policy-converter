@@ -1,0 +1,665 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Allow deployments in system namespaces.",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "value": "kube-system,kube-public,istio-system"
+        }
+      ],
+      "critical": true,
+      "disable": false,
+      "id": 1,
+      "rule_mode": "",
+      "rule_type": "exception"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Allow deployments in NeuVector namespace",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "value": "neuvector"
+        }
+      ],
+      "critical": true,
+      "disable": false,
+      "id": 2,
+      "rule_mode": "",
+      "rule_type": "exception"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-annotation",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "annotations__SKIP",
+          "op": "containsAny",
+          "path": "annotations",
+          "value": "bad1,bad2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Block deployments with bad labels and annotations.",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "labels",
+          "op": "containsAny",
+          "path": "labels",
+          "value": "bad1=value1*,bad2=value2"
+        },
+        {
+          "name": "annotations",
+          "op": "containsAny",
+          "path": "annotations",
+          "value": "bad1=value1,bad2=value2*"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1001,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-label-a",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "labels___SKIP",
+          "op": "containsAny",
+          "path": "labels",
+          "value": "badlabel1,badlabel2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1002,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-label-b",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "labels",
+          "op": "containsAll",
+          "path": "labels",
+          "value": "test1,test2,test3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1003,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-mix",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "path": "namespace",
+          "value": "ns1,ns2,ns3"
+        },
+        {
+          "name": "labels",
+          "op": "containsAny",
+          "path": "labels",
+          "value": "badlabel1,badlabel2,badlabel3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1004,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "psp - allowPrivEscalation",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "allowPrivEscalation",
+          "op": "=",
+          "path": "allowPrivEscalation",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1005,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "psp - runAsPrivileged",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "runAsPrivileged",
+          "op": "=",
+          "path": "runAsPrivileged",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1006,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "psp - runAsRoot",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "runAsRoot",
+          "op": "=",
+          "path": "runAsRoot",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1007,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "psp - shareIpcWithHost",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "shareIpcWithHost",
+          "op": "=",
+          "path": "shareIpcWithHost",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1008,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "psp - shareNetWithHost",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "shareNetWithHost",
+          "op": "=",
+          "path": "shareNetWithHost",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1009,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "psp - sharePidWithHost",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "sharePidWithHost",
+          "op": "=",
+          "path": "sharePidWithHost",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1010,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "namespace contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "path": "namespace",
+          "value": "test,ns*"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1011,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "namespace not contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "notContainsAny",
+          "path": "namespace",
+          "value": "test*"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1012,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "user contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "user",
+          "op": "containsAny",
+          "path": "user",
+          "value": "ban-user1,ban-user2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1013,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "user contains all",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "user",
+          "op": "notContainsAny",
+          "path": "user",
+          "value": "only-user-1,only-user-2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1014,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "user contains any regex",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "user",
+          "op": "regex",
+          "path": "user",
+          "value": "reg-user-1*, *reg-user-2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1015,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "user not contains any regex",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "user",
+          "op": "!regex",
+          "path": "user",
+          "value": "*only-user*"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1016,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "usergroup contains all",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "userGroups",
+          "op": "containsAll",
+          "path": "userGroups",
+          "value": "ban-group1,ban-group2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1017,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "usergroup contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "userGroups",
+          "op": "containsAny",
+          "path": "userGroups",
+          "value": "ban-group1,ban-group-2,ban-group-3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1018,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "usergroup not contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "userGroups",
+          "op": "notContainsAny",
+          "path": "userGroups",
+          "value": "allow-group-1,allow-group-2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1019,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "usergroup contains other than",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "userGroups",
+          "op": "containsOtherThan",
+          "path": "userGroups",
+          "value": "must-group-1,must-group-2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1020,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "usergroup contains regex",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "userGroups",
+          "op": "regex",
+          "path": "userGroups",
+          "value": "reg-group-*"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1021,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "usergroup not contains regex",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "userGroups",
+          "op": "!regex",
+          "path": "userGroups",
+          "value": "required-group*"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1022,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "environments contains secret",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "envVarSecrets",
+          "op": "=",
+          "path": "envVarSecrets",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1023,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "image contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "image",
+          "op": "containsAny",
+          "path": "image",
+          "value": "ubuntu20,ubuntu18"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1024,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "image not contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "image",
+          "op": "notContainsAny",
+          "path": "image",
+          "value": "aaa,bbb,ccc"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1025,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "image registry contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "imageRegistry",
+          "op": "containsAny",
+          "path": "imageRegistry",
+          "value": "block1,block2,block3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1026,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "image registry contains any",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "imageRegistry",
+          "op": "notContainsAny",
+          "path": "imageRegistry",
+          "value": "allow1,allow2,allow3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1027,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "PSP Best Practice",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "pspCompliance",
+          "op": "=",
+          "path": "pspCompliance",
+          "value": "true"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1028,
+      "rule_mode": "",
+      "rule_type": "deny"
+    }
+  ]
+}
