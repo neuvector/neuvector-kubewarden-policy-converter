@@ -1,0 +1,34 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: user-not-contains-any
+spec:
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+  settings:
+    variables:
+    - name: userConfig
+      expression: '["^test11$","^value2$"]'
+    - name: hasUsername
+      expression: 'has(request.userInfo.username)'
+    validations:
+      - expression: '!variables.hasUsername || 
+                variables.userConfig.exists(key, request.userInfo.username.matches(key))'
+        message: 'The username in the request is not allowed.'
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["cronjobs"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  mutating: false
+  backgroundAudit: false
