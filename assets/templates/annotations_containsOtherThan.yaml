@@ -1,0 +1,41 @@
+variables:
+- name: userConfig
+  expression: '{"good1": "value1*", "good2": "value2*"}'
+- name: dataset1a
+  expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+- name: dataset1b
+  expression: 'has(object.spec.template.metadata.annotations) ? object.spec.template.metadata.annotations : []'
+- name: dataset3
+  expression: 'has(object.spec.jobTemplate.metadata.annotations) ? object.spec.jobTemplate.metadata.annotations: []'
+- name: isType1
+  expression: 'object.kind in ["Pod"] ? true: false'
+- name: isType2
+  expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+- name: isType3
+  expression: 'object.kind in ["CronJob"] ? true: false'
+validations:
+  - expression: '
+      !variables.isType1 ||
+      (
+        !variables.dataset1a.exists(x, !(x in variables.userConfig && matches(variables.dataset1a[x], variables.userConfig[x])))
+      )
+      '
+    message: 'operator: annotations must use only allowed key/value pairs. (contains other than)'
+  - expression: '
+      !variables.isType2 ||
+      (
+        (!variables.dataset1a.exists(x, !(x in variables.userConfig && matches(variables.dataset1a[x], variables.userConfig[x])))) 
+        &&
+        (!variables.dataset1b.exists(x, !(x in variables.userConfig && matches(variables.dataset1b[x], variables.userConfig[x])))) 
+      )
+      '
+    message: 'operator: annotations must use allowed key/value pairs. (contains other than)'
+  - expression: '
+      !variables.isType3 ||
+      (
+        (!variables.dataset1a.exists(x, !(x in variables.userConfig && matches(variables.dataset1a[x], variables.userConfig[x])))) 
+        &&
+        (!variables.dataset3.exists(x, !(x in variables.userConfig && matches(variables.dataset3[x], variables.userConfig[x])))) 
+      )
+      '
+    message: 'operator: annotations must use allowed key/value pairs. (contains other than)'

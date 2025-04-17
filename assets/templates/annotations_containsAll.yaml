@@ -1,0 +1,39 @@
+  variables:
+  - name: dataset1a
+    expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+  - name: dataset1b
+    expression: 'has(object.spec.template.metadata.annotations) ? object.spec.template.metadata.annotations : []'
+  - name: dataset3
+    expression: 'has(object.spec.jobTemplate.metadata.annotations) ? object.spec.jobTemplate.metadata.annotations: []'
+  - name: isType1
+    expression: 'object.kind in ["Pod"] ? true: false'
+  - name: isType2
+    expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+  - name: isType3
+    expression: 'object.kind in ["CronJob"] ? true: false'
+  validations:
+  - expression: '
+      !variables.isType1 ||
+      (
+        !variables.userConfig.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.userConfig[key]))
+      )
+      '
+    message: 'operator: contains_all, annotations cannot use all userConfig key/value'
+  - expression: '
+      !variables.isType2 ||
+      (
+        (!variables.userConfig.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.userConfig[key])))
+        &&
+        (!variables.userConfig.all(key, key in variables.dataset1b && variables.dataset1b[key].matches(variables.userConfig[key])))
+      )
+      '
+    message: 'operator: contains_all, annotations cannot use all userConfig key/value'
+  - expression: '
+      !variables.isType3 ||
+      (
+        (!variables.userConfig.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.userConfig[key])))
+        &&
+        (!variables.userConfig.all(key, key in variables.dataset3 && variables.dataset3[key].matches(variables.userConfig[key])))
+      )
+      '
+    message: 'operator: contains_all, annotations cannot use all userConfig key/value'
