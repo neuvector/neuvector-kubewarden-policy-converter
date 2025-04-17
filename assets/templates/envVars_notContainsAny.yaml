@@ -1,0 +1,50 @@
+  variables:
+  - name: isType1
+    expression: 'object.kind in ["Pod"] ? true: false'
+  - name: isType2
+    expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+  - name: isType3
+    expression: 'object.kind in ["CronJob"] ? true: false'
+  - name: containerData
+    expression: 'variables.isType1 ? object.spec.containers : 
+                    variables.isType2 ? object.spec.template.spec.containers : 
+                      variables.isType3 ? object.spec.jobTemplate.spec.template.spec.containers : []'
+  - name: hasContainer
+    expression: 'variables.containerData.size() > 0 ? true : false'
+  - name: initContainerData
+    expression: 'variables.isType1 ? (has(object.spec.initContainers)? object.spec.initContainers : []) : 
+                    variables.isType2 ? (has(object.spec.template.spec.initContainers) ? object.spec.template.spec.initContainers : []) : 
+                      variables.isType3 ? (has(object.spec.jobTemplate.spec.template.spec.initContainers) ? object.spec.jobTemplate.spec.template.spec.initContainers: []) : []'
+  - name: hasInitContainer
+    expression: 'variables.initContainerData.size() > 0 ? true : false'
+  - name: ephemeralContainerData
+    expression: 'variables.isType1 ? (has(object.spec.ephemeralContainers)? object.spec.ephemeralContainers : []) : 
+                    variables.isType2 ? (has(object.spec.template.spec.ephemeralContainers) ? object.spec.template.spec.ephemeralContainers : []) : 
+                      variables.isType3 ? (has(object.spec.jobTemplate.spec.template.spec.ephemeralContainers) ? object.spec.jobTemplate.spec.template.spec.ephemeralContainers: []) : []'
+  - name: hasEphemeralContainer
+    expression: 'variables.ephemeralContainerData.size() > 0 ? true : false'
+  validations:
+    - expression: "
+      !variables.hasContainer ||
+      (variables.containerData.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.userConfig.exists(check, check==envVar.name &&  envVar.value.matches(variables.userConfig[check]) )
+        )))
+      "
+      message: 'operator: containers not_contains_any, environment variables does not use any predefined key/value'
+    - expression: "
+      !variables.hasInitContainer ||
+      (variables.initContainerData.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.userConfig.exists(check, check==envVar.name && variables.userConfig[check].matches(envVar.value) )
+        )))
+      "
+      message: 'operator: initContainers not_contains_any, environment variables does not use any predefined key/value'
+    - expression: "
+      !variables.hasEphemeralContainer ||
+      (variables.ephemeralContainerData.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.userConfig.exists(check, check==envVar.name && variables.userConfig[check].matches(envVar.value) )
+        )))
+      "
+      message: 'operator: ephemeralContainers not_contains_any, environment variables does not use any predefined key/value'

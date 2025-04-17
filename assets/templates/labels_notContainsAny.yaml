@@ -1,0 +1,39 @@
+variables:
+- name: dataset1a
+  expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
+- name: dataset1b
+  expression: 'has(object.spec.template.metadata.labels) ? object.spec.template.metadata.labels : []'
+- name: dataset3
+  expression: 'has(object.spec.jobTemplate.metadata.labels) ? object.spec.jobTemplate.metadata.labels: []'
+- name: isType1
+  expression: 'object.kind in ["Pod"] ? true: false'
+- name: isType2
+  expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+- name: isType3
+  expression: 'object.kind in ["CronJob"] ? true: false'
+validations:
+  - expression: '
+      !variables.isType1 ||
+      (
+        variables.dataset1a.exists(key, key in variables.userConfig && variables.dataset1a[key].matches(variables.userConfig[key]))
+      )
+      '
+    message: 'operator: not_contains_any, labels does not use any predefined key/value'
+  - expression: '
+      !variables.isType2 ||
+      (
+        (variables.dataset1a.exists(key, key in variables.userConfig && variables.dataset1a[key].matches(variables.userConfig[key]))) 
+        ||
+        (variables.dataset1b.exists(key, key in variables.userConfig && variables.dataset1b[key].matches(variables.userConfig[key])))
+      )
+      '
+    message: 'operator: not_contains_any, labels does not use any predefined key/value'
+  - expression: '
+      !variables.isType3 ||
+      (
+        (variables.dataset1a.exists(key, key in variables.userConfig && variables.dataset1a[key].matches(variables.userConfig[key]))) 
+        ||
+        (variables.dataset3.exists(key, key in variables.userConfig && variables.dataset3[key].matches(variables.userConfig[key])))
+      )
+      '
+    message: 'operator: not_contains_any, labels does not use any predefined key/value'
