@@ -1,0 +1,8 @@
+variables:
+- name: hasGroup
+  expression: 'has(request.userInfo.groups)'
+validations:
+- expression: |
+    !variables.hasGroup || 
+    !variables.userConfig.all(pattern, request.userInfo.groups.exists(group, group.matches(pattern)))
+  message: 'The group in the request is not allowed.'

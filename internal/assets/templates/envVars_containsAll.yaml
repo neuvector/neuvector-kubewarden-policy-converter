@@ -1,0 +1,68 @@
+variables:
+- name: isPod
+  expression: 'object.kind == "Pod"'
+- name: isController
+  expression: 'object.kind in ["Deployment", "ReplicaSet", "DaemonSet", "StatefulSet", "Job"]'
+- name: isCronJob
+  expression: 'object.kind == "CronJob"'
+- name: containers
+  expression: |
+    variables.isPod ? object.spec.containers :
+    variables.isController ? object.spec.template.spec.containers :
+    variables.isCronJob ? object.spec.jobTemplate.spec.template.spec.containers :
+    []
+- name: hasContainers
+  expression: 'variables.containers.size() > 0'
+- name: initContainers
+  expression: |
+    variables.isPod ? (has(object.spec.initContainers) ? object.spec.initContainers : []) :
+    variables.isController ? (has(object.spec.template.spec.initContainers) ? object.spec.template.spec.initContainers : []) :
+    variables.isCronJob ? (has(object.spec.jobTemplate.spec.template.spec.initContainers) ? object.spec.jobTemplate.spec.template.spec.initContainers : []) :
+    []
+- name: hasInitContainers
+  expression: 'variables.initContainers.size() > 0'
+- name: ephemeralContainers
+  expression: |
+    variables.isPod ? (has(object.spec.ephemeralContainers) ? object.spec.ephemeralContainers : []) :
+    variables.isController ? (has(object.spec.template.spec.ephemeralContainers) ? object.spec.template.spec.ephemeralContainers : []) :
+    variables.isCronJob ? (has(object.spec.jobTemplate.spec.template.spec.ephemeralContainers) ? object.spec.jobTemplate.spec.template.spec.ephemeralContainers : []) :
+    []
+- name: hasEphemeralContainers
+  expression: 'variables.ephemeralContainers.size() > 0'
+- name: containerHasAllUserConfigEnv
+  expression: |
+    variables.containers.exists(container,
+      has(container.env) &&
+      variables.userConfig.all(key,
+        container.env.exists(envVar, envVar.name == key && envVar.value.matches(variables.userConfig[key]))
+      )
+    )
+- name: initContainerHasAllUserConfigEnv
+  expression: |
+    variables.initContainers.exists(container,
+      has(container.env) &&
+      variables.userConfig.all(key,
+        container.env.exists(envVar, envVar.name == key && envVar.value.matches(variables.userConfig[key]))
+      )
+    )
+- name: ephemeralContainerHasAllUserConfigEnv
+  expression: |
+    variables.ephemeralContainers.exists(container,
+      has(container.env) &&
+      variables.userConfig.all(key,
+        container.env.exists(envVar, envVar.name == key && envVar.value.matches(variables.userConfig[key]))
+      )
+    )
+validations:
+- expression: |
+    !variables.hasContainers ||
+    !variables.containerHasAllUserConfigEnv
+  message: 'operator: containers contains_all, environment variables cannot use all userConfig key/value'
+- expression: |
+    !variables.hasInitContainers ||
+    !variables.initContainerHasAllUserConfigEnv
+  message: 'operator: initContainers contains_all, environment variables cannot use all userConfig key/value'
+- expression: |
+    !variables.hasEphemeralContainers ||
+    !variables.ephemeralContainerHasAllUserConfigEnv
+  message: 'operator: ephemeralContainers contains_all, environment variables cannot use all userConfig key/value'
