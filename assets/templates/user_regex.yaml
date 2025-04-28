@@ -1,7 +1,0 @@
-variables:
-- name: hasUsername
-  expression: 'has(request.userInfo.username)'
-validations:
-  - expression: '!variables.hasUsername || 
-            !variables.userConfig.exists(key, request.userInfo.username.matches(key))'
-    message: 'The username in the request is not allowed.'

@@ -1,0 +1,32 @@
+variables:
+- name: objectLabels
+  expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
+- name: templateLabels
+  expression: 'has(object.spec.template.metadata.labels) ? object.spec.template.metadata.labels : []'
+- name: jobTemplateLabels
+  expression: 'has(object.spec.jobTemplate.metadata.labels) ? object.spec.jobTemplate.metadata.labels : []'
+- name: isPod
+  expression: 'object.kind == "Pod"'
+- name: isController
+  expression: 'object.kind in ["Deployment", "ReplicaSet", "DaemonSet", "StatefulSet", "Job"]'
+- name: isCronJob
+  expression: 'object.kind == "CronJob"'
+- name: objectLabelsContainAny
+  expression: 'variables.objectLabels.exists(key, key in variables.userConfig && variables.objectLabels[key].matches(variables.userConfig[key]))'
+- name: templateLabelsContainAny
+  expression: 'variables.templateLabels.exists(key, key in variables.userConfig && variables.templateLabels[key].matches(variables.userConfig[key]))'
+- name: jobTemplateLabelsContainAny
+  expression: 'variables.jobTemplateLabels.exists(key, key in variables.userConfig && variables.jobTemplateLabels[key].matches(variables.userConfig[key]))'
+validations:
+- expression: |
+    !variables.isPod ||
+    !(variables.objectLabelsContainAny)
+  message: 'operator: contains_any, labels cannot use any userConfig key/value'
+- expression: |
+    !variables.isController ||
+    (!(variables.objectLabelsContainAny) && !(variables.templateLabelsContainAny))
+  message: 'operator: contains_any, labels cannot use any userConfig key/value'
+- expression: |
+    !variables.isCronJob ||
+    (!(variables.objectLabelsContainAny) && !(variables.jobTemplateLabelsContainAny))
+  message: 'operator: contains_any, labels cannot use any userConfig key/value'

@@ -26,27 +26,102 @@ go build -o nvrules2kw
 ## Usage
 
 ```
-nvrules2kw --rulefile <rules.json> [flags]
+NAME:
+   nvrules2kw - Convert NeuVector Admission Control Rules to Kubewarden Policies
+
+USAGE:
+   nvrules2kw [global options] command [command options] [arguments...]
+
+DESCRIPTION:
+   Examples:
+
+   # Fetch NeuVector Admission Control Rules and pipe them to nvrules2kw.
+   # For instructions on connecting to the REST API server, visit:
+   # https://open-docs.neuvector.com/configuration/console
+   curl -k \
+     -H "Content-Type: application/json" \
+     -H "X-Auth-Apikey: <API_KEY>" \
+     "https://<API_SERVER_ADDRESS>/v1/admission/rules" | nvrules2kw --output policies.yaml
+
+   # Convert rules from a file and output to a file
+   nvrules2kw convert --rulefile ./rules/nvrules.json --output policies.yaml
+
+   # Show supported criteria
+   nvrules2kw support
+
+
+COMMANDS:
+   convert  Convert NeuVector rules to Kubewarden policies
+   support  Show supported criteria matrix
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h  show help
 ```
 
-## Flags
+## Support matrix
 
-| Flag               | Description                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| `--rulefile`       | **(Required)** Path to the NeuVector rules JSON file. This file should be the output from NeuVector’s `/v1/admission/rules` API. |
-| `--policyserver`   | Name of the Kubewarden Policy Server to bind the generated policy to. Default is `"default"`. |
-| `--backgroundaudit`| Whether to enable the policy in background audit checks. Default is `false`. |
-| `--output`         | Path to write the generated Kubewarden policy YAML. If not specified, output is printed to `stdout`. |
+You can use the `support` command to view the support matrix.
 
+```
+nvrules2kw support
+```
+
+The following table shows the support matrix:
+
+```
++--------------------------------------+-----------+------+
+|            CRITERION NAME            | SUPPORTED | NOTE |
++--------------------------------------+-----------+------+
+| Allow Privilege Escalation           | Yes       |      |
+| Annotations                          | Yes       |      |
+| Add customized criterion             | No        |      |
+| Count of high severity CVE           | No        |      |
+| Count of high severity CVE with fix  | No        |      |
+| Count of medium severity CVE         | No        |      |
+| CVE names                            | No        |      |
+| CVE score                            | No        |      |
+| Environment variables with secrets   | Yes       |      |
+| Environment variables                | Yes       |      |
+| Image                                | Yes       |      |
+| Image compliance violations          | No        |      |
+| Image without OS information         | No        |      |
+| Image registry                       | Yes       |      |
+| Image scanned                        | No        |      |
+| Image signed                         | No        |      |
+| Image Sigstore Verifiers             | No        |      |
+| Labels                               | Yes       |      |
+| Modules                              | No        |      |
+| Mount Volumes                        | No        |      |
+| Namespace                            | Yes       |      |
+| PSP Best Practice                    | Yes       |      |
+| Resource Limit Configuration (RLC)   | No        |      |
+| Run as privileged                    | Yes       |      |
+| Run as root                          | Yes       |      |
+| Service Account Bound High Risk Role | No        |      |
+| Share host's IPC namespaces          | Yes       |      |
+| Share host's Network                 | Yes       |      |
+| Share host's PID namespaces          | Yes       |      |
+| StorageClass Name                    | No        |      |
+| User                                 | Yes       |      |
+| User groups                          | Yes       |      |
+| Violates PSA policy                  | No        |      |
++--------------------------------------+-----------+------+
+
+```
 
 ## Example
 
-```
-nvrules2kw \
-  --rulefile ./sample_rules.json \
-  --policyserver edge-policy-server \
-  --output generated_policy.yaml
+You can either pipe in the rules fetched from the NeuVector REST API server or specify them in a file.
 
+```
+# Fetch NeuVector Admission Control Rules and pipe them to nvrules2kw.
+# For instructions on connecting to the REST API server, visit:
+# https://open-docs.neuvector.com/configuration/console
+curl -k \
+  -H "Content-Type: application/json" \
+  -H "X-Auth-Apikey: <API_KEY>" \
+  "https://<API_SERVER_ADDRESS>/v1/admission/rules" | nvrules2kw convert --output policies.yaml
 ```
 
 A summary table will be displayed to show the status of each rule conversion.

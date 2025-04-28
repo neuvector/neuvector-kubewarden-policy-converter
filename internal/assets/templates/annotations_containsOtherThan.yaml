@@ -1,0 +1,32 @@
+variables:
+- name: objectAnnotations
+  expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+- name: templateAnnotations
+  expression: 'has(object.spec.template.metadata.annotations) ? object.spec.template.metadata.annotations : []'
+- name: jobTemplateAnnotations
+  expression: 'has(object.spec.jobTemplate.metadata.annotations) ? object.spec.jobTemplate.metadata.annotations : []'
+- name: isPod
+  expression: 'object.kind == "Pod"'
+- name: isController
+  expression: 'object.kind in ["Deployment", "ReplicaSet", "DaemonSet", "StatefulSet", "Job"]'
+- name: isCronJob
+  expression: 'object.kind == "CronJob"'
+- name: objectAnnotationsOnlyAllowed
+  expression: '!variables.objectAnnotations.exists(x, !(x in variables.userConfig && variables.objectAnnotations[x].matches(variables.userConfig[x])))'
+- name: templateAnnotationsOnlyAllowed
+  expression: '!variables.templateAnnotations.exists(x, !(x in variables.userConfig && variables.templateAnnotations[x].matches(variables.userConfig[x])))'
+- name: jobTemplateAnnotationsOnlyAllowed
+  expression: '!variables.jobTemplateAnnotations.exists(x, !(x in variables.userConfig && variables.jobTemplateAnnotations[x].matches(variables.userConfig[x])))'
+validations:
+- expression: |
+    !variables.isPod ||
+    variables.objectAnnotationsOnlyAllowed
+  message: 'operator: annotations must use only allowed key/value pairs. (contains other than)'
+- expression: |
+    !variables.isController ||
+    (variables.objectAnnotationsOnlyAllowed && variables.templateAnnotationsOnlyAllowed)
+  message: 'operator: annotations must use allowed key/value pairs. (contains other than)'
+- expression: |
+    !variables.isCronJob ||
+    (variables.objectAnnotationsOnlyAllowed && variables.jobTemplateAnnotationsOnlyAllowed)
+  message: 'operator: annotations must use allowed key/value pairs. (contains other than)'

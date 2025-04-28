@@ -1,7 +1,0 @@
-variables:
-- name: hasNamespace
-  expression: 'has(request.namespace)'
-validations:
-  - expression: '!variables.hasNamespace || 
-            variables.userConfig.exists(pattern, request.namespace.matches(pattern))'
-    message: 'The namespace in the request must be in the approved list.'
