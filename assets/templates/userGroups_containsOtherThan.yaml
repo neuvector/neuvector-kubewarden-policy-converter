@@ -1,9 +1,0 @@
-variables:
-- name: hasGroup
-  expression: 'has(request.userInfo.groups)'
-validations:
-- expression: '!variables.hasGroup || 
-            !request.userInfo.groups.exists(group,
-              !(variables.userConfig.exists(pattern, group.matches(pattern)))
-            )'
-  message: 'Invalid group name: group must use only allowed values. (contains other than)'

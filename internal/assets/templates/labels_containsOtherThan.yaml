@@ -1,0 +1,32 @@
+variables:
+- name: objectLabels
+  expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
+- name: templateLabels
+  expression: 'has(object.spec.template.metadata.labels) ? object.spec.template.metadata.labels : []'
+- name: jobTemplateLabels
+  expression: 'has(object.spec.jobTemplate.metadata.labels) ? object.spec.jobTemplate.metadata.labels : []'
+- name: isPod
+  expression: 'object.kind == "Pod"'
+- name: isController
+  expression: 'object.kind in ["Deployment", "ReplicaSet", "DaemonSet", "StatefulSet", "Job"]'
+- name: isCronJob
+  expression: 'object.kind == "CronJob"'
+- name: objectLabelsOnlyAllowed
+  expression: '!variables.objectLabels.exists(x, !(x in variables.userConfig && variables.objectLabels[x].matches(variables.userConfig[x])))'
+- name: templateLabelsOnlyAllowed
+  expression: '!variables.templateLabels.exists(x, !(x in variables.userConfig && variables.templateLabels[x].matches(variables.userConfig[x])))'
+- name: jobTemplateLabelsOnlyAllowed
+  expression: '!variables.jobTemplateLabels.exists(x, !(x in variables.userConfig && variables.jobTemplateLabels[x].matches(variables.userConfig[x])))'
+validations:
+- expression: |
+    !variables.isPod ||
+    variables.objectLabelsOnlyAllowed
+  message: 'operator: labels must use only allowed key/value pairs. (contains other than)'
+- expression: |
+    !variables.isController ||
+    (variables.objectLabelsOnlyAllowed && variables.templateLabelsOnlyAllowed)
+  message: 'operator: labels must use allowed key/value pairs. (contains other than)'
+- expression: |
+    !variables.isCronJob ||
+    (variables.objectLabelsOnlyAllowed && variables.jobTemplateLabelsOnlyAllowed)
+  message: 'operator: labels must use allowed key/value pairs. (contains other than)'

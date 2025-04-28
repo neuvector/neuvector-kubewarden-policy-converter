@@ -1,0 +1,32 @@
+variables:
+- name: objectAnnotations
+  expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+- name: templateAnnotations
+  expression: 'has(object.spec.template.metadata.annotations) ? object.spec.template.metadata.annotations : []'
+- name: jobTemplateAnnotations
+  expression: 'has(object.spec.jobTemplate.metadata.annotations) ? object.spec.jobTemplate.metadata.annotations : []'
+- name: isPod
+  expression: 'object.kind == "Pod"'
+- name: isController
+  expression: 'object.kind in ["Deployment", "ReplicaSet", "DaemonSet", "StatefulSet", "Job"]'
+- name: isCronJob
+  expression: 'object.kind == "CronJob"'
+- name: objectAnnotationsContainAny
+  expression: 'variables.objectAnnotations.exists(key, key in variables.userConfig && variables.objectAnnotations[key].matches(variables.userConfig[key]))'
+- name: templateAnnotationsContainAny
+  expression: 'variables.templateAnnotations.exists(key, key in variables.userConfig && variables.templateAnnotations[key].matches(variables.userConfig[key]))'
+- name: jobTemplateAnnotationsContainAny
+  expression: 'variables.jobTemplateAnnotations.exists(key, key in variables.userConfig && variables.jobTemplateAnnotations[key].matches(variables.userConfig[key]))'
+validations:
+- expression: |
+    !variables.isPod ||
+    (variables.objectAnnotationsContainAny)
+  message: 'operator: not_contains_any, annotations does not use any userConfig key/value'
+- expression: |
+    !variables.isController ||
+    ((variables.objectAnnotationsContainAny) && (variables.templateAnnotationsContainAny))
+  message: 'operator: not_contains_any, annotations does not use any userConfig key/value'
+- expression: |
+    !variables.isCronJob ||
+    ((variables.objectAnnotationsContainAny) && (variables.jobTemplateAnnotationsContainAny))
+  message: 'operator: not_contains_any, annotations does not use any userConfig key/value'
