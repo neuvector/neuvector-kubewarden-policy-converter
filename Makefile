@@ -25,7 +25,7 @@ run: build
 .PHONY: test
 test:
 	@echo "Running tests..."
-	@go test -v -race ./...
+	@go test -v -race ./... -coverprofile coverage/cover.out -covermode=atomic
 
 # Clean built files
 .PHONY: clean
