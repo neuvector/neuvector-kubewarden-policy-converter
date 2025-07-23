@@ -1,3 +1,4 @@
+//nolint:gocognit,revive,testpackage // table-driven test; accept builtin shadow; keep same package to test unexported APIs
 package convert
 
 import (
@@ -7,7 +8,14 @@ import (
 	nvapis "github.com/neuvector/neuvector/controller/api"
 )
 
+// TODO: refactor this test to use testify
 func TestProcessSingleRule(t *testing.T) {
+	var (
+		caPolicy      *policiesv1.ClusterAdmissionPolicy
+		caPolicyGroup *policiesv1.ClusterAdmissionPolicyGroup
+		ok            bool
+	)
+
 	tests := []struct {
 		name             string
 		rule             *nvapis.RESTAdmissionRule
@@ -92,21 +100,21 @@ func TestProcessSingleRule(t *testing.T) {
 			expectedStatus:  MsgStatusOk,
 			expectPolicyCap: true,
 			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
-				cap, ok := policy.(*policiesv1.ClusterAdmissionPolicy)
+				caPolicy, ok = policy.(*policiesv1.ClusterAdmissionPolicy)
 				if !ok {
 					t.Fatalf("Expected ClusterAdmissionPolicy, got %T", policy)
 				}
-				if cap.Kind != "ClusterAdmissionPolicy" {
-					t.Errorf("Expected Kind 'ClusterAdmissionPolicy', got '%s'", cap.Kind)
+				if caPolicy.Kind != "ClusterAdmissionPolicy" {
+					t.Errorf("Expected Kind 'ClusterAdmissionPolicy', got '%s'", caPolicy.Kind)
 				}
-				if cap.Name != "neuvector-rule-1001-conversion" {
-					t.Errorf("Expected Name 'neuvector-rule-1001-conversion', got '%s'", cap.Name)
+				if caPolicy.Name != "neuvector-rule-1001-conversion" {
+					t.Errorf("Expected Name 'neuvector-rule-1001-conversion', got '%s'", caPolicy.Name)
 				}
-				if cap.Spec.PolicyServer != policyServer {
-					t.Errorf("Expected PolicyServer '%s', got '%s'", policyServer, cap.Spec.PolicyServer)
+				if caPolicy.Spec.PolicyServer != policyServer {
+					t.Errorf("Expected PolicyServer '%s', got '%s'", policyServer, caPolicy.Spec.PolicyServer)
 				}
-				if cap.Spec.PolicySpec.Module != policyCEL {
-					t.Errorf("Expected Module '%s', got '%s'", policyCEL, cap.Spec.PolicySpec.Module)
+				if caPolicy.Spec.PolicySpec.Module != policyCEL {
+					t.Errorf("Expected Module '%s', got '%s'", policyCEL, caPolicy.Spec.PolicySpec.Module)
 				}
 			},
 		},
@@ -129,12 +137,12 @@ func TestProcessSingleRule(t *testing.T) {
 			expectedStatus:  MsgStatusOk,
 			expectPolicyCap: true,
 			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
-				cap, ok := policy.(*policiesv1.ClusterAdmissionPolicy)
+				caPolicy, ok = policy.(*policiesv1.ClusterAdmissionPolicy)
 				if !ok {
 					t.Fatalf("Expected ClusterAdmissionPolicy, got %T", policy)
 				}
-				if len(cap.Spec.PolicySpec.MatchConditions) != 1 {
-					t.Errorf("Expected 1 MatchCondition, got '%d'", len(cap.Spec.PolicySpec.MatchConditions))
+				if len(caPolicy.Spec.PolicySpec.MatchConditions) != 1 {
+					t.Errorf("Expected 1 MatchCondition, got '%d'", len(caPolicy.Spec.PolicySpec.MatchConditions))
 				}
 			},
 		},
@@ -157,18 +165,21 @@ func TestProcessSingleRule(t *testing.T) {
 			expectedStatus:   MsgStatusOk,
 			expectPolicyCapg: true,
 			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
-				capg, ok := policy.(*policiesv1.ClusterAdmissionPolicyGroup)
+				caPolicyGroup, ok = policy.(*policiesv1.ClusterAdmissionPolicyGroup)
 				if !ok {
 					t.Fatalf("Expected ClusterAdmissionPolicyGroup, got %T", policy)
 				}
-				if capg.Kind != "ClusterAdmissionPolicyGroup" {
-					t.Errorf("Expected Kind 'ClusterAdmissionPolicyGroup', got '%s'", capg.Kind)
+				if caPolicyGroup.Kind != "ClusterAdmissionPolicyGroup" {
+					t.Errorf("Expected Kind 'ClusterAdmissionPolicyGroup', got '%s'", caPolicyGroup.Kind)
 				}
-				if capg.Name != "neuvector-rule-1001-conversion" {
-					t.Errorf("Expected Name 'neuvector-rule-1001-conversion', got '%s'", capg.Name)
+				if caPolicyGroup.Name != "neuvector-rule-1001-conversion" {
+					t.Errorf("Expected Name 'neuvector-rule-1001-conversion', got '%s'", caPolicyGroup.Name)
 				}
-				if len(capg.Spec.Policies) != 2 {
-					t.Errorf("Expected 2 policies inside ClusterAdmissionPolicyGroup, got '%d'", len(capg.Spec.Policies))
+				if len(caPolicyGroup.Spec.Policies) != 2 {
+					t.Errorf(
+						"Expected 2 policies inside ClusterAdmissionPolicyGroup, got '%d'",
+						len(caPolicyGroup.Spec.Policies),
+					)
 				}
 			},
 		},

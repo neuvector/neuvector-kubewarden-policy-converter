@@ -55,7 +55,7 @@ func readEmbeddedTemplate(filePath string) (map[string]interface{}, error) {
 		return nil, fmt.Errorf("failed to read YAML file %s: %w", filePath, err)
 	}
 	var yamlObj map[string]interface{}
-	if err := yaml.Unmarshal(data, &yamlObj); err != nil {
+	if err = yaml.Unmarshal(data, &yamlObj); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal YAML %s: %w", filePath, err)
 	}
 	return yamlObj, nil
@@ -110,6 +110,7 @@ func parseValuesToList(input string) (string, error) {
 func parseValuesToMap(input string) (string, error) {
 	pairs := strings.Split(input, ",")
 	result := make(map[string]string)
+	maxSplitParts := 2
 
 	for _, pair := range pairs {
 		pair = strings.TrimSpace(pair)
@@ -117,7 +118,7 @@ func parseValuesToMap(input string) (string, error) {
 			continue
 		}
 
-		parts := strings.SplitN(pair, "=", 2)
+		parts := strings.SplitN(pair, "=", maxSplitParts)
 		key := strings.TrimSpace(parts[0])
 
 		if key == "" {

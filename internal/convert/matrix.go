@@ -27,7 +27,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-// Kubewarden policy modules
+// Kubewarden policy modules.
 const (
 	policyCEL                 = "registry://ghcr.io/kubewarden/policies/cel-policy:latest"
 	policyHostNamespacesPSP   = "registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.7"
@@ -43,8 +43,9 @@ const (
 	valueTypeList = "list"
 	valueTypeMap  = "map"
 
+	nvPreserveID = 1000 // Rule IDs under 1000 are reserved for NeuVector internal rules and should not be used in non-NeuVector environments.
 	// mappingType1to1    = "1-1"
-	// mappingType1toMany = "1-many"
+	// mappingType1toMany = "1-many".
 )
 
 // GenerateMembersFuncType returns members for policy group mapping.
@@ -183,10 +184,15 @@ func (cm *CriteriaMatrix) addMetadataCriteria(m map[string]criterionMapping) {
 		nvdata.CriteriaKeyAnnotations: "Annotations",
 	} {
 		m[key] = criterionMapping{
-			name:                key,
-			displayName:         value,
-			module:              policyCEL,
-			supportedOps:        map[string]bool{nvdata.CriteriaOpContainsAny: true, nvdata.CriteriaOpContainsAll: true, nvdata.CriteriaOpNotContainsAny: true, nvdata.CriteriaOpContainsOtherThan: true},
+			name:        key,
+			displayName: value,
+			module:      policyCEL,
+			supportedOps: map[string]bool{
+				nvdata.CriteriaOpContainsAny:       true,
+				nvdata.CriteriaOpContainsAll:       true,
+				nvdata.CriteriaOpNotContainsAny:    true,
+				nvdata.CriteriaOpContainsOtherThan: true,
+			},
 			valueType:           valueTypeMap,
 			generateMembersFunc: cm.converter.generatePolicyGroupMembers,
 			policySettingFunc:   cm.converter.injectCelPolicySetting,
@@ -210,10 +216,13 @@ func (cm *CriteriaMatrix) addTrustedRepoCriteria(m map[string]criterionMapping) 
 		nvdata.CriteriaKeyImageRegistry: "Image registry",
 	} {
 		m[key] = criterionMapping{
-			name:                key,
-			displayName:         value,
-			module:              policyTrustedRepos,
-			supportedOps:        map[string]bool{nvdata.CriteriaOpContainsAny: true, nvdata.CriteriaOpNotContainsAny: true},
+			name:        key,
+			displayName: value,
+			module:      policyTrustedRepos,
+			supportedOps: map[string]bool{
+				nvdata.CriteriaOpContainsAny:    true,
+				nvdata.CriteriaOpNotContainsAny: true,
+			},
 			generateMembersFunc: cm.converter.generatePolicyGroupMembers,
 			policySettingFunc:   cm.converter.injectTrustedRepoPolicySetting,
 		}
@@ -222,20 +231,32 @@ func (cm *CriteriaMatrix) addTrustedRepoCriteria(m map[string]criterionMapping) 
 
 func (cm *CriteriaMatrix) addUserGroupCriteria(m map[string]criterionMapping) {
 	m[nvdata.CriteriaKeyUser] = criterionMapping{
-		name:                nvdata.CriteriaKeyUser,
-		displayName:         "User",
-		module:              policyCEL,
-		supportedOps:        map[string]bool{nvdata.CriteriaOpContainsAny: true, nvdata.CriteriaOpNotContainsAny: true, nvdata.CriteriaOpRegex: true, nvdata.CriteriaOpNotRegex: true},
+		name:        nvdata.CriteriaKeyUser,
+		displayName: "User",
+		module:      policyCEL,
+		supportedOps: map[string]bool{
+			nvdata.CriteriaOpContainsAny:    true,
+			nvdata.CriteriaOpNotContainsAny: true,
+			nvdata.CriteriaOpRegex:          true,
+			nvdata.CriteriaOpNotRegex:       true,
+		},
 		valueType:           valueTypeList,
 		generateMembersFunc: cm.converter.generatePolicyGroupMembers,
 		policySettingFunc:   cm.converter.injectCelPolicySetting,
 	}
 
 	m[nvdata.CriteriaKeyK8sGroups] = criterionMapping{
-		name:                nvdata.CriteriaKeyK8sGroups,
-		displayName:         "User groups",
-		module:              policyCEL,
-		supportedOps:        map[string]bool{nvdata.CriteriaOpContainsAny: true, nvdata.CriteriaOpContainsAll: true, nvdata.CriteriaOpNotContainsAny: true, nvdata.CriteriaOpContainsOtherThan: true, nvdata.CriteriaOpRegex: true, nvdata.CriteriaOpNotRegex: true},
+		name:        nvdata.CriteriaKeyK8sGroups,
+		displayName: "User groups",
+		module:      policyCEL,
+		supportedOps: map[string]bool{
+			nvdata.CriteriaOpContainsAny:       true,
+			nvdata.CriteriaOpContainsAll:       true,
+			nvdata.CriteriaOpNotContainsAny:    true,
+			nvdata.CriteriaOpContainsOtherThan: true,
+			nvdata.CriteriaOpRegex:             true,
+			nvdata.CriteriaOpNotRegex:          true,
+		},
 		valueType:           valueTypeList,
 		generateMembersFunc: cm.converter.generatePolicyGroupMembers,
 		policySettingFunc:   cm.converter.injectCelPolicySetting,
@@ -357,8 +378,7 @@ func (cm *CriteriaMatrix) GetPolicySettingFunc(name string) (PolicySettingFunc, 
 }
 
 func (cm *CriteriaMatrix) isSupportedRule(rule *nvapis.RESTAdmissionRule) (bool, string) {
-	// Rule IDs under 1000 are reserved for NeuVector internal rules and should not be used in non-NeuVector environments.
-	if rule.ID < 1000 {
+	if rule.ID < nvPreserveID {
 		return false, MsgNeuVectorRuleOnly
 	}
 
@@ -389,7 +409,7 @@ func (cm *CriteriaMatrix) isSupportedRule(rule *nvapis.RESTAdmissionRule) (bool,
 
 func (cm *CriteriaMatrix) dumpSupportedCriteriaTable() {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(50)
+	table.SetColWidth(defaultColumnWidth)
 	table.SetHeader([]string{"Criterion Name", "Supported", "Note"})
 
 	var mappings []criterionMapping
