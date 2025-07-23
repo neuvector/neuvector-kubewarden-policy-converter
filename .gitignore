@@ -1,1 +1,5 @@
-bin/nvrules2kw
+# Binaries
+bin
+
+# e2e cluster logs
+test/e2e/logs
