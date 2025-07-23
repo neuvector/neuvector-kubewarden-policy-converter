@@ -122,7 +122,7 @@ func main() {
 		{
 			Name:  "support",
 			Usage: "Show supported criteria matrix",
-			Action: func(c *cli.Context) error {
+			Action: func(_ *cli.Context) error {
 				converter := convert.NewRuleConverter(convert.ConversionConfig{})
 
 				converter.ShowRules()

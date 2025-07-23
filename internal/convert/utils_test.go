@@ -1,3 +1,4 @@
+//nolint:testpackage // will refactor this test to use testify
 package convert
 
 import (
@@ -5,6 +6,7 @@ import (
 	"testing"
 )
 
+// TODO: refactor this test to use testify
 func Test_convertToRegexPattern(t *testing.T) {
 	tests := []struct {
 		name  string

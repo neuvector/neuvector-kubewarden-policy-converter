@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
@@ -64,9 +65,11 @@ const (
 	MsgUnsupportedCriteriaOperator = "Unsupported operator"
 	MsgRuleParsingError            = "Failed to parse rule"
 	MsgRuleGenerateKWPolicyError   = "Failed to generate Kubewarden poilcy"
+
+	defaultColumnWidth = 50
 )
 
-// Define a struct to store the rule parsing result with unexported fields
+// Policy stores the rule parsing result with unexported fields.
 type Policy interface{}
 
 type ruleParsingResult struct {
@@ -101,7 +104,7 @@ func (r *RuleConverter) ProcessRules(input io.Reader) error {
 	}
 
 	// output all collected policies
-	if err := r.outputPolicies(policies, r.config.OutputFile); err != nil {
+	if err = r.outputPolicies(policies, r.config.OutputFile); err != nil {
 		return fmt.Errorf("failed to write output YAML: %w", err)
 	}
 
@@ -148,10 +151,10 @@ func (r *RuleConverter) processSingleRule(rule *nvapis.RESTAdmissionRule) rulePa
 
 func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(50)
+	table.SetColWidth(defaultColumnWidth)
 	table.SetHeader([]string{"ID", "STATUS", "NOTES"})
 	for _, result := range results {
-		table.Append([]string{fmt.Sprintf("%d", result.id), result.status, result.notes})
+		table.Append([]string{strconv.FormatUint(uint64(result.id), 10), result.status, result.notes})
 	}
 	table.Render()
 }
@@ -183,7 +186,9 @@ func (r *RuleConverter) requiresPolicyGroup(rule *nvapis.RESTAdmissionRule) (boo
 //  1. When there is only one criterion and it has a 1-to-1 mapping to a policy.
 //     (This is determined using the supported_matrix.)
 //  2. When there are two criteria, and one of them is a namespace criterion.
-func (r *RuleConverter) generateClusterAdmissionPolicy(rule *nvapis.RESTAdmissionRule) (*policiesv1.ClusterAdmissionPolicy, error) {
+func (r *RuleConverter) generateClusterAdmissionPolicy(
+	rule *nvapis.RESTAdmissionRule,
+) (*policiesv1.ClusterAdmissionPolicy, error) {
 	policy := policiesv1.ClusterAdmissionPolicy{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ClusterAdmissionPolicy",
@@ -240,8 +245,10 @@ func (r *RuleConverter) generateClusterAdmissionPolicy(rule *nvapis.RESTAdmissio
 	return &policy, nil
 }
 
-// Generate a ClusterAdmissionPolicyGroup CR
-func (r *RuleConverter) generatePolicyGroup(rule *nvapis.RESTAdmissionRule) (*policiesv1.ClusterAdmissionPolicyGroup, error) {
+// Generate a ClusterAdmissionPolicyGroup CR.
+func (r *RuleConverter) generatePolicyGroup(
+	rule *nvapis.RESTAdmissionRule,
+) (*policiesv1.ClusterAdmissionPolicyGroup, error) {
 	var (
 		policies   = policiesv1.PolicyGroupMembersWithContext{}
 		conditions []string
@@ -336,7 +343,9 @@ func (r *RuleConverter) buildPolicySettings(criterion *nvapis.RESTAdmRuleCriteri
 	return rawBytes, nil
 }
 
-func (r *RuleConverter) generatePolicyGroupMembers(criterion *nvapis.RESTAdmRuleCriterion) ([]policiesv1.PolicyGroupMemberWithContext, error) {
+func (r *RuleConverter) generatePolicyGroupMembers(
+	criterion *nvapis.RESTAdmRuleCriterion,
+) ([]policiesv1.PolicyGroupMemberWithContext, error) {
 	module, err := r.config.matrix.GetModule(criterion.Name)
 	if err != nil {
 		return nil, err
@@ -359,7 +368,10 @@ func (r *RuleConverter) generatePolicyGroupMembers(criterion *nvapis.RESTAdmRule
 	return []policiesv1.PolicyGroupMemberWithContext{policy}, nil
 }
 
-func (r *RuleConverter) injectTrustedRepoPolicySetting(criterion *nvapis.RESTAdmRuleCriterion, yamlObj map[string]interface{}) error {
+func (r *RuleConverter) injectTrustedRepoPolicySetting(
+	criterion *nvapis.RESTAdmRuleCriterion,
+	yamlObj map[string]interface{},
+) error {
 	objKeyMap := map[string]string{
 		nvdata.CriteriaKeyImageRegistry: "registries",
 		nvdata.CriteriaKeyImage:         "images",
@@ -392,7 +404,10 @@ func (r *RuleConverter) injectTrustedRepoPolicySetting(criterion *nvapis.RESTAdm
 	return nil
 }
 
-func (r *RuleConverter) injectCelPolicySetting(criterion *nvapis.RESTAdmRuleCriterion, yamlObj map[string]interface{}) error {
+func (r *RuleConverter) injectCelPolicySetting(
+	criterion *nvapis.RESTAdmRuleCriterion,
+	yamlObj map[string]interface{},
+) error {
 	valueType, err := r.config.matrix.GetCriterionValueType(criterion.Name)
 	if err != nil {
 		return fmt.Errorf("failed to get value type for criterion %s: %w", criterion.Name, err)
@@ -475,7 +490,9 @@ func (r *RuleConverter) getNamespaceSelector(criterion *nvapis.RESTAdmRuleCriter
 	}
 }
 
-func (r *RuleConverter) generatePspComplianceMembers(_ *nvapis.RESTAdmRuleCriterion) ([]policiesv1.PolicyGroupMemberWithContext, error) {
+func (r *RuleConverter) generatePspComplianceMembers(
+	_ *nvapis.RESTAdmRuleCriterion,
+) ([]policiesv1.PolicyGroupMemberWithContext, error) {
 	var members []policiesv1.PolicyGroupMemberWithContext
 
 	yamlFiles := map[string]string{
