@@ -409,8 +409,7 @@ func (cm *CriteriaMatrix) isSupportedRule(rule *nvapis.RESTAdmissionRule) (bool,
 
 func (cm *CriteriaMatrix) dumpSupportedCriteriaTable() {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(defaultColumnWidth)
-	table.SetHeader([]string{"Criterion Name", "Supported", "Note"})
+	table.Header([]string{"Criterion Name", "Supported", "Note"})
 
 	var mappings []criterionMapping
 	for _, mapping := range cm.data {

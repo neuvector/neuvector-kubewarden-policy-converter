@@ -151,11 +151,16 @@ func (r *RuleConverter) processSingleRule(rule *nvapis.RESTAdmissionRule) rulePa
 
 func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(defaultColumnWidth)
-	table.SetHeader([]string{"ID", "STATUS", "NOTES"})
+	table.Header([]string{"ID", "STATUS", "NOTES"})
 	for _, result := range results {
-		table.Append([]string{strconv.FormatUint(uint64(result.id), 10), result.status, result.notes})
+		data := []string{
+			strconv.FormatUint(uint64(result.id), 10),
+			result.status,
+			result.notes,
+		}
+		table.Append(data)
 	}
+
 	table.Render()
 }
 
