@@ -125,8 +125,7 @@ func main() {
 			Action: func(_ *cli.Context) error {
 				converter := convert.NewRuleConverter(convert.ConversionConfig{})
 
-				converter.ShowRules()
-				return nil
+				return converter.ShowRules()
 			},
 		},
 	}

@@ -30,6 +30,7 @@ import (
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/tw"
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -108,13 +109,16 @@ func (r *RuleConverter) ProcessRules(input io.Reader) error {
 		return fmt.Errorf("failed to write output YAML: %w", err)
 	}
 
-	r.renderResultsTable(results)
+	err = r.renderResultsTable(results)
+	if err != nil {
+		return fmt.Errorf("failed to render results table: %w", err)
+	}
 
 	return nil
 }
 
-func (r *RuleConverter) ShowRules() {
-	r.config.matrix.dumpSupportedCriteriaTable()
+func (r *RuleConverter) ShowRules() error {
+	return r.config.matrix.dumpSupportedCriteriaTable()
 }
 
 func (r *RuleConverter) processSingleRule(rule *nvapis.RESTAdmissionRule) ruleParsingResult {
@@ -149,14 +153,35 @@ func (r *RuleConverter) processSingleRule(rule *nvapis.RESTAdmissionRule) rulePa
 	}
 }
 
-func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(defaultColumnWidth)
-	table.SetHeader([]string{"ID", "STATUS", "NOTES"})
+func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) error {
+	table := tablewriter.NewTable(os.Stdout,
+		tablewriter.WithConfig(tablewriter.Config{
+			Row: tw.CellConfig{
+				Formatting:   tw.CellFormatting{AutoWrap: tw.WrapNormal},
+				Alignment:    tw.CellAlignment{Global: tw.AlignLeft},
+				ColMaxWidths: tw.CellWidth{Global: defaultColumnWidth},
+			},
+		}),
+	)
+	table.Header([]string{"ID", "STATUS", "NOTES"})
 	for _, result := range results {
-		table.Append([]string{strconv.FormatUint(uint64(result.id), 10), result.status, result.notes})
+		data := []string{
+			strconv.FormatUint(uint64(result.id), 10),
+			result.status,
+			result.notes,
+		}
+		err := table.Append(data)
+		if err != nil {
+			return fmt.Errorf("failed to append data: %w", err)
+		}
 	}
-	table.Render()
+
+	err := table.Render()
+	if err != nil {
+		return fmt.Errorf("failed to render table: %w", err)
+	}
+
+	return nil
 }
 
 func (r *RuleConverter) requiresPolicyGroup(rule *nvapis.RESTAdmissionRule) (bool, error) {

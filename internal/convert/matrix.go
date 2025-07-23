@@ -25,6 +25,7 @@ import (
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/tw"
 )
 
 // Kubewarden policy modules.
@@ -407,10 +408,17 @@ func (cm *CriteriaMatrix) isSupportedRule(rule *nvapis.RESTAdmissionRule) (bool,
 	return true, ""
 }
 
-func (cm *CriteriaMatrix) dumpSupportedCriteriaTable() {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetColWidth(defaultColumnWidth)
-	table.SetHeader([]string{"Criterion Name", "Supported", "Note"})
+func (cm *CriteriaMatrix) dumpSupportedCriteriaTable() error {
+	table := tablewriter.NewTable(os.Stdout,
+		tablewriter.WithConfig(tablewriter.Config{
+			Row: tw.CellConfig{
+				Formatting:   tw.CellFormatting{AutoWrap: tw.WrapNormal},
+				Alignment:    tw.CellAlignment{Global: tw.AlignLeft},
+				ColMaxWidths: tw.CellWidth{Global: defaultColumnWidth},
+			},
+		}),
+	)
+	table.Header([]string{"Criterion Name", "Supported", "Note"})
 
 	var mappings []criterionMapping
 	for _, mapping := range cm.data {
@@ -426,8 +434,16 @@ func (cm *CriteriaMatrix) dumpSupportedCriteriaTable() {
 		if mapping.unsupported {
 			supportStatus = "No"
 		}
-		table.Append([]string{mapping.displayName, supportStatus, mapping.relatedPolicyURL})
+		err := table.Append([]string{mapping.displayName, supportStatus, mapping.relatedPolicyURL})
+		if err != nil {
+			return fmt.Errorf("failed to append data: %w", err)
+		}
 	}
 
-	table.Render()
+	err := table.Render()
+	if err != nil {
+		return fmt.Errorf("failed to render table: %w", err)
+	}
+
+	return nil
 }
