@@ -1,9 +1,9 @@
-//nolint:testpackage // will refactor this test to use testify
 package convert
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 // TODO: refactor this test to use testify
@@ -22,9 +22,7 @@ func Test_convertToRegexPattern(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := convertToRegexPattern(tt.input)
-			if got != tt.want {
-				t.Errorf("convertToRegexPattern(%q) = %q; want %q", tt.input, got, tt.want)
-			}
+			require.Equal(t, tt.want, got, "input: %q", tt.input)
 		})
 	}
 }
@@ -65,12 +63,11 @@ func Test_parseValuesToList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := parseValuesToList(tt.input)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("parseValuesToList() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("parseValuesToList() = %v, want %v", got, tt.want)
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.want, got)
 			}
 		})
 	}
@@ -118,12 +115,11 @@ func Test_parseValuesToMap(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := parseValuesToMap(tt.input)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("parseValuesToMap() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("parseValuesToMap() = %v, want %v", got, tt.want)
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.want, got)
 			}
 		})
 	}
@@ -141,9 +137,7 @@ func Test_normalizeOpName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
 			got := normalizeOpName(tt.input)
-			if got != tt.want {
-				t.Errorf("normalizeOpName(%q) = %q; want %q", tt.input, got, tt.want)
-			}
+			require.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -154,7 +148,5 @@ func Test_parseCommaSeparatedString(t *testing.T) {
 
 	got := parseCommaSeparatedString(input)
 
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("parseCommaSeparatedString(%q) = %v; want %v", input, got, want)
-	}
+	require.Equal(t, want, got)
 }

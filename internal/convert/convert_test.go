@@ -1,4 +1,3 @@
-//nolint:gocognit,revive,testpackage // table-driven test; accept builtin shadow; keep same package to test unexported APIs
 package convert
 
 import (
@@ -6,9 +5,9 @@ import (
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	"github.com/stretchr/testify/require"
 )
 
-// TODO: refactor this test to use testify
 func TestProcessSingleRule(t *testing.T) {
 	var (
 		caPolicy      *policiesv1.ClusterAdmissionPolicy
@@ -17,15 +16,13 @@ func TestProcessSingleRule(t *testing.T) {
 	)
 
 	tests := []struct {
-		name             string
-		rule             *nvapis.RESTAdmissionRule
-		expectedID       uint32
-		expectedStatus   string
-		expectedNotes    string
-		expectPolicyNil  bool
-		expectPolicyCap  bool
-		expectPolicyCapg bool
-		validatePolicy   func(t *testing.T, policy interface{}, policyServer string)
+		name               string
+		rule               *nvapis.RESTAdmissionRule
+		expectedID         uint32
+		expectedPass       bool
+		expectedNotes      string
+		expectedPolicyType interface{}
+		validatePolicy     func(t *testing.T, policy interface{}, policyServer string)
 	}{
 		{
 			name: "ID less than 1000 should be skipped",
@@ -40,10 +37,9 @@ func TestProcessSingleRule(t *testing.T) {
 				RuleType: "deny",
 				RuleMode: "protect",
 			},
-			expectedID:      999,
-			expectedStatus:  MsgStatusSkip,
-			expectedNotes:   MsgNeuVectorRuleOnly,
-			expectPolicyNil: true,
+			expectedID:    999,
+			expectedPass:  false,
+			expectedNotes: MsgNeuVectorRuleOnly,
 		},
 		{
 			name: "Non-existing criteria should be skipped",
@@ -59,10 +55,9 @@ func TestProcessSingleRule(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:      1001,
-			expectedStatus:  MsgStatusSkip,
-			expectedNotes:   MsgUnsupportedRuleCriteria,
-			expectPolicyNil: true,
+			expectedID:    1001,
+			expectedPass:  false,
+			expectedNotes: MsgUnsupportedRuleCriteria,
 		},
 		{
 			name: "Invalid criteria operator should be skipped",
@@ -78,9 +73,9 @@ func TestProcessSingleRule(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:      1001,
-			expectedStatus:  MsgStatusSkip,
-			expectPolicyNil: true,
+			expectedID:    1001,
+			expectedPass:  false,
+			expectedNotes: MsgUnsupportedCriteriaOperator,
 		},
 		{
 			name: "Valid rule should unmarshal to ClusterAdmissionPolicy",
@@ -96,26 +91,18 @@ func TestProcessSingleRule(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:      1001,
-			expectedStatus:  MsgStatusOk,
-			expectPolicyCap: true,
+			expectedID:         1001,
+			expectedPass:       true,
+			expectedNotes:      MsgRuleConvertedSuccessfully,
+			expectedPolicyType: &policiesv1.ClusterAdmissionPolicy{},
 			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
 				caPolicy, ok = policy.(*policiesv1.ClusterAdmissionPolicy)
-				if !ok {
-					t.Fatalf("Expected ClusterAdmissionPolicy, got %T", policy)
-				}
-				if caPolicy.Kind != "ClusterAdmissionPolicy" {
-					t.Errorf("Expected Kind 'ClusterAdmissionPolicy', got '%s'", caPolicy.Kind)
-				}
-				if caPolicy.Name != "neuvector-rule-1001-conversion" {
-					t.Errorf("Expected Name 'neuvector-rule-1001-conversion', got '%s'", caPolicy.Name)
-				}
-				if caPolicy.Spec.PolicyServer != policyServer {
-					t.Errorf("Expected PolicyServer '%s', got '%s'", policyServer, caPolicy.Spec.PolicyServer)
-				}
-				if caPolicy.Spec.PolicySpec.Module != policyCEL {
-					t.Errorf("Expected Module '%s', got '%s'", policyCEL, caPolicy.Spec.PolicySpec.Module)
-				}
+				require.True(t, ok, "Expected ClusterAdmissionPolicy, got %T", policy)
+				require.NotNil(t, caPolicy)
+				require.Equal(t, "ClusterAdmissionPolicy", caPolicy.Kind)
+				require.Equal(t, "neuvector-rule-1001-conversion", caPolicy.Name)
+				require.Equal(t, policyServer, caPolicy.Spec.PolicyServer)
+				require.Equal(t, policyCEL, caPolicy.Spec.PolicySpec.Module)
 			},
 		},
 		{
@@ -133,17 +120,17 @@ func TestProcessSingleRule(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:      1001,
-			expectedStatus:  MsgStatusOk,
-			expectPolicyCap: true,
+			expectedID:         1001,
+			expectedPass:       true,
+			expectedNotes:      MsgRuleConvertedSuccessfully,
+			expectedPolicyType: &policiesv1.ClusterAdmissionPolicy{},
 			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
 				caPolicy, ok = policy.(*policiesv1.ClusterAdmissionPolicy)
-				if !ok {
-					t.Fatalf("Expected ClusterAdmissionPolicy, got %T", policy)
-				}
-				if len(caPolicy.Spec.PolicySpec.MatchConditions) != 1 {
-					t.Errorf("Expected 1 MatchCondition, got '%d'", len(caPolicy.Spec.PolicySpec.MatchConditions))
-				}
+				require.True(t, ok, "Expected ClusterAdmissionPolicy, got %T", policy)
+				require.NotNil(t, caPolicy)
+				require.Equal(t, "ClusterAdmissionPolicy", caPolicy.Kind)
+				require.Equal(t, policyServer, caPolicy.Spec.PolicyServer)
+				require.Len(t, caPolicy.Spec.PolicySpec.MatchConditions, 1)
 			},
 		},
 		{
@@ -161,26 +148,18 @@ func TestProcessSingleRule(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:       1001,
-			expectedStatus:   MsgStatusOk,
-			expectPolicyCapg: true,
+			expectedID:         1001,
+			expectedPass:       true,
+			expectedNotes:      MsgRuleConvertedSuccessfully,
+			expectedPolicyType: &policiesv1.ClusterAdmissionPolicyGroup{},
 			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
 				caPolicyGroup, ok = policy.(*policiesv1.ClusterAdmissionPolicyGroup)
-				if !ok {
-					t.Fatalf("Expected ClusterAdmissionPolicyGroup, got %T", policy)
-				}
-				if caPolicyGroup.Kind != "ClusterAdmissionPolicyGroup" {
-					t.Errorf("Expected Kind 'ClusterAdmissionPolicyGroup', got '%s'", caPolicyGroup.Kind)
-				}
-				if caPolicyGroup.Name != "neuvector-rule-1001-conversion" {
-					t.Errorf("Expected Name 'neuvector-rule-1001-conversion', got '%s'", caPolicyGroup.Name)
-				}
-				if len(caPolicyGroup.Spec.Policies) != 2 {
-					t.Errorf(
-						"Expected 2 policies inside ClusterAdmissionPolicyGroup, got '%d'",
-						len(caPolicyGroup.Spec.Policies),
-					)
-				}
+				require.True(t, ok, "Expected ClusterAdmissionPolicyGroup, got %T", policy)
+				require.NotNil(t, caPolicyGroup)
+				require.Equal(t, "ClusterAdmissionPolicyGroup", caPolicyGroup.Kind)
+				require.Equal(t, "neuvector-rule-1001-conversion", caPolicyGroup.Name)
+				require.Equal(t, policyServer, caPolicyGroup.Spec.PolicyServer)
+				require.Len(t, caPolicyGroup.Spec.Policies, 2)
 			},
 		},
 	}
@@ -193,30 +172,19 @@ func TestProcessSingleRule(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := converter.processSingleRule(tt.rule)
+			require.Equal(t, tt.expectedID, result.id)
+			require.Equal(t, tt.expectedPass, result.pass)
+			require.Equal(t, tt.expectedNotes, result.notes)
 
-			if result.id != tt.expectedID {
-				t.Errorf("Expected ID '%d', got '%d'", tt.expectedID, result.id)
-			}
-
-			if result.status != tt.expectedStatus {
-				t.Errorf("Expected status '%s', got '%s'", tt.expectedStatus, result.status)
-			}
-
-			if tt.expectedNotes != "" && result.notes != tt.expectedNotes {
-				t.Errorf("Expected notes '%s', got '%s'", tt.expectedNotes, result.notes)
-			}
-
-			if tt.expectPolicyNil && result.policy != nil {
-				t.Errorf("Expected policy to be nil, got '%v'", result.policy)
-			}
-
-			if tt.expectPolicyCap || tt.expectPolicyCapg {
-				if result.policy == nil {
-					t.Fatal("Expected policy not nil")
-				}
+			// Check policy type based on status
+			if result.pass {
+				require.NotNil(t, result.policy)
+				require.IsType(t, tt.expectedPolicyType, result.policy)
 				if tt.validatePolicy != nil {
 					tt.validatePolicy(t, result.policy, policyServer)
 				}
+			} else {
+				require.Nil(t, result.policy)
 			}
 		})
 	}

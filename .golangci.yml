@@ -109,7 +109,6 @@ linters:
     - staticcheck # is a go vet on steroids, applying a ton of static analysis checks
     - testableexamples # checks if examples are testable (have an expected output)
     - testifylint # checks usage of github.com/stretchr/testify
-    - testpackage # makes you use a separate _test package
     - tparallel # detects inappropriate usage of t.Parallel() method in your Go test codes
     - unconvert # removes unnecessary type conversions
     - unparam # reports unused function parameters
@@ -157,6 +156,10 @@ linters:
     #- thelper # detects golang test helpers without t.Helper() call and checks the consistency of test helpers
     #- wsl # [too strict and mostly code is not more readable] whitespace linter forces you to use empty lines
     #- wsl_v5 # [too strict and mostly code is not more readable] add or remove empty lines
+
+    # We disable the testpackage linter because we have tests which is not
+    # black boxed and that will not cause issues for us for now.
+    # - testpackage # makes you use a separate _test package
 
   # All settings can be found here https://github.com/golangci/golangci-lint/blob/HEAD/.golangci.reference.yml
   settings:
