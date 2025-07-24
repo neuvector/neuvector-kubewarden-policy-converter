@@ -56,9 +56,6 @@ func NewRuleConverter(config ConversionConfig) *RuleConverter {
 }
 
 const (
-	MsgStatusOk   = "Ok"
-	MsgStatusSkip = "Skip"
-
 	MsgNeuVectorRuleOnly           = "NeuVector environment only rule"
 	MsgOnlyDenyRuleSupported       = `Only "deny" rule supported`
 	MsgRuleConvertedSuccessfully   = "Rule converted successfully"
@@ -75,7 +72,7 @@ type Policy interface{}
 
 type ruleParsingResult struct {
 	id     uint32
-	status string
+	pass   bool
 	notes  string
 	policy Policy
 }
@@ -124,13 +121,13 @@ func (r *RuleConverter) ShowRules() error {
 func (r *RuleConverter) processSingleRule(rule *nvapis.RESTAdmissionRule) ruleParsingResult {
 	supported, reason := r.config.matrix.isSupportedRule(rule)
 	if !supported {
-		return ruleParsingResult{id: rule.ID, status: MsgStatusSkip, notes: reason}
+		return ruleParsingResult{id: rule.ID, pass: false, notes: reason}
 	}
 
 	useGroupType, err := r.requiresPolicyGroup(rule)
 	if err != nil {
 		note := fmt.Sprintf("%s: %v", MsgRuleParsingError, err)
-		return ruleParsingResult{id: rule.ID, status: MsgStatusSkip, notes: note}
+		return ruleParsingResult{id: rule.ID, pass: false, notes: note}
 	}
 
 	var policy Policy
@@ -142,12 +139,12 @@ func (r *RuleConverter) processSingleRule(rule *nvapis.RESTAdmissionRule) rulePa
 
 	if err != nil {
 		note := fmt.Sprintf("%s: %v", MsgRuleGenerateKWPolicyError, err)
-		return ruleParsingResult{id: rule.ID, status: MsgStatusSkip, notes: note}
+		return ruleParsingResult{id: rule.ID, pass: false, notes: note}
 	}
 
 	return ruleParsingResult{
 		id:     rule.ID,
-		status: MsgStatusOk,
+		pass:   true,
 		notes:  MsgRuleConvertedSuccessfully,
 		policy: policy,
 	}
@@ -165,9 +162,13 @@ func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) error {
 	)
 	table.Header([]string{"ID", "STATUS", "NOTES"})
 	for _, result := range results {
+		status := "OK"
+		if !result.pass {
+			status = "Skipped"
+		}
 		data := []string{
 			strconv.FormatUint(uint64(result.id), 10),
-			result.status,
+			status,
 			result.notes,
 		}
 		err := table.Append(data)
