@@ -64,6 +64,10 @@ const (
 	MsgRuleParsingError            = "Failed to parse rule"
 	MsgRuleGenerateKWPolicyError   = "Failed to generate Kubewarden poilcy"
 
+	kwAPIVersion                    = "policies.kubewarden.io/v1"
+	clusterAdmissionPolicyKind      = "ClusterAdmissionPolicy"
+	clusterAdmissionPolicyGroupKind = "ClusterAdmissionPolicyGroup"
+
 	defaultColumnWidth = 50
 )
 
@@ -217,8 +221,8 @@ func (r *RuleConverter) generateClusterAdmissionPolicy(
 ) (*policiesv1.ClusterAdmissionPolicy, error) {
 	policy := policiesv1.ClusterAdmissionPolicy{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "ClusterAdmissionPolicy",
-			APIVersion: "policies.kubewarden.io/v1",
+			Kind:       clusterAdmissionPolicyKind,
+			APIVersion: kwAPIVersion,
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: fmt.Sprintf("neuvector-rule-%d-conversion", rule.ID),
@@ -318,8 +322,8 @@ func (r *RuleConverter) generatePolicyGroup(
 
 	group := policiesv1.ClusterAdmissionPolicyGroup{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "ClusterAdmissionPolicyGroup",
-			APIVersion: "policies.kubewarden.io/v1",
+			Kind:       clusterAdmissionPolicyGroupKind,
+			APIVersion: kwAPIVersion,
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name: fmt.Sprintf("neuvector-rule-%d-conversion", rule.ID),
@@ -439,7 +443,7 @@ func (r *RuleConverter) injectCelPolicySetting(
 		return fmt.Errorf("failed to get value type for criterion %s: %w", criterion.Name, err)
 	}
 
-	if valueType != "list" && valueType != "map" {
+	if valueType != valueTypeList && valueType != valueTypeMap {
 		return nil
 	}
 
