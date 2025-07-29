@@ -45,8 +45,6 @@ const (
 	valueTypeMap  = "map"
 
 	nvPreserveID = 1000 // Rule IDs under 1000 are reserved for NeuVector internal rules and should not be used in non-NeuVector environments.
-	// mappingType1to1    = "1-1"
-	// mappingType1toMany = "1-many".
 )
 
 // GenerateMembersFuncType returns members for policy group mapping.
@@ -71,7 +69,7 @@ type criterionMapping struct {
 }
 
 type CriteriaMatrix struct {
-	data      map[string]criterionMapping
+	criteria  map[string]criterionMapping
 	converter *RuleConverter
 }
 
@@ -79,7 +77,7 @@ func NewCriteriaMatrix(rc *RuleConverter) *CriteriaMatrix {
 	cm := &CriteriaMatrix{
 		converter: rc,
 	}
-	cm.data = cm.buildSupportedCriteriaMatrix()
+	cm.criteria = cm.buildSupportedCriteriaMatrix()
 	return cm
 }
 
@@ -330,7 +328,7 @@ func (cm *CriteriaMatrix) addMiscCriteria(m map[string]criterionMapping) {
 }
 
 func (cm *CriteriaMatrix) GetCriterionValueType(name string) (string, error) {
-	criterion, exists := cm.data[name]
+	criterion, exists := cm.criteria[name]
 	if !exists {
 		return "", fmt.Errorf("criterion not found: %s", name)
 	}
@@ -347,7 +345,7 @@ func (cm *CriteriaMatrix) GetCriterionValueType(name string) (string, error) {
 // }
 
 func (cm *CriteriaMatrix) IsOneToMany(name string) (bool, error) {
-	criterion, exists := cm.data[name]
+	criterion, exists := cm.criteria[name]
 	if !exists {
 		return false, fmt.Errorf("mapping type not found for name: %s", name)
 	}
@@ -355,7 +353,7 @@ func (cm *CriteriaMatrix) IsOneToMany(name string) (bool, error) {
 }
 
 func (cm *CriteriaMatrix) GetModule(name string) (string, error) {
-	criterion, exists := cm.data[name]
+	criterion, exists := cm.criteria[name]
 	if !exists {
 		return "", fmt.Errorf("module not found for name: %s", name)
 	}
@@ -363,7 +361,7 @@ func (cm *CriteriaMatrix) GetModule(name string) (string, error) {
 }
 
 func (cm *CriteriaMatrix) GetGenerateMembersFunc(name string) (GenerateMembersFuncType, error) {
-	criterion, exists := cm.data[name]
+	criterion, exists := cm.criteria[name]
 	if !exists {
 		return nil, fmt.Errorf("generate member function not found for name: %s", name)
 	}
@@ -371,7 +369,7 @@ func (cm *CriteriaMatrix) GetGenerateMembersFunc(name string) (GenerateMembersFu
 }
 
 func (cm *CriteriaMatrix) GetPolicySettingFunc(name string) (PolicySettingFunc, error) {
-	criterion, exists := cm.data[name]
+	criterion, exists := cm.criteria[name]
 	if !exists {
 		return nil, fmt.Errorf("policy setting function not found for name: %s", name)
 	}
@@ -389,7 +387,7 @@ func (cm *CriteriaMatrix) isSupportedRule(rule *nvapis.RESTAdmissionRule) (bool,
 	}
 
 	for _, rule := range rule.Criteria {
-		criterion, exists := cm.data[rule.Name]
+		criterion, exists := cm.criteria[rule.Name]
 		if !exists {
 			return false, MsgUnsupportedRuleCriteria
 		}
@@ -421,7 +419,7 @@ func (cm *CriteriaMatrix) dumpSupportedCriteriaTable() error {
 	table.Header([]string{"Criterion Name", "Supported", "Note"})
 
 	var mappings []criterionMapping
-	for _, mapping := range cm.data {
+	for _, mapping := range cm.criteria {
 		mappings = append(mappings, mapping)
 	}
 

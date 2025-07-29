@@ -27,21 +27,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-const appDescription = `Examples:
+const appDescription = `
+nvrules2kw converts NeuVector Admission Control rules into Kubewarden ClusterAdmissionPolicy YAMLs.
 
-# Fetch NeuVector Admission Control Rules and pipe them to nvrules2kw.
-# For instructions on connecting to the REST API server, visit:
-# https://open-docs.neuvector.com/configuration/console
-curl -k \
-  -H "Content-Type: application/json" \
-  -H "X-Auth-Apikey: <API_KEY>" \
-  "https://<API_SERVER_ADDRESS>/v1/admission/rules" | nvrules2kw --output policies.yaml
-
-# Convert rules from a file and output to a file
-nvrules2kw convert --rulefile ./rules/nvrules.json --output policies.yaml
-
-# Show supported criteria
-nvrules2kw support
+Use "nvrules2kw <command> --help" for details on each command.
 `
 
 func main() {
