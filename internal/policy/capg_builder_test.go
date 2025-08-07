@@ -9,6 +9,7 @@ import (
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/stretchr/testify/require"
 )
 
@@ -32,8 +33,8 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				RuleMode: "protect",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  handlers.ShareIPC,
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -44,7 +45,7 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				BackgroundAudit: true,
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareIPC: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName:  "single-criterion-test",
 			expectedPoliciesLen: 1,
@@ -59,13 +60,13 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				Comment: "Multiple Same Module",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  handlers.ShareIPC,
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 					{
-						Name:  handlers.ShareNetwork,
-						Op:    "=",
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "false",
 					},
 				},
@@ -76,8 +77,8 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				BackgroundAudit: false,
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareIPC:     handlers.NewHostNamespaceHandler(),
-				handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName:  "multiple-same-module",
 			expectedPoliciesLen: 1,
@@ -91,7 +92,7 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
 						Name:  "unknownCriterion",
-						Op:    "=",
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},

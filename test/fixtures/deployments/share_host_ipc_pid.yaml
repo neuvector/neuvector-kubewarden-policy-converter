@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deployment-host-ipc
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cache-service
+  template:
+    metadata:
+      labels:
+        app: cache-service
+    spec:
+      hostIPC: true
+      hostPID: true
+      containers:
+      - name: cache
+        image: memcached:1.6
+        ports:
+        - containerPort: 11211
+        command: ["memcached", "-m", "128"]
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"

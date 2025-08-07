@@ -34,6 +34,7 @@ nvrules2kw converts NeuVector Admission Control rules into Kubewarden ClusterAdm
 Use "nvrules2kw <command> --help" for details on each command.
 `
 
+//nolint:funlen // No need to split this function
 func main() {
 	var commands = []*cli.Command{
 		{
@@ -63,6 +64,11 @@ func main() {
 					Usage: "Execution mode of this policy, either \"protect\" or \"monitor\"",
 					Value: "protect",
 				},
+				&cli.BoolFlag{
+					Name:  "verbose",
+					Usage: "Verbose mode, show the results table",
+					Value: false,
+				},
 			},
 			Before: func(c *cli.Context) error {
 				mode := c.String("mode")
@@ -77,6 +83,7 @@ func main() {
 				backgroundAudit := c.Bool("backgroundaudit")
 				outputFile := c.String("output")
 				mode := c.String("mode")
+				verbose := c.Bool("verbose")
 
 				var input io.Reader
 				if ruleFile != "" {
@@ -100,6 +107,7 @@ func main() {
 					Mode:            mode,
 					PolicyServer:    policyServer,
 					BackgroundAudit: backgroundAudit,
+					Verbose:         verbose,
 				})
 
 				if err := converter.Convert(input); err != nil {

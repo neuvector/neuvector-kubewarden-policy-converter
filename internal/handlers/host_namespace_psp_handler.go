@@ -15,13 +15,13 @@ type HostNamespaceHandler struct {
 }
 
 const (
-	AllowHostIPC     = "allow_host_ipc"
-	AllowHostNetwork = "allow_host_network"
-	AllowHostPID     = "allow_host_pid"
+	PolicySettingAllowHostIPC     = "allow_host_ipc"
+	PolicySettingAllowHostNetwork = "allow_host_network"
+	PolicySettingAllowHostPID     = "allow_host_pid"
 
-	ShareIPC     = "shareIpcWithHost"
-	ShareNetwork = "shareNetWithHost"
-	SharePID     = "sharePidWithHost"
+	RuleShareIPC     = "shareIpcWithHost"
+	RuleShareNetwork = "shareNetWithHost"
+	RuleSharePID     = "sharePidWithHost"
 )
 
 func NewHostNamespaceHandler() *HostNamespaceHandler {
@@ -47,10 +47,6 @@ func (h *HostNamespaceHandler) getBoolValue(value string) (bool, error) {
 	return !boolValue, nil
 }
 
-func (h *HostNamespaceHandler) GetModule() string {
-	return share.PolicyHostNamespacesPSPURI
-}
-
 // BuildPolicySettings builds settings for a single criterion.
 func (h *HostNamespaceHandler) BuildPolicySettings(criterion *nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	return h.BuildGroupedPolicySettings([]*nvapis.RESTAdmRuleCriterion{criterion})
@@ -60,27 +56,27 @@ func (h *HostNamespaceHandler) BuildPolicySettings(criterion *nvapis.RESTAdmRule
 // This allows combining shareIPC, shareNetwork, and sharePID rules into a single policy.
 func (h *HostNamespaceHandler) BuildGroupedPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	settings := map[string]bool{
-		AllowHostIPC:     true,
-		AllowHostPID:     true,
-		AllowHostNetwork: true,
+		PolicySettingAllowHostIPC:     true,
+		PolicySettingAllowHostPID:     true,
+		PolicySettingAllowHostNetwork: true,
 	}
 
 	// Process each criterion and set the appropriate flag
 	var err error
 	for _, criterion := range criteria {
 		switch criterion.Name {
-		case ShareIPC:
-			settings[AllowHostIPC], err = h.getBoolValue(criterion.Value)
+		case RuleShareIPC:
+			settings[PolicySettingAllowHostIPC], err = h.getBoolValue(criterion.Value)
 			if err != nil {
 				return nil, err
 			}
-		case ShareNetwork:
-			settings[AllowHostNetwork], err = h.getBoolValue(criterion.Value)
+		case RuleShareNetwork:
+			settings[PolicySettingAllowHostNetwork], err = h.getBoolValue(criterion.Value)
 			if err != nil {
 				return nil, err
 			}
-		case SharePID:
-			settings[AllowHostPID], err = h.getBoolValue(criterion.Value)
+		case RuleSharePID:
+			settings[PolicySettingAllowHostPID], err = h.getBoolValue(criterion.Value)
 			if err != nil {
 				return nil, err
 			}

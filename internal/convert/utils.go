@@ -103,7 +103,7 @@ func parseValuesToMap(input string) (string, error) {
 			continue
 		}
 
-		parts := strings.SplitN(pair, "=", maxSplitParts)
+		parts := strings.SplitN(pair, nvdata.CriteriaOpEqual, maxSplitParts)
 		key := strings.TrimSpace(parts[0])
 
 		if key == "" {

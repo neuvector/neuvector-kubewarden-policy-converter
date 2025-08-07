@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/stretchr/testify/require"
 )
 
@@ -58,8 +59,8 @@ func TestBuildPolicySettings(t *testing.T) {
 		{
 			name: "IPC sharing set to true",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  ShareIPC,
-				Op:    "=",
+				Name:  RuleShareIPC,
+				Op:    nvdata.CriteriaOpEqual,
 				Value: "true",
 			},
 			expectedSettings: []byte(`{"allow_host_ipc":false,"allow_host_network":true,"allow_host_pid":true}`),
@@ -67,8 +68,8 @@ func TestBuildPolicySettings(t *testing.T) {
 		{
 			name: "Network sharing set to true",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  ShareNetwork,
-				Op:    "=",
+				Name:  RuleShareNetwork,
+				Op:    nvdata.CriteriaOpEqual,
 				Value: "true",
 			},
 			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":false,"allow_host_pid":true}`),
@@ -76,8 +77,8 @@ func TestBuildPolicySettings(t *testing.T) {
 		{
 			name: "PID sharing set to true",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  SharePID,
-				Op:    "=",
+				Name:  RuleSharePID,
+				Op:    nvdata.CriteriaOpEqual,
 				Value: "true",
 			},
 			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":true,"allow_host_pid":false}`),
@@ -85,8 +86,8 @@ func TestBuildPolicySettings(t *testing.T) {
 		{
 			name: "PID sharing set to false",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  SharePID,
-				Op:    "=",
+				Name:  RuleSharePID,
+				Op:    nvdata.CriteriaOpEqual,
 				Value: "false",
 			},
 			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":true,"allow_host_pid":true}`),
@@ -115,13 +116,13 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 			name: "IPC sharing set to true",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
 				{
-					Name:  ShareIPC,
-					Op:    "=",
+					Name:  RuleShareIPC,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "true",
 				},
 				{
-					Name:  ShareNetwork,
-					Op:    "=",
+					Name:  RuleShareNetwork,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "true",
 				},
 			},
@@ -131,18 +132,18 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 			name: "IPC sharing set to true",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
 				{
-					Name:  ShareIPC,
-					Op:    "=",
+					Name:  RuleShareIPC,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "true",
 				},
 				{
-					Name:  ShareNetwork,
-					Op:    "=",
+					Name:  RuleShareNetwork,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "true",
 				},
 				{
-					Name:  SharePID,
-					Op:    "=",
+					Name:  RuleSharePID,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "true",
 				},
 			},
@@ -152,18 +153,18 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 			name: "IPC sharing set to true",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
 				{
-					Name:  ShareIPC,
-					Op:    "=",
+					Name:  RuleShareIPC,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "false",
 				},
 				{
-					Name:  ShareNetwork,
-					Op:    "=",
+					Name:  RuleShareNetwork,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "false",
 				},
 				{
-					Name:  SharePID,
-					Op:    "=",
+					Name:  RuleSharePID,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "false",
 				},
 			},
@@ -173,8 +174,8 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 			name: "Network sharing set to true",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
 				{
-					Name:  ShareNetwork,
-					Op:    "=",
+					Name:  RuleShareNetwork,
+					Op:    nvdata.CriteriaOpEqual,
 					Value: "true",
 				},
 			},
