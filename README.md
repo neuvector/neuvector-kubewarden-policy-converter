@@ -122,43 +122,13 @@ nvrules2kw support
 The following table shows the support matrix:
 
 ```
-+--------------------------------------+-----------+------+
-|            CRITERION NAME            | SUPPORTED | NOTE |
-+--------------------------------------+-----------+------+
-| Allow Privilege Escalation           | Yes       |      |
-| Annotations                          | Yes       |      |
-| Add customized criterion             | No        |      |
-| Count of high severity CVE           | No        |      |
-| Count of high severity CVE with fix  | No        |      |
-| Count of medium severity CVE         | No        |      |
-| CVE names                            | No        |      |
-| CVE score                            | No        |      |
-| Environment variables with secrets   | Yes       |      |
-| Environment variables                | Yes       |      |
-| Image                                | Yes       |      |
-| Image compliance violations          | No        |      |
-| Image without OS information         | No        |      |
-| Image registry                       | Yes       |      |
-| Image scanned                        | No        |      |
-| Image signed                         | No        |      |
-| Image Sigstore Verifiers             | No        |      |
-| Labels                               | Yes       |      |
-| Modules                              | No        |      |
-| Mount Volumes                        | No        |      |
-| Namespace                            | Yes       |      |
-| PSP Best Practice                    | Yes       |      |
-| Resource Limit Configuration (RLC)   | No        |      |
-| Run as privileged                    | Yes       |      |
-| Run as root                          | Yes       |      |
-| Service Account Bound High Risk Role | No        |      |
-| Share host's IPC namespaces          | Yes       |      |
-| Share host's Network                 | Yes       |      |
-| Share host's PID namespaces          | Yes       |      |
-| StorageClass Name                    | No        |      |
-| User                                 | Yes       |      |
-| User groups                          | Yes       |      |
-| Violates PSA policy                  | No        |      |
-+--------------------------------------+-----------+------+
+┌─────────────────────────────┬───────────┬───────────────────────────────────────────────────────────────────┐
+│       CRITERION NAME        │ SUPPORTED │                         KUBEWARDEN MODULE                         │
+├─────────────────────────────┼───────────┼───────────────────────────────────────────────────────────────────┤
+│ Share host's IPC namespaces │ Yes       │ registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0 │
+│ Share host's Network        │ Yes       │ registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0 │
+│ Share host's PID namespaces │ Yes       │ registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0 │
+└─────────────────────────────┴───────────┴───────────────────────────────────────────────────────────────────┘
 
 ```
 

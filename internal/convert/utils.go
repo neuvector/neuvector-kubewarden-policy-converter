@@ -22,11 +22,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/assets"
-
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
-	"sigs.k8s.io/yaml"
 )
 
 func parseAdmissionRules(reader io.Reader) (*nvapis.RESTAdmissionRulesData, error) {
@@ -47,18 +44,6 @@ func normalizeOpName(input string) string {
 	}
 
 	return input
-}
-
-func readEmbeddedTemplate(filePath string) (map[string]interface{}, error) {
-	data, err := assets.YamlFiles.ReadFile(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read YAML file %s: %w", filePath, err)
-	}
-	var yamlObj map[string]interface{}
-	if err = yaml.Unmarshal(data, &yamlObj); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal YAML %s: %w", filePath, err)
-	}
-	return yamlObj, nil
 }
 
 func parseCommaSeparatedString(input string) []interface{} {

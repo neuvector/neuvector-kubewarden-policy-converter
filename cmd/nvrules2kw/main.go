@@ -23,6 +23,7 @@ import (
 	"os"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/convert"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 
 	"github.com/urfave/cli/v2"
 )
@@ -94,14 +95,14 @@ func main() {
 					}
 				}
 
-				converter := convert.NewRuleConverter(convert.ConversionConfig{
+				converter := convert.NewRuleConverter(share.ConversionConfig{
 					OutputFile:      outputFile,
 					Mode:            mode,
 					PolicyServer:    policyServer,
 					BackgroundAudit: backgroundAudit,
 				})
 
-				if err := converter.ProcessRules(input); err != nil {
+				if err := converter.Convert(input); err != nil {
 					return fmt.Errorf("error processing rules: %w", err)
 				}
 
@@ -112,7 +113,7 @@ func main() {
 			Name:  "support",
 			Usage: "Show supported criteria matrix",
 			Action: func(_ *cli.Context) error {
-				converter := convert.NewRuleConverter(convert.ConversionConfig{})
+				converter := convert.NewRuleConverter(share.ConversionConfig{})
 
 				return converter.ShowRules()
 			},

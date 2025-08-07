@@ -1,0 +1,160 @@
+package policy
+
+import (
+	"encoding/json"
+	"errors"
+	"testing"
+
+	v1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
+	nvapis "github.com/neuvector/neuvector/controller/api"
+	"github.com/stretchr/testify/require"
+)
+
+func TestCAPBuilder_GeneratePolicy(t *testing.T) {
+	tests := []struct {
+		name               string
+		rule               *nvapis.RESTAdmissionRule
+		config             share.ConversionConfig
+		handlers           map[string]share.PolicyHandler
+		expectedPolicyName string
+		expectedModule     string
+		expectedSettings   map[string]interface{}
+		expectedMode       string
+		expectedError      error
+	}{
+		{
+			name: "successful policy generation with comment",
+			rule: &nvapis.RESTAdmissionRule{
+				ID:      1243,
+				Comment: "Test Policy",
+				Criteria: []*nvapis.RESTAdmRuleCriterion{
+					{
+						Name:  handlers.ShareIPC,
+						Op:    "=",
+						Value: "true",
+					},
+				},
+			},
+			config: share.ConversionConfig{
+				PolicyServer:    "test-server",
+				Mode:            "monitor",
+				BackgroundAudit: false,
+			},
+			handlers: map[string]share.PolicyHandler{
+				handlers.ShareIPC: handlers.NewHostNamespaceHandler(),
+			},
+			expectedPolicyName: "test-policy",
+			expectedModule:     share.PolicyHostNamespacesPSPURI,
+			expectedSettings: map[string]interface{}{
+				"allow_host_network": true,
+				"allow_host_ipc":     false,
+				"allow_host_pid":     true,
+			},
+			expectedMode: "monitor",
+		},
+		{
+			name: "successful policy generation without comment",
+			rule: &nvapis.RESTAdmissionRule{
+				ID: 1243,
+				Criteria: []*nvapis.RESTAdmRuleCriterion{
+					{
+						Name:  handlers.ShareNetwork,
+						Op:    "=",
+						Value: "true",
+					},
+				},
+			},
+			config: share.ConversionConfig{
+				PolicyServer:    "test-server",
+				Mode:            "monitor",
+				BackgroundAudit: false,
+			},
+			handlers: map[string]share.PolicyHandler{
+				handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
+			},
+			expectedPolicyName: "neuvector-rule-1243-conversion",
+			expectedModule:     share.PolicyHostNamespacesPSPURI,
+			expectedSettings: map[string]interface{}{
+				"allow_host_network": false,
+				"allow_host_ipc":     true,
+				"allow_host_pid":     true,
+			},
+			expectedMode: "monitor",
+		},
+		{
+			name: "error when handler for ShareIPC criterion is missing",
+			rule: &nvapis.RESTAdmissionRule{
+				ID:      1243,
+				Comment: "Test Policy",
+				Criteria: []*nvapis.RESTAdmRuleCriterion{
+					{
+						Name:  handlers.ShareIPC,
+						Op:    "=",
+						Value: "true",
+					},
+				},
+			},
+			config: share.ConversionConfig{
+				PolicyServer:    "test-server",
+				Mode:            "monitor",
+				BackgroundAudit: false,
+			},
+			handlers: map[string]share.PolicyHandler{
+				handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
+			},
+			expectedPolicyName: "test-policy",
+			expectedModule:     share.PolicyHostNamespacesPSPURI,
+			expectedSettings: map[string]interface{}{
+				"allow_host_network": true,
+				"allow_host_ipc":     false,
+				"allow_host_pid":     true,
+			},
+			expectedMode:  "monitor",
+			expectedError: errors.New("no handler found for criterion: shareIpcWithHost"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			builder := &CAPBuilder{
+				handlers: tt.handlers,
+			}
+
+			policy, err := builder.GeneratePolicy(tt.rule, tt.config)
+			require.Equal(t, tt.expectedError, err)
+
+			if tt.expectedError != nil {
+				require.Nil(t, policy)
+				return
+			}
+			require.NotNil(t, policy)
+
+			// Type assert to ClusterAdmissionPolicy
+			admissionPolicy, ok := policy.(*v1.ClusterAdmissionPolicy)
+			require.True(t, ok)
+
+			// Verify metadata
+			require.Equal(t, tt.expectedPolicyName, admissionPolicy.ObjectMeta.Name)
+			require.Equal(t, clusterAdmissionPolicyKind, admissionPolicy.TypeMeta.Kind)
+			require.Equal(t, kwAPIVersion, admissionPolicy.TypeMeta.APIVersion)
+
+			// Verify spec
+			require.Equal(t, tt.expectedModule, admissionPolicy.Spec.PolicySpec.Module)
+			require.Equal(t, tt.config.PolicyServer, admissionPolicy.Spec.PolicySpec.PolicyServer)
+			require.Equal(t, tt.config.BackgroundAudit, admissionPolicy.Spec.PolicySpec.BackgroundAudit)
+			require.Equal(t, v1.PolicyMode(tt.expectedMode), admissionPolicy.Spec.PolicySpec.Mode)
+
+			// Verify settings
+			var actualSettings map[string]interface{}
+			err = json.Unmarshal(admissionPolicy.Spec.PolicySpec.Settings.Raw, &actualSettings)
+			require.NoError(t, err)
+			require.Equal(t, tt.expectedSettings, actualSettings)
+
+			// Verify rules
+			rules := admissionPolicy.Spec.PolicySpec.Rules
+			require.Len(t, rules, 3) // Default rules from BuildRules()
+		})
+	}
+}
