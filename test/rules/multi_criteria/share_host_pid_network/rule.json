@@ -1,0 +1,31 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny both IPC and network sharing with host",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "sharePidWithHost",
+                    "op": "=",
+                    "path": "sharePidWithHost",
+                    "value": "true"
+                },
+                {
+                    "name": "shareNetWithHost",
+                    "op": "=",
+                    "path": "shareNetWithHost",
+                    "value": "true"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1002,
+            "rule_mode": "",
+            "rule_type": "deny"
+        }
+    ]
+}

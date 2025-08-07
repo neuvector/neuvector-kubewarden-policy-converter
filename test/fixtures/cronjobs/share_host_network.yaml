@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: test-cronjob-network-enabled
+  namespace: default
+spec:
+  schedule: "0 1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          hostNetwork: true
+          containers:
+          - name: test-container
+            image: nginx:latest
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+          restartPolicy: OnFailure

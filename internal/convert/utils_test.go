@@ -3,6 +3,7 @@ package convert
 import (
 	"testing"
 
+	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/stretchr/testify/require"
 )
 
@@ -130,7 +131,7 @@ func Test_normalizeOpName(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"=", "equal"},
+		{nvdata.CriteriaOpEqual, "equal"},
 		{"!regex", "notregex"},
 	}
 

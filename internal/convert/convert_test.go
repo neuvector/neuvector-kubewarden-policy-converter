@@ -9,14 +9,15 @@ import (
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/stretchr/testify/require"
 )
 
 func initMockHandlers() map[string]share.PolicyHandler {
 	return map[string]share.PolicyHandler{
-		handlers.ShareIPC:     handlers.NewHostNamespaceHandler(),
-		handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
-		handlers.SharePID:     handlers.NewHostNamespaceHandler(),
+		handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
+		handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
+		handlers.RuleSharePID:     handlers.NewHostNamespaceHandler(),
 	}
 }
 
@@ -78,7 +79,7 @@ func TestProcessSingleRule(t *testing.T) {
 				Category: "Test",
 				Comment:  "Rule with invalid criteria operator",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: "shareIpcWithHost", Op: "containsAny_invalid", Value: "bad1,bad2"},
+					{Name: handlers.RuleShareIPC, Op: "containsAny_invalid", Value: "bad1,bad2"},
 				},
 				Disable:  false,
 				Critical: false,
@@ -96,7 +97,7 @@ func TestProcessSingleRule(t *testing.T) {
 				Category: "Test",
 				Comment:  "Valid rule",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: "shareIpcWithHost", Op: "=", Value: "true"},
+					{Name: handlers.RuleShareIPC, Op: nvdata.CriteriaOpEqual, Value: "true"},
 				},
 				Disable:  false,
 				Critical: false,
@@ -124,8 +125,8 @@ func TestProcessSingleRule(t *testing.T) {
 				Category: "Test",
 				Comment:  "Namespace criterion",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: "shareIpcWithHost", Op: "=", Value: "true"},
-					{Name: "sharePidWithHost", Op: "=", Value: "true"},
+					{Name: handlers.RuleShareIPC, Op: nvdata.CriteriaOpEqual, Value: "true"},
+					{Name: handlers.RuleSharePID, Op: nvdata.CriteriaOpEqual, Value: "true"},
 				},
 				Disable:  false,
 				Critical: false,
@@ -277,7 +278,7 @@ func TestValidateAndFilterRule(t *testing.T) {
 				Category: "Test",
 				Comment:  "Rule with invalid criteria operator",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: "shareIpcWithHost", Op: "containsAny_invalid", Value: "bad1,bad2"},
+					{Name: handlers.RuleShareIPC, Op: "containsAny_invalid", Value: "bad1,bad2"},
 				},
 				Disable:  false,
 				Critical: false,

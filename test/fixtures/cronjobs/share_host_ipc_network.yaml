@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: test-cronjob-host-ipc
+  namespace: default
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          hostIPC: true
+          hostNetwork: true
+          containers:
+          - name: system-monitor
+            image: busybox:1.35
+            command:
+            - /bin/sh
+            - -c
+            - "echo 'Monitoring system IPC'; ipcs -m; sleep 10"
+            resources:
+              requests:
+                memory: "16Mi"
+                cpu: "25m"
+          restartPolicy: Never
