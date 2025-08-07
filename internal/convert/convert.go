@@ -39,6 +39,7 @@ type RuleConverter struct {
 	handlers      map[string]share.PolicyHandler
 	supportMatrix map[string]share.PolicyHandler
 	policyFactory *policy.Factory
+	verbose       bool
 }
 
 const (
@@ -50,6 +51,7 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 	rc := &RuleConverter{
 		config:        config,
 		policyFactory: policy.NewFactory(),
+		verbose:       config.Verbose,
 	}
 
 	rc.initHandlers()
@@ -61,9 +63,9 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 
 func (r *RuleConverter) initHandlers() {
 	r.handlers = map[string]share.PolicyHandler{
-		handlers.ShareIPC:     handlers.NewHostNamespaceHandler(),
-		handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
-		handlers.SharePID:     handlers.NewHostNamespaceHandler(),
+		handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
+		handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
+		handlers.RuleSharePID:     handlers.NewHostNamespaceHandler(),
 	}
 }
 
@@ -92,9 +94,11 @@ func (r *RuleConverter) Convert(input io.Reader) error {
 		return fmt.Errorf("failed to write output YAML: %w", err)
 	}
 
-	err = r.renderResultsTable(results)
-	if err != nil {
-		return fmt.Errorf("failed to render results table: %w", err)
+	if r.verbose {
+		err = r.renderResultsTable(results)
+		if err != nil {
+			return fmt.Errorf("failed to render results table: %w", err)
+		}
 	}
 
 	return nil

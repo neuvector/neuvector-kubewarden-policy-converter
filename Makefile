@@ -25,7 +25,7 @@ run: build
 .PHONY: test
 test:
 	@echo "Running tests..."
-	@go test -v -race ./... -coverprofile coverage/cover.out -covermode=atomic
+	@go test -v -race $$(go list ./... | grep -v /e2e)  -coverprofile coverage/unit-test/cover.out -covermode=atomic
 
 # Clean built files
 .PHONY: clean
@@ -50,6 +50,11 @@ lint: golangci-lint
 .PHONY: lint-fix
 lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 	$(GOLANGCI_LINT) run --fix
+
+.PHONY: e2e-test
+e2e-test: kwctl
+	@echo "Running e2e tests..."
+	@PATH="$(PWD)/bin:$(PATH)" go test -v -race ./test/e2e/... -coverprofile coverage/e2e-test/cover.out -covermode=atomic
 
 ##@ Dependencies
 
@@ -82,3 +87,19 @@ GOBIN=$(LOCALBIN) go install $${package} ;\
 mv "$$(echo "$(1)" | sed "s/-$(3)$$//")" $(1) ;\
 }
 endef
+
+KWCTL := $(LOCALBIN)/kwctl
+KWCTL_VERSION := v1.27.2
+
+.PHONY: kwctl
+kwctl: $(KWCTL) ## Download kwctl locally if necessary
+$(KWCTL): $(LOCALBIN)
+	@[ -f $(KWCTL) ] || { \
+		echo "Installing kwctl..."; \
+		mkdir -p $(LOCALBIN); \
+		curl -sSLf https://github.com/kubewarden/kwctl/releases/download/$(KWCTL_VERSION)/kwctl-linux-x86_64.zip -o $(KWCTL).zip; \
+		unzip -o $(KWCTL).zip -d $(LOCALBIN)/; \
+		rm $(KWCTL).zip; \
+		mv $(LOCALBIN)/kwctl-linux-x86_64 $(KWCTL); \
+		chmod +x $(KWCTL); \
+	}

@@ -22,8 +22,8 @@ func TestFactory_CreateBuilder(t *testing.T) {
 			rule: &nvapis.RESTAdmissionRule{
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  "shareIpcWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -35,13 +35,13 @@ func TestFactory_CreateBuilder(t *testing.T) {
 			rule: &nvapis.RESTAdmissionRule{
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  "shareIpcWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 					{
-						Name:  "shareNetWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "false",
 					},
 				},
@@ -54,7 +54,7 @@ func TestFactory_CreateBuilder(t *testing.T) {
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
 						Name:  nvdata.CriteriaKeyNamespace,
-						Op:    "=",
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "kube-system",
 					},
 				},
@@ -67,12 +67,12 @@ func TestFactory_CreateBuilder(t *testing.T) {
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
 						Name:  nvdata.CriteriaKeyNamespace,
-						Op:    "=",
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "kube-system",
 					},
 					{
-						Name:  "shareIpcWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -85,17 +85,17 @@ func TestFactory_CreateBuilder(t *testing.T) {
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
 						Name:  nvdata.CriteriaKeyNamespace,
-						Op:    "=",
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "kube-system",
 					},
 					{
-						Name:  "shareIpcWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 					{
-						Name:  "shareNetWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "false",
 					},
 				},
@@ -141,7 +141,7 @@ func TestFactory_RequiresPolicyGroup(t *testing.T) {
 			name: "one non-namespace criterion",
 			rule: &nvapis.RESTAdmissionRule{
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: "shareIpcWithHost"},
+					{Name: handlers.RuleShareIPC},
 				},
 			},
 			expected: false,
@@ -150,8 +150,8 @@ func TestFactory_RequiresPolicyGroup(t *testing.T) {
 			name: "two non-namespace criteria",
 			rule: &nvapis.RESTAdmissionRule{
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: "shareIpcWithHost"},
-					{Name: "shareNetWithHost"},
+					{Name: handlers.RuleShareIPC},
+					{Name: handlers.RuleShareNetwork},
 				},
 			},
 			expected: true,
@@ -161,7 +161,7 @@ func TestFactory_RequiresPolicyGroup(t *testing.T) {
 			rule: &nvapis.RESTAdmissionRule{
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{Name: nvdata.CriteriaKeyNamespace},
-					{Name: "shareIpcWithHost"},
+					{Name: handlers.RuleShareIPC},
 				},
 			},
 			expected: false,
@@ -171,8 +171,8 @@ func TestFactory_RequiresPolicyGroup(t *testing.T) {
 			rule: &nvapis.RESTAdmissionRule{
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{Name: nvdata.CriteriaKeyNamespace},
-					{Name: "shareIpcWithHost"},
-					{Name: "shareNetWithHost"},
+					{Name: handlers.RuleShareIPC},
+					{Name: handlers.RuleShareNetwork},
 				},
 			},
 			expected: true,
@@ -219,8 +219,8 @@ func TestFactory_GeneratePolicy(t *testing.T) {
 				ID: 1234,
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  "shareIpcWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -229,7 +229,7 @@ func TestFactory_GeneratePolicy(t *testing.T) {
 				Mode: "monitor",
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareIPC: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
 			},
 		},
 		{
@@ -238,13 +238,13 @@ func TestFactory_GeneratePolicy(t *testing.T) {
 				ID: 1234,
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  "shareIpcWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 					{
-						Name:  "shareNetWithHost",
-						Op:    "=",
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "false",
 					},
 				},
@@ -253,8 +253,8 @@ func TestFactory_GeneratePolicy(t *testing.T) {
 				Mode: "protect",
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareIPC:     handlers.NewHostNamespaceHandler(),
-				handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
 		},
 		{
@@ -264,7 +264,7 @@ func TestFactory_GeneratePolicy(t *testing.T) {
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
 						Name:  "unknownCriterion",
-						Op:    "=",
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},

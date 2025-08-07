@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-allow-hostnetwork-true
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-allow
+  template:
+    metadata:
+      labels:
+        app: test-allow
+    spec:
+      hostNetwork: true
+      containers:
+      - name: nginx
+        image: nginx:alpine

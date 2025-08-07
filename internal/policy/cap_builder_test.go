@@ -9,6 +9,7 @@ import (
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,8 +32,8 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				Comment: "Test Policy",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  handlers.ShareIPC,
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -43,7 +44,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				BackgroundAudit: false,
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareIPC: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName: "test-policy",
 			expectedModule:     share.PolicyHostNamespacesPSPURI,
@@ -60,8 +61,8 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				ID: 1243,
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  handlers.ShareNetwork,
-						Op:    "=",
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -72,7 +73,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				BackgroundAudit: false,
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName: "neuvector-rule-1243-conversion",
 			expectedModule:     share.PolicyHostNamespacesPSPURI,
@@ -90,8 +91,8 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				Comment: "Test Policy",
 				Criteria: []*nvapis.RESTAdmRuleCriterion{
 					{
-						Name:  handlers.ShareIPC,
-						Op:    "=",
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
 						Value: "true",
 					},
 				},
@@ -102,7 +103,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				BackgroundAudit: false,
 			},
 			handlers: map[string]share.PolicyHandler{
-				handlers.ShareNetwork: handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName: "test-policy",
 			expectedModule:     share.PolicyHostNamespacesPSPURI,
