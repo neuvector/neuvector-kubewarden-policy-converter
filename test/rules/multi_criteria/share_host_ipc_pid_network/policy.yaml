@@ -2,7 +2,7 @@ apiVersion: policies.kubewarden.io/v1
 kind: ClusterAdmissionPolicyGroup
 metadata:
   creationTimestamp: null
-  name: deny-both-ipc-and-network-sharing-with-host
+  name:  neuvector-rule-1002-conversion
 spec:
   backgroundAudit: true
   expression: host_namespaces_psp()

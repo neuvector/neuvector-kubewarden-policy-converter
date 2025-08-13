@@ -22,6 +22,8 @@ const (
 	RuleShareIPC     = "shareIpcWithHost"
 	RuleShareNetwork = "shareNetWithHost"
 	RuleSharePID     = "sharePidWithHost"
+
+	PolicyHostNamespacesPSPURI = "registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0"
 )
 
 func NewHostNamespaceHandler() *HostNamespaceHandler {
@@ -29,8 +31,8 @@ func NewHostNamespaceHandler() *HostNamespaceHandler {
 		BasePolicyHandler: BasePolicyHandler{
 			Unsupported:  false,
 			SupportedOps: map[string]bool{nvdata.CriteriaOpEqual: true},
-			Name:         share.ExtractModuleName(share.PolicyHostNamespacesPSPURI),
-			Module:       share.PolicyHostNamespacesPSPURI,
+			Name:         share.ExtractModuleName(PolicyHostNamespacesPSPURI),
+			Module:       PolicyHostNamespacesPSPURI,
 		},
 	}
 }
@@ -47,14 +49,8 @@ func (h *HostNamespaceHandler) getBoolValue(value string) (bool, error) {
 	return !boolValue, nil
 }
 
-// BuildPolicySettings builds settings for a single criterion.
-func (h *HostNamespaceHandler) BuildPolicySettings(criterion *nvapis.RESTAdmRuleCriterion) ([]byte, error) {
-	return h.BuildGroupedPolicySettings([]*nvapis.RESTAdmRuleCriterion{criterion})
-}
-
-// BuildGroupedPolicySettings builds settings from multiple criteria that map to the same module
-// This allows combining shareIPC, shareNetwork, and sharePID rules into a single policy.
-func (h *HostNamespaceHandler) BuildGroupedPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
+// BuildPolicySettings allows combining shareIPC, shareNetwork, and sharePID rules into a single policy.
+func (h *HostNamespaceHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	settings := map[string]bool{
 		PolicySettingAllowHostIPC:     true,
 		PolicySettingAllowHostPID:     true,

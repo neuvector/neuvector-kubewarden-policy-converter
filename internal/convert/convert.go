@@ -62,17 +62,23 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 
 func (r *RuleConverter) initHandlers() {
 	r.handlers = map[string]share.PolicyHandler{
-		handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
-		handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
-		handlers.RuleSharePID:     handlers.NewHostNamespaceHandler(),
+		handlers.RuleShareIPC:                  handlers.NewHostNamespaceHandler(),
+		handlers.RuleShareNetwork:              handlers.NewHostNamespaceHandler(),
+		handlers.RuleSharePID:                  handlers.NewHostNamespaceHandler(),
+		handlers.RuleAllowPrivilegedEscalation: handlers.NewAllowPrivilegedEscalationHandler(),
+		handlers.RuleRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
+		handlers.RuleRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
 	}
 }
 
 func (r *RuleConverter) initSupportMatrix() {
 	r.supportMatrix = map[string]share.PolicyHandler{
-		MatrixKeyShareIPC:     handlers.NewHostNamespaceHandler(),
-		MatrixKeyShareNetwork: handlers.NewHostNamespaceHandler(),
-		MatrixKeySharePID:     handlers.NewHostNamespaceHandler(),
+		MatrixKeyShareIPC:                  handlers.NewHostNamespaceHandler(),
+		MatrixKeyShareNetwork:              handlers.NewHostNamespaceHandler(),
+		MatrixKeySharePID:                  handlers.NewHostNamespaceHandler(),
+		MatrixKeyAllowPrivilegedEscalation: handlers.NewAllowPrivilegedEscalationHandler(),
+		MatrixKeyRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
+		MatrixKeyRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
 	}
 }
 

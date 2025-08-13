@@ -1,6 +1,8 @@
 package share
 
-import "strings"
+import (
+	"strings"
+)
 
 func ExtractModuleName(module string) string {
 	// remove the registry:// prefix

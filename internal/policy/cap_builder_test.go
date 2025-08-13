@@ -47,7 +47,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName: "neuvector-rule-1243-conversion",
-			expectedModule:     share.PolicyHostNamespacesPSPURI,
+			expectedModule:     handlers.PolicyHostNamespacesPSPURI,
 			expectedSettings: map[string]interface{}{
 				"allow_host_network": true,
 				"allow_host_ipc":     false,
@@ -76,7 +76,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName: "neuvector-rule-1243-conversion",
-			expectedModule:     share.PolicyHostNamespacesPSPURI,
+			expectedModule:     handlers.PolicyHostNamespacesPSPURI,
 			expectedSettings: map[string]interface{}{
 				"allow_host_network": false,
 				"allow_host_ipc":     true,
@@ -106,7 +106,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
 			expectedPolicyName: "test-policy",
-			expectedModule:     share.PolicyHostNamespacesPSPURI,
+			expectedModule:     handlers.PolicyHostNamespacesPSPURI,
 			expectedSettings: map[string]interface{}{
 				"allow_host_network": true,
 				"allow_host_ipc":     false,

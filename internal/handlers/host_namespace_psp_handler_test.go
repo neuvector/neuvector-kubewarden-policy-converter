@@ -6,6 +6,7 @@ import (
 
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
+
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,63 +48,7 @@ func TestGetBoolValue(t *testing.T) {
 	}
 }
 
-func TestBuildPolicySettings(t *testing.T) {
-	handler := NewHostNamespaceHandler()
-
-	tests := []struct {
-		name             string
-		criterion        *nvapis.RESTAdmRuleCriterion
-		expectedSettings []byte
-		expectedError    error
-	}{
-		{
-			name: "IPC sharing set to true",
-			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleShareIPC,
-				Op:    nvdata.CriteriaOpEqual,
-				Value: "true",
-			},
-			expectedSettings: []byte(`{"allow_host_ipc":false,"allow_host_network":true,"allow_host_pid":true}`),
-		},
-		{
-			name: "Network sharing set to true",
-			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleShareNetwork,
-				Op:    nvdata.CriteriaOpEqual,
-				Value: "true",
-			},
-			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":false,"allow_host_pid":true}`),
-		},
-		{
-			name: "PID sharing set to true",
-			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleSharePID,
-				Op:    nvdata.CriteriaOpEqual,
-				Value: "true",
-			},
-			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":true,"allow_host_pid":false}`),
-		},
-		{
-			name: "PID sharing set to false",
-			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleSharePID,
-				Op:    nvdata.CriteriaOpEqual,
-				Value: "false",
-			},
-			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":true,"allow_host_pid":true}`),
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			generatedSettings, err := handler.BuildPolicySettings(tt.criterion)
-			require.Equal(t, tt.expectedSettings, generatedSettings)
-			require.Equal(t, tt.expectedError, err)
-		})
-	}
-}
-
-func TestBuildGroupedPolicySettings(t *testing.T) {
+func TestBuildHostNamespacePolicySettings(t *testing.T) {
 	handler := NewHostNamespaceHandler()
 
 	tests := []struct {
@@ -112,6 +57,50 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 		expectedSettings []byte
 		expectedError    error
 	}{
+		{
+			name: "IPC sharing set to true",
+			criteria: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleShareIPC,
+					Op:    nvdata.CriteriaOpEqual,
+					Value: "true",
+				},
+			},
+			expectedSettings: []byte(`{"allow_host_ipc":false,"allow_host_network":true,"allow_host_pid":true}`),
+		},
+		{
+			name: "Network sharing set to true",
+			criteria: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleShareNetwork,
+					Op:    nvdata.CriteriaOpEqual,
+					Value: "true",
+				},
+			},
+			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":false,"allow_host_pid":true}`),
+		},
+		{
+			name: "PID sharing set to true",
+			criteria: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleSharePID,
+					Op:    nvdata.CriteriaOpEqual,
+					Value: "true",
+				},
+			},
+			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":true,"allow_host_pid":false}`),
+		},
+		{
+			name: "PID sharing set to false",
+			criteria: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleSharePID,
+					Op:    nvdata.CriteriaOpEqual,
+					Value: "false",
+				},
+			},
+			expectedSettings: []byte(`{"allow_host_ipc":true,"allow_host_network":true,"allow_host_pid":true}`),
+		},
 		{
 			name: "IPC sharing set to true",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
@@ -185,8 +174,9 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			generatedSettings, err := handler.BuildGroupedPolicySettings(tt.criteria)
-			require.Equal(t, tt.expectedSettings, generatedSettings)
+			generatedSettings, err := handler.BuildPolicySettings(tt.criteria)
+			require.NoError(t, err)
+			require.JSONEq(t, string(tt.expectedSettings), string(generatedSettings))
 			require.Equal(t, tt.expectedError, err)
 		})
 	}

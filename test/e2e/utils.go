@@ -29,8 +29,8 @@ type Config struct {
 	Description   string   `json:"description"`
 	TestWorkspace string   `json:"testWorkspace"`
 	RunKwctl      bool     `json:"runKwctl"` // Whether to run kwctl to verify the rule
-	Accept        []string `json:"accept"`   // List of files that should pass after run kwctl
-	Deny          []string `json:"deny"`     // List of files that should deny after run kwctl
+	Accept        []string `json:"accept"`   // List of files that should accept after run kwctl
+	Reject        []string `json:"reject"`   // List of files that should deny after run kwctl
 }
 
 type kwctlResponse struct {
@@ -42,7 +42,7 @@ type kwctlResponse struct {
 }
 
 // verifyWithKwctl verifies the output policy with kwctl,
-// pass resources should be allowed, deny resources should be denied.
+// accept resources should be allowed, deny resources should be denied.
 func verifyWithKwctl(t *testing.T, config *Config, outputPath string) {
 	t.Helper()
 	for _, testCase := range []struct {
@@ -50,7 +50,7 @@ func verifyWithKwctl(t *testing.T, config *Config, outputPath string) {
 		resources []string
 	}{
 		{true, config.Accept},
-		{false, config.Deny},
+		{false, config.Reject},
 	} {
 		for _, resource := range testCase.resources {
 			resourcePath := filepath.Join(config.TestWorkspace, resource)

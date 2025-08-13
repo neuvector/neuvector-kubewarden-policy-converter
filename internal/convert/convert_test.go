@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
-	nvdata "github.com/neuvector/neuvector/share"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,13 +19,8 @@ func initMockHandlers() map[string]share.PolicyHandler {
 	}
 }
 
-func TestProcessSingleRule(t *testing.T) {
-	var (
-		caPolicy      *policiesv1.ClusterAdmissionPolicy
-		caPolicyGroup *policiesv1.ClusterAdmissionPolicyGroup
-		ok            bool
-	)
-
+// TestProcessSingleRuleFailed cover the failed cases.
+func TestProcessSingleRuleFailed(t *testing.T) {
 	tests := []struct {
 		name               string
 		rule               *nvapis.RESTAdmissionRule
@@ -90,62 +83,6 @@ func TestProcessSingleRule(t *testing.T) {
 			expectedPass:  false,
 			expectedNotes: fmt.Sprintf("%s: %s", share.MsgUnsupportedCriteriaOperator, "containsAny_invalid"),
 		},
-		{
-			name: "Valid rule should unmarshal to ClusterAdmissionPolicy",
-			rule: &nvapis.RESTAdmissionRule{
-				ID:       1001,
-				Category: "Test",
-				Comment:  "Valid rule",
-				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: handlers.RuleShareIPC, Op: nvdata.CriteriaOpEqual, Value: "true"},
-				},
-				Disable:  false,
-				Critical: false,
-				CfgType:  "user_created",
-				RuleType: "deny",
-			},
-			expectedID:         1001,
-			expectedPass:       true,
-			expectedNotes:      share.MsgRuleConvertedSuccessfully,
-			expectedPolicyType: &policiesv1.ClusterAdmissionPolicy{},
-			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
-				caPolicy, ok = policy.(*policiesv1.ClusterAdmissionPolicy)
-				require.True(t, ok, "Expected ClusterAdmissionPolicy, got %T", policy)
-				require.NotNil(t, caPolicy)
-				require.Equal(t, "ClusterAdmissionPolicy", caPolicy.Kind)
-				require.Equal(t, "neuvector-rule-1001-conversion", caPolicy.Name)
-				require.Equal(t, policyServer, caPolicy.Spec.PolicyServer)
-				require.Equal(t, share.PolicyHostNamespacesPSPURI, caPolicy.Spec.PolicySpec.Module)
-			},
-		},
-		{
-			name: "Namespace criterion should use MatchConditions",
-			rule: &nvapis.RESTAdmissionRule{
-				ID:       1001,
-				Category: "Test",
-				Comment:  "Namespace criterion",
-				Criteria: []*nvapis.RESTAdmRuleCriterion{
-					{Name: handlers.RuleShareIPC, Op: nvdata.CriteriaOpEqual, Value: "true"},
-					{Name: handlers.RuleSharePID, Op: nvdata.CriteriaOpEqual, Value: "true"},
-				},
-				Disable:  false,
-				Critical: false,
-				CfgType:  "user_created",
-				RuleType: "deny",
-			},
-			expectedID:         1001,
-			expectedPass:       true,
-			expectedNotes:      share.MsgRuleConvertedSuccessfully,
-			expectedPolicyType: &policiesv1.ClusterAdmissionPolicyGroup{},
-			validatePolicy: func(t *testing.T, policy interface{}, policyServer string) {
-				caPolicyGroup, ok = policy.(*policiesv1.ClusterAdmissionPolicyGroup)
-				require.True(t, ok, "Expected ClusterAdmissionPolicyGroup, got %T", policy)
-				require.NotNil(t, caPolicyGroup)
-				require.Equal(t, "ClusterAdmissionPolicyGroup", caPolicyGroup.Kind)
-				require.Equal(t, policyServer, caPolicy.Spec.PolicyServer)
-				require.Equal(t, share.PolicyHostNamespacesPSPURI, caPolicy.Spec.PolicySpec.Module)
-			},
-		},
 	}
 
 	policyServer := "test-server"
@@ -159,17 +96,7 @@ func TestProcessSingleRule(t *testing.T) {
 			require.Equal(t, tt.expectedID, result.id)
 			require.Equal(t, tt.expectedPass, result.pass)
 			require.Equal(t, tt.expectedNotes, result.notes)
-
-			// Check policy type based on status
-			if result.pass {
-				require.NotNil(t, result.policy)
-				require.IsType(t, tt.expectedPolicyType, result.policy)
-				if tt.validatePolicy != nil {
-					tt.validatePolicy(t, result.policy, policyServer)
-				}
-			} else {
-				require.Nil(t, result.policy)
-			}
+			require.Nil(t, result.policy)
 		})
 	}
 }
@@ -304,8 +231,10 @@ func TestValidateAndFilterRule(t *testing.T) {
 	}
 }
 
-func TestConvetToHostNamespacePolicy(t *testing.T) {
-	t.Helper()
+/*
+Single-criterion conversion tests.
+*/
+func TestConvertSingleCriterion_HostNamespacePolicy(t *testing.T) {
 	for _, ruleDir := range []string{
 		"../../test/rules/single_criterion/share_host_ipc/not_allow_share_host_ipc",
 		"../../test/rules/single_criterion/share_host_network/not_allow_share_host_network",
@@ -313,4 +242,42 @@ func TestConvetToHostNamespacePolicy(t *testing.T) {
 	} {
 		testRuleConversion(t, ruleDir)
 	}
+}
+
+func TestConvertSingleCriterion_RunAsPrivileged(t *testing.T) {
+	ruleDir := "../../test/rules/single_criterion/run_as_privilege/not_allow_run_as_privilege"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertSingleCriterion_AllowPrivilegeEscalation(t *testing.T) {
+	ruleDir := "../../test/rules/single_criterion/pod_privilege_escalation/not_allow_pod_privilege_escalation"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertSingleCriterion_RunAsRoot(t *testing.T) {
+	ruleDir := "../../test/rules/single_criterion/run_as_root/not_allow_run_as_root"
+	testRuleConversion(t, ruleDir)
+}
+
+/*
+Multi-criteria conversion tests for compound rules and edge cases.
+*/
+func TestConvertMultiCriteria_ShareHostIPCAndNetwork(t *testing.T) {
+	ruleDir := "../../test/rules/multi_criteria/share_host_ipc_network"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertMultiCriteria_ShareHostIPCAndPID(t *testing.T) {
+	ruleDir := "../../test/rules/multi_criteria/share_host_ipc_pid"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertMultiCriteria_ShareHostIPCPIDAndNetwork(t *testing.T) {
+	ruleDir := "../../test/rules/multi_criteria/share_host_ipc_pid_network"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertMultiCriteria_ShareHostPIDAndNetwork(t *testing.T) {
+	ruleDir := "../../test/rules/multi_criteria/share_host_pid_network"
+	testRuleConversion(t, ruleDir)
 }

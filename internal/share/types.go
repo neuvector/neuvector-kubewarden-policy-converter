@@ -28,10 +28,6 @@ type PolicyHandler interface {
 	// GetModule returns the Kubewarden policy module for this criterion
 	GetModule() string
 
-	// BuildPolicySettings builds the policy settings for this criterion
-	BuildPolicySettings(criterion *nvapis.RESTAdmRuleCriterion) ([]byte, error)
-
-	// BuildGroupedPolicySettings builds policy settings from multiple criteria that map to the same module
-	// This allows handlers to combine settings from multiple criteria intelligently
-	BuildGroupedPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error)
+	// BuildPolicySettings builds the policy settings for one criterion or multiple criteria that map to the same module
+	BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error)
 }

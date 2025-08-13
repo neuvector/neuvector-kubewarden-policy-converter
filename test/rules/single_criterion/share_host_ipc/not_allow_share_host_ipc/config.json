@@ -2,7 +2,7 @@
   "description": "Test single criteria rule (deny IPC sharing with host)",
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
-  "pass": [
+  "accept": [
     "cronjobs/share_host_network.yaml",
     "cronjobs/share_host_pid.yaml",
     "deployments/normal.yaml",
@@ -11,7 +11,7 @@
     "pods/share_host_network.yaml",
     "pods/share_host_pid.yaml"
   ],
-  "deny": [
+  "reject": [
     "deployments/share_host_ipc.yaml",
     "cronjobs/share_host_ipc.yaml",
     "pods/share_host_ipc.yaml"

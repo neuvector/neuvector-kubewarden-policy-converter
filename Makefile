@@ -54,7 +54,7 @@ lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 .PHONY: e2e-test
 e2e-test: kwctl build
 	@echo "Running e2e tests..."
-	@PATH="$(PWD)/bin:$(PATH)" go test -v -race ./test/e2e/... -coverprofile coverage/e2e-test/cover.out -covermode=atomic
+	@PATH="$(PWD)/bin:$(PATH)" go test -v -race ./test/e2e/... -coverprofile coverage/e2e-test/cover.out -covermode=atomic -timeout 60m
 
 ##@ Dependencies
 
@@ -69,7 +69,7 @@ KWCTL := $(LOCALBIN)/kwctl
 
 ## Tool Versions
 GOLANGCI_LINT_VERSION ?= v2.3.0
-KWCTL_VERSION := v1.27.2
+KWCTL_VERSION := v1.28.1
 
 .PHONY: golangci-lint
 golangci-lint: $(GOLANGCI_LINT) ## Download golangci-lint locally if necessary.
