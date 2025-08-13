@@ -1,6 +1,10 @@
 package share
 
-import "strings"
+import (
+	"bytes"
+	"encoding/json"
+	"strings"
+)
 
 func ExtractModuleName(module string) string {
 	// remove the registry:// prefix
@@ -15,4 +19,13 @@ func ExtractModuleName(module string) string {
 	module = parts[len(parts)-1]
 	module = strings.ReplaceAll(module, "-", "_")
 	return module
+}
+
+func ConvertBytesToJSON(b []byte) ([]byte, error) {
+	var v any
+	if err := json.Unmarshal(b, &v); err != nil {
+		return bytes.TrimSpace(b), err
+	}
+	cb, err := json.Marshal(v)
+	return cb, err
 }

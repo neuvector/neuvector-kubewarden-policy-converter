@@ -4,8 +4,10 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
+
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,7 +49,7 @@ func TestGetBoolValue(t *testing.T) {
 	}
 }
 
-func TestBuildPolicySettings(t *testing.T) {
+func TestBuildHostNamespacePolicySettings(t *testing.T) {
 	handler := NewHostNamespaceHandler()
 
 	tests := []struct {
@@ -97,13 +99,20 @@ func TestBuildPolicySettings(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			generatedSettings, err := handler.BuildPolicySettings(tt.criterion)
-			require.Equal(t, tt.expectedSettings, generatedSettings)
+			require.NoError(t, err)
+
+			convertedSettings, err := share.ConvertBytesToJSON(generatedSettings)
+			require.NoError(t, err)
+			expectedSettings, err := share.ConvertBytesToJSON(tt.expectedSettings)
+			require.NoError(t, err)
+
+			require.Equal(t, expectedSettings, convertedSettings)
 			require.Equal(t, tt.expectedError, err)
 		})
 	}
 }
 
-func TestBuildGroupedPolicySettings(t *testing.T) {
+func TestBuildHostNamespaceGroupedPolicySettings(t *testing.T) {
 	handler := NewHostNamespaceHandler()
 
 	tests := []struct {
@@ -186,7 +195,14 @@ func TestBuildGroupedPolicySettings(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			generatedSettings, err := handler.BuildGroupedPolicySettings(tt.criteria)
-			require.Equal(t, tt.expectedSettings, generatedSettings)
+			require.NoError(t, err)
+
+			convertedSettings, err := share.ConvertBytesToJSON(generatedSettings)
+			require.NoError(t, err)
+			expectedSettings, err := share.ConvertBytesToJSON(tt.expectedSettings)
+			require.NoError(t, err)
+
+			require.Equal(t, expectedSettings, convertedSettings)
 			require.Equal(t, tt.expectedError, err)
 		})
 	}

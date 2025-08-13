@@ -1,0 +1,47 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  creationTimestamp: null
+  name: neuvector-rule-1000-conversion
+spec:
+  backgroundAudit: true
+  mode: protect
+  module: registry://ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v1.0.0
+  mutating: false
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+  settings:
+    default_allow_privilege_escalation: true
+status:
+  policyStatus: ""

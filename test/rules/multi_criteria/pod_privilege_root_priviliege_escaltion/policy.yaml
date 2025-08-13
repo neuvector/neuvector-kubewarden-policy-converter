@@ -1,0 +1,57 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  creationTimestamp: null
+  name: deny-both-ipc-and-network-sharing-with-host
+spec:
+  backgroundAudit: true
+  expression: allow_privilege_escalation_psp() && container_running_as_user() && pod_privileged()
+  message: violate NeuVector rule (id=1002), comment Deny both IPC and network sharing
+    with host
+  mode: protect
+  policies:
+    pod_privileged:
+      module: registry://ghcr.io/kubewarden/policies/pod-privileged:v1.0.3
+      settings: {}
+    allow_privilege_escalation_psp:
+      module: registry://ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v1.0.0
+      settings:
+        default_allow_privilege_escalation: true
+    container_running_as_user:
+      module: registry://ghcr.io/kubewarden/policies/container-running-as-user:v1.0.4
+      settings: {}
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+status:
+  policyStatus: ""

@@ -2,6 +2,7 @@ package policy
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
@@ -67,6 +68,9 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 		policies[policyName] = member
 		conditions = append(conditions, fmt.Sprintf("%s()", policyName))
 	}
+
+	// Ensure the conditions are sorted in fixed order
+	sort.Strings(conditions)
 
 	group := policiesv1.ClusterAdmissionPolicyGroup{
 		TypeMeta: metav1.TypeMeta{

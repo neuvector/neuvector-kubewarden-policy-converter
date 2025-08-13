@@ -1,0 +1,17 @@
+{
+  "description": "Test single criteria rule (not allow run as root)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "pass": [
+    "deployments/normal.yaml",
+    "cronjobs/normal.yaml",
+    "pods/normal.yaml"
+  ],
+  "deny": [
+    "cronjobs/run_as_root.yaml",
+    "deployments/run_as_root.yaml",
+    "pods/run_as_root.yaml"
+  ]
+}
+
+

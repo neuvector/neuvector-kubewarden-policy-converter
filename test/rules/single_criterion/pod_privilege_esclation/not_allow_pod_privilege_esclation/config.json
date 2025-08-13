@@ -1,0 +1,17 @@
+{
+  "description": "Test single criteria rule (not allow pod privilege escalation)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "pass": [
+    "cronjobs/normal.yaml",
+    "deployments/normal.yaml",
+    "pods/normal.yaml"
+  ],
+  "deny": [
+    "cronjobs/privileged_escalation.yaml",
+    "deployments/privileged_escalation.yaml",
+    "pods/privileged_escalation.yaml"
+  ]
+}
+
+

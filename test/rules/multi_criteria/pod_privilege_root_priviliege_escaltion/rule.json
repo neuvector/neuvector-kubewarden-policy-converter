@@ -1,0 +1,37 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny both IPC and network sharing with host",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "runAsRoot",
+                    "op": "=",
+                    "path": "runAsRoot",
+                    "value": "true"
+                },
+                {
+                    "name": "runAsPrivileged",
+                    "op": "=",
+                    "path": "runAsPrivileged",
+                    "value": "true"
+                },
+                {
+                    "name": "allowPrivEscalation",
+                    "op": "=",
+                    "path": "allowPrivEscalation",
+                    "value": "true"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1002,
+            "rule_mode": "",
+            "rule_type": "deny"
+        }
+    ]
+}
