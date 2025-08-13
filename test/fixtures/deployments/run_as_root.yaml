@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment-normal
+  name: test-deployment-run-as-root
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test-app
+      app: test-app-root
   template:
     metadata:
       labels:
-        app: test-app
+        app: test-app-root
     spec:
       containers:
       - name: test-container
-        image: gcr.io/distroless/base:nonroot
+        image: nginx:latest
         securityContext:
-          runAsUser: 1000
+          runAsUser: 0
         resources:
           requests:
             memory: "64Mi"

@@ -116,12 +116,12 @@ Defines test scenarios with expected outcomes:
   "description": "Test single criteria rule (does not allow run as root)",
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
-  "pass": [
+  "accept": [
     "deployments/normal.yaml",
     "cronjobs/normal.yaml",
     "pods/normal.yaml"
   ],
-  "deny": [
+  "reject": [
     "cronjobs/run_as_root.yaml",
     "deployments/run_as_root.yaml",
     "pods/run_as_root.yaml"
@@ -160,8 +160,8 @@ graph TD
     B --> C[Convert to Kubewarden Policy]
     C --> D[Generate policy.yaml]
     D --> E[Assert Generated Policy]
-    E --> F[Test Pass Cases]
-    F --> G[Ensure kwctl allows pass fixtures]
+    E --> F[Test accept Cases]
+    F --> G[Ensure kwctl allows accept fixtures]
     G --> H[Test Deny Cases]
     H --> I[Ensure kwctl blocks deny fixtures]
     I --> J[Collect Test Results]
@@ -213,12 +213,12 @@ cd test/rules/single_criterion/your_policy_type
   "description": "Test single criteria rule (does not allow run as root)",
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
-  "pass": [
+  "accept": [
     "deployments/normal.yaml",
     "cronjobs/normal.yaml",
     "pods/normal.yaml"
   ],
-  "deny": [
+  "reject": [
     "cronjobs/run_as_root.yaml",
     "deployments/run_as_root.yaml",
     "pods/run_as_root.yaml"
@@ -302,7 +302,7 @@ cd test/rules/multi_criteria/your_policy_combination
   "description": "Test multi-criteria rule (deny both IPC and network sharing)",
   "runKwctl": false,
   "testWorkspace": "../fixtures/",
-  "pass": [
+  "accept": [
     "cronjobs/share_host_pid.yaml",
     "cronjobs/normal.yaml",
     "deployments/share_host_pid.yaml",
@@ -310,7 +310,7 @@ cd test/rules/multi_criteria/your_policy_combination
     "pods/share_host_pid.yaml",
     "pods/normal.yaml"
   ],
-  "deny": [
+  "reject": [
     "cronjobs/share_host_ipc_network.yaml",
     "cronjobs/share_host_pid_network.yaml",
     "cronjobs/share_host_ipc.yaml",

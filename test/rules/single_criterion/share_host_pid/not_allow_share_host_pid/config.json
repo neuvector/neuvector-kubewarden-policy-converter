@@ -2,7 +2,7 @@
   "description": "Test single criteria rule (deny PID sharing with host)",
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
-  "pass": [
+  "accept": [
     "cronjobs/share_host_network.yaml",
     "cronjobs/share_host_ipc.yaml",
     "deployments/normal.yaml",
@@ -11,7 +11,7 @@
     "pods/share_host_network.yaml",
     "pods/share_host_ipc.yaml"
   ],
-  "deny": [
+  "reject": [
     "cronjobs/share_host_pid.yaml",
     "deployments/share_host_pid.yaml",
     "pods/share_host_pid.yaml"

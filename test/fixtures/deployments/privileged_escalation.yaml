@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment-normal
+  name: test-deployment-privileged
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test-app
+      app: test-app-priv
   template:
     metadata:
       labels:
-        app: test-app
+        app: test-app-priv
     spec:
       containers:
       - name: test-container
-        image: gcr.io/distroless/base:nonroot
+        image: nginx:latest
         securityContext:
-          runAsUser: 1000
+          allowPrivilegeEscalation: true
         resources:
           requests:
             memory: "64Mi"

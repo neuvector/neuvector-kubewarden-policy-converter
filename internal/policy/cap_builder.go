@@ -50,7 +50,7 @@ func (b *CAPBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share
 	policy.Spec.PolicySpec.Module = handler.GetModule()
 
 	// Build policy settings using handler
-	settings, err := handler.BuildPolicySettings(criterion)
+	settings, err := handler.BuildPolicySettings(rule.Criteria)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build policy settings: %w", err)
 	}

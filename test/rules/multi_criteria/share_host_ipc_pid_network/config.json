@@ -2,12 +2,12 @@
   "description": "Test multi-criteria rule (deny IPC, PID, and network sharing)",
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
-  "pass": [
+  "accept": [
     "cronjobs/normal.yaml",
     "deployments/normal.yaml",
     "pods/normal.yaml"
   ],
-  "deny": [
+  "reject": [
     "cronjobs/share_host_ipc_network.yaml",
     "cronjobs/share_host_pid_network.yaml",
     "cronjobs/share_host_ipc.yaml",
