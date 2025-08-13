@@ -16,5 +16,6 @@ const (
 	PolicyPodPrivilegedURI          = "registry://ghcr.io/kubewarden/policies/pod-privileged:v1.0.3"
 	PolicyContainerRunningAsUserURI = "registry://ghcr.io/kubewarden/policies/container-running-as-user:v1.0.4"
 	PolicyTrustedReposURI           = "registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0"
-	PolicyEnvSecretScannerURI       = "registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v0.1.8" // #nosec G101
+	PolicyEnvSecretScannerURI       = "registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.5" // #nosec G101 - This is a policy registry URL, not a secret
+	PolicyEnvironmentVariableURI    = "registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1"
 )

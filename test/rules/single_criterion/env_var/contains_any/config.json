@@ -1,0 +1,23 @@
+{
+  "description": "Test single criteria rule (not contain any of the env vars)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "pass": [
+    "cronjobs/normal.yaml",
+    "cronjobs/env_var_rfoo_rbar.yaml",
+    "deployments/normal.yaml",
+    "deployments/env_var_rfoo_rbar.yaml",
+    "pods/normal.yaml",
+    "pods/env_var_rfoo_rbar.yaml"
+  ],
+  "deny": [
+    "cronjobs/env_var_foo_bar.yaml",
+    "cronjobs/env_var_foo_rbar.yaml",
+    "deployments/env_var_foo_bar.yaml",
+    "deployments/env_var_foo_rbar.yaml",
+    "pods/env_var_foo_bar.yaml",
+    "pods/env_var_foo_rbar.yaml"
+  ]
+}
+
+

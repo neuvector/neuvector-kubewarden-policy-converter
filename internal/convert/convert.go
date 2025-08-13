@@ -69,6 +69,8 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleAllowPrivilegedEscalation: handlers.NewAllowPrivilegedEscalationHandler(),
 		handlers.RuleRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
 		handlers.RuleRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
+		handlers.RuleEnvVars:                   handlers.NewEnvVarHandler(),
+		handlers.RuleEnvVarSecret:              handlers.NewEnvVarSecretHandler(),
 	}
 }
 
@@ -80,6 +82,8 @@ func (r *RuleConverter) initSupportMatrix() {
 		MatrixKeyAllowPrivilegedEscalation: handlers.NewAllowPrivilegedEscalationHandler(),
 		MatrixKeyRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
 		MatrixKeyRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
+		MatrixKeyEnvVar:                    handlers.NewEnvVarHandler(),
+		MatrixKeyEnvVarSecret:              handlers.NewEnvVarSecretHandler(),
 	}
 }
 

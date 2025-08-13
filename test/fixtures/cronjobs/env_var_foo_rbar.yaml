@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: foo-rbar-cronjob
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: foo-rbar-job
+        spec:
+          containers:
+            - name: nginx
+              image: nginx:latest
+              command: ["nginx", "-g", "daemon off;"]
+              env:
+                - name: foo
+                  value: "1"
+                - name: rbar
+                  value: "2"
+          restartPolicy: OnFailure

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rfoo-rbar-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      env:
+        - name: rfoo
+          value: "1"
+        - name: rbar
+          value: "2"

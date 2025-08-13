@@ -96,7 +96,7 @@ func runKwctl(resourcePath, policyPath string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("failed to create temp file: %w", err)
 	}
-	defer os.Remove(tempFile.Name())
+	// defer os.Remove(tempFile.Name())
 
 	err = os.WriteFile(tempFile.Name(), output, 0600)
 	if err != nil {

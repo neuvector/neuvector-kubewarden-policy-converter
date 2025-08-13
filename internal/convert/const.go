@@ -7,4 +7,6 @@ const (
 	MatrixKeyAllowPrivilegedEscalation = "Allow privilege escalation"
 	MatrixKeyRunAsRoot                 = "Run as root"
 	MatrixKeyRunAsPrivileged           = "Run as privileged"
+	MatrixKeyEnvVar                    = "Environment variable"
+	MatrixKeyEnvVarSecret              = "Environment variable secret"
 )
