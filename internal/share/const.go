@@ -18,4 +18,5 @@ const (
 	PolicyTrustedReposURI           = "registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0"
 	PolicyEnvSecretScannerURI       = "registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.5" // #nosec G101 - This is a policy registry URL, not a secret
 	PolicyEnvironmentVariableURI    = "registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1"
+	PolicyAnnotationsPolicyURI      = "registry://ghcr.io/kubewarden/policies/annotations:v0.1.0"
 )
