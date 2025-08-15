@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-criteria-no-match
+  namespace: default
+  annotations:
+    environment: "development"
+  labels:
+    app: "test-service"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-service
+  template:
+    metadata:
+      labels:
+        app: test-service
+    spec:
+      containers:
+      - name: test-container
+        image: alpine:latest
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "100m"

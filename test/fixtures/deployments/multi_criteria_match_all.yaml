@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-criteria-match-all
+  namespace: foo
+  annotations:
+    environment: "production"
+    team: "backend"
+  labels:
+    app: "web-service"
+    version: "v1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-service
+  template:
+    metadata:
+      labels:
+        app: web-service
+    spec:
+      containers:
+      - name: web-container
+        image: nginx:1.21
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: annotations-rfoo-rbar-deployment
+  namespace: default
+  annotations:
+    rfoo: "4"
+    rbar: "3"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: annotations-rfoo-rbar-app
+  template:
+    metadata:
+      labels:
+        app: annotations-rfoo-rbar-app
+      annotations:
+        rfoo: "4"
+        rbar: "3"
+    spec:
+      containers:
+      - name: app-container
+        image: nginx:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"

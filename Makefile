@@ -89,7 +89,6 @@ mv "$$(echo "$(1)" | sed "s/-$(3)$$//")" $(1) ;\
 endef
 
 KWCTL := $(LOCALBIN)/kwctl
-KWCTL_VERSION := v1.27.2
 
 .PHONY: kwctl
 kwctl: $(KWCTL) ## Download kwctl locally if necessary

@@ -1,0 +1,51 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  creationTimestamp: null
+  name: neuvector-rule-1000-conversion
+spec:
+  backgroundAudit: true
+  mode: protect
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:v1.3.4
+  mutating: false
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+  settings:
+    validations:
+    - expression: |
+        has(object.metadata.namespace) && (object.metadata.namespace in ["foo", "bar"])
+      message: |
+        Namespace must be one of: "foo", "bar".
+status:
+  policyStatus: ""

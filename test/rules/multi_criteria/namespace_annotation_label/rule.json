@@ -1,0 +1,37 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "namespace annotations labels all contain foo or bar",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "namespace",
+                    "op": "containsAny",
+                    "path": "namespace",
+                    "value": "foo,bar"
+                },
+                {
+                    "name": "annotations",
+                    "op": "containsAny",
+                    "path": "annotations",
+                    "value": "foo,bar"
+                },
+                {
+                    "name": "labels",
+                    "op": "containsAny",
+                    "path": "labels",
+                    "value": "foo,bar"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1006,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        }
+    ]
+}

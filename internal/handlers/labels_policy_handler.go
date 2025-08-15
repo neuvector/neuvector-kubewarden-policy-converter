@@ -1,3 +1,4 @@
+//nolint:dupl // annotations and labels handlers have similar structure by design
 package handlers
 
 import (
@@ -11,24 +12,23 @@ import (
 	nvdata "github.com/neuvector/neuvector/share"
 )
 
-type EnvVarHandler struct {
+type LabelsPolicyHandler struct {
 	BasePolicyHandler
 
 	criteriaNegationMap map[string]string
 }
 
 const (
-	PolicySettingEnvironmentVariable       = "default_allow_privilege_escalation"
-	PolicySettingEnvVarDoesNotContainAllOf = "doesNotContainAllOf"
-	PolicySettingEnvVarDoesNotContainAnyOf = "doesNotContainAnyOf"
-	PolicySettingEnvVarContainsOtherThan   = "containsOtherThan"
-	PolicySettingEnvVarContainsAnyOf       = "containsAnyOf"
+	PolicySettingLabelsDoesNotContainAllOf = "doesNotContainAllOf"
+	PolicySettingLabelsDoesNotContainAnyOf = "doesNotContainAnyOf"
+	PolicySettingLabelsContainsOtherThan   = "containsOtherThan"
+	PolicySettingLabelsContainsAnyOf       = "containsAnyOf"
 
-	RuleEnvVars = "envVars"
+	RuleLabels = "labels"
 )
 
-func NewEnvVarHandler() *EnvVarHandler {
-	return &EnvVarHandler{
+func NewLabelsPolicyHandler() *LabelsPolicyHandler {
+	return &LabelsPolicyHandler{
 		BasePolicyHandler: BasePolicyHandler{
 			Unsupported: false,
 			SupportedOps: map[string]bool{
@@ -37,28 +37,25 @@ func NewEnvVarHandler() *EnvVarHandler {
 				nvdata.CriteriaOpContainsOtherThan: true,
 				nvdata.CriteriaOpNotContainsAny:    true,
 			},
-			Name:   share.ExtractModuleName(share.PolicyEnvironmentVariableURI),
-			Module: share.PolicyEnvironmentVariableURI,
+			Name:   share.ExtractModuleName(share.PolicyLabelsPolicyURI),
+			Module: share.PolicyLabelsPolicyURI,
 		},
 		criteriaNegationMap: map[string]string{
-			nvdata.CriteriaOpContainsAll:       PolicySettingEnvVarDoesNotContainAllOf,
-			nvdata.CriteriaOpContainsAny:       PolicySettingEnvVarDoesNotContainAnyOf,
-			nvdata.CriteriaOpContainsOtherThan: PolicySettingEnvVarContainsOtherThan,
-			nvdata.CriteriaOpNotContainsAny:    PolicySettingEnvVarContainsAnyOf,
+			nvdata.CriteriaOpContainsAll:       PolicySettingAnnoDoesNotContainAllOf,
+			nvdata.CriteriaOpContainsAny:       PolicySettingAnnoDoesNotContainAnyOf,
+			nvdata.CriteriaOpContainsOtherThan: PolicySettingAnnoContainsOtherThan,
+			nvdata.CriteriaOpNotContainsAny:    PolicySettingAnnoContainsAnyOf,
 		},
 	}
 }
 
 // BuildPolicySettings builds settings for a single criterion.
-func (h *EnvVarHandler) BuildPolicySettings(criterion *nvapis.RESTAdmRuleCriterion) ([]byte, error) {
+func (h *LabelsPolicyHandler) BuildPolicySettings(criterion *nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	return h.BuildGroupedPolicySettings([]*nvapis.RESTAdmRuleCriterion{criterion})
 }
 
 // BuildGroupedPolicySettings builds settings from multiple criteria that map to the same module.
-// Should be only used for one criterion.
-func (h *EnvVarHandler) BuildGroupedPolicySettings(
-	criteria []*nvapis.RESTAdmRuleCriterion,
-) ([]byte, error) {
+func (h *LabelsPolicyHandler) BuildGroupedPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	if len(criteria) != 1 {
 		return nil, errors.New("only one criterion is allowed")
 	}

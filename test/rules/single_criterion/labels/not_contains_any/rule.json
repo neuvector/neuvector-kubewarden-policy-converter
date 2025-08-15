@@ -1,0 +1,25 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "labels",
+                    "op": "notContainsAny",
+                    "path": "labels",
+                    "value": "foo,bar"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1000,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        }
+    ]
+}

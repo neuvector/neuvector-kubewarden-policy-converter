@@ -10,7 +10,7 @@ const (
 	MsgRuleParsingError            = "failed to parse rule"
 	MsgRuleGenerateKWPolicyError   = "failed to generate Kubewarden poilcy"
 
-	PolicyCELURI                    = "registry://ghcr.io/kubewarden/policies/cel-policy:latest"
+	PolicyCELURI                    = "registry://ghcr.io/kubewarden/policies/cel-policy:v1.3.4"
 	PolicyHostNamespacesPSPURI      = "registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0"
 	PolicyAllowPrivEscalationURI    = "registry://ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v1.0.0"
 	PolicyPodPrivilegedURI          = "registry://ghcr.io/kubewarden/policies/pod-privileged:v1.0.3"
@@ -19,4 +19,5 @@ const (
 	PolicyEnvSecretScannerURI       = "registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.5" // #nosec G101 - This is a policy registry URL, not a secret
 	PolicyEnvironmentVariableURI    = "registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1"
 	PolicyAnnotationsPolicyURI      = "registry://ghcr.io/kubewarden/policies/annotations:v0.1.0"
+	PolicyLabelsPolicyURI           = "registry://ghcr.io/kubewarden/policies/labels:v0.1.0"
 )

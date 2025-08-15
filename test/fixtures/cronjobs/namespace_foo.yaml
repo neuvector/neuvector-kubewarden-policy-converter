@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: test-cronjob-namespace-foo
+  namespace: foo
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: test-container
+            image: gcr.io/distroless/base:nonroot
+            command:
+            - /bin/sh
+            - -c
+            - echo "Hello from CronJob in namespace foo"
+          restartPolicy: OnFailure

@@ -1,0 +1,21 @@
+{
+  "description": "Test single criteria rule (should not contain any of the namespace)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "pass": [
+    "cronjobs/namespace_rbar.yaml",
+    "cronjobs/normal.yaml",
+    "deployments/namespace_rbar.yaml",
+    "deployments/normal.yaml",
+    "pods/namespace_rbar.yaml",
+    "pods/normal.yaml"
+  ],
+  "deny": [
+    "cronjobs/namespace_foo.yaml",
+    "cronjobs/namespace_bar.yaml",
+    "deployments/namespace_foo.yaml",
+    "deployments/namespace_bar.yaml",
+    "pods/namespace_foo.yaml",
+    "pods/namespace_bar.yaml"
+  ]
+}

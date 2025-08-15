@@ -7,12 +7,25 @@ import (
 	nvapis "github.com/neuvector/neuvector/controller/api"
 )
 
+const (
+	PolicySettingCriteria       = "criteria"
+	PolicySettingValues         = "values"
+	PolicySettingCELValidations = "validations"
+	PolicySettingCELExpression  = "expression"
+	PolicySettingCELMessage     = "message"
+)
+
 // BasePolicyHandler provides base implementation for PolicyHandler interface.
 type BasePolicyHandler struct {
 	Name         string
 	Module       string
 	Unsupported  bool
 	SupportedOps map[string]bool
+}
+
+type CELValidation struct {
+	Expression string `json:"expression"`
+	Message    string `json:"message"`
 }
 
 func (h *BasePolicyHandler) Validate(rule *nvapis.RESTAdmRuleCriterion) error {

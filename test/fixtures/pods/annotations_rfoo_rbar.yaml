@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: annotations-rfoo-rbar-pod
+  namespace: default
+  annotations:
+    rfoo: "4"
+    rbar: "3"
+spec:
+  containers:
+  - name: web-server
+    image: nginx:1.21
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"

@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: multi-criteria-match-all
+  namespace: foo
+  annotations:
+    environment: "production"
+    team: "backend"
+  labels:
+    app: "batch-job"
+    version: "v1.0"
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: batch-container
+            image: alpine:latest
+            command:
+            - /bin/sh
+            - -c
+            - echo "Multi-criteria batch job"
+          restartPolicy: OnFailure

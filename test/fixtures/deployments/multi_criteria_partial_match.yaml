@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-criteria-partial-match
+  namespace: bar
+  annotations:
+    environment: "staging"
+  labels:
+    app: "api-service"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-service
+  template:
+    metadata:
+      labels:
+        app: api-service
+    spec:
+      containers:
+      - name: api-container
+        image: node:16
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"

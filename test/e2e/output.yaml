@@ -1,0 +1,57 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  creationTimestamp: null
+  name: deny-both-ipc-and-network-sharing-with-host
+spec:
+  backgroundAudit: true
+  expression: env_variable_secrets_scanner() && environment_variable_policy()
+  message: violate NeuVector rule (id=1002), comment Deny both IPC and network sharing
+    with host
+  mode: protect
+  policies:
+    env_variable_secrets_scanner:
+      module: registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.5
+      settings: {}
+    environment_variable_policy:
+      module: registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1
+      settings:
+        criteria: doesNotContainAnyOf
+        values:
+        - foo
+        - bar
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+status:
+  policyStatus: ""

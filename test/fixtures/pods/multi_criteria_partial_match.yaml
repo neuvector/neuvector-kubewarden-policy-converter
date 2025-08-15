@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-criteria-partial-match
+  namespace: bar
+  annotations:
+    environment: "staging"
+  labels:
+    app: "cache-pod"
+spec:
+  containers:
+  - name: cache-container
+    image: memcached:1.6
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "200m"

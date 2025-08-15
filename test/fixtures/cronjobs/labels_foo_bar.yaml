@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: labels-foo-bar-cronjob
+  namespace: default
+  labels:
+    foo: "1"
+    bar: "2"
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: labels-foo-bar-job
+          labels:
+            foo: "1"
+            bar: "2"
+        spec:
+          containers:
+            - name: nginx
+              image: nginx:latest
+              command: ["nginx", "-g", "daemon off;"]
+              resources:
+                requests:
+                  memory: "16Mi"
+                  cpu: "25m"
+          restartPolicy: OnFailure

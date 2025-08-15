@@ -1,10 +1,10 @@
+//nolint:dupl // annotations and labels handlers have similar structure by design
 package handlers
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
@@ -23,8 +23,6 @@ const (
 	PolicySettingAnnoDoesNotContainAnyOf = "doesNotContainAnyOf"
 	PolicySettingAnnoContainsOtherThan   = "containsOtherThan"
 	PolicySettingAnnoContainsAnyOf       = "containsAnyOf"
-	PolicySettingCriteria                = "criteria"
-	PolicySettingValues                  = "values"
 
 	RuleAnnotations = "annotations"
 )
@@ -51,24 +49,12 @@ func NewAnnotationsPolicyHandler() *AnnotationsPolicyHandler {
 	}
 }
 
-func (h *AnnotationsPolicyHandler) getBoolValue(value string) (bool, error) {
-	boolValue, err := strconv.ParseBool(value)
-	if err != nil {
-		return false, err
-	}
-
-	// NeuVector uses the opposite of the boolean value.
-	// For example, if the value is "true", the policy will be disabled.
-	// If the value is "false", the policy will be enabled.
-	return !boolValue, nil
-}
-
 // BuildPolicySettings builds settings for a single criterion.
 func (h *AnnotationsPolicyHandler) BuildPolicySettings(criterion *nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	return h.BuildGroupedPolicySettings([]*nvapis.RESTAdmRuleCriterion{criterion})
 }
 
-// BuildGroupedPolicySettings builds settings from multiple criteria that map to the same module
+// BuildGroupedPolicySettings builds settings from multiple criteria that map to the same module.
 func (h *AnnotationsPolicyHandler) BuildGroupedPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	if len(criteria) != 1 {
 		return nil, errors.New("only one criterion is allowed")

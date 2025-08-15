@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: multi-criteria-no-match
+  namespace: default
+  annotations:
+    environment: "development"
+  labels:
+    app: "dev-job"
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: dev-container
+            image: ubuntu:latest
+            command:
+            - /bin/sh
+            - -c
+            - echo "Development job"
+          restartPolicy: OnFailure

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-criteria-no-match
+  namespace: default
+  annotations:
+    environment: "development"
+  labels:
+    app: "debug-pod"
+spec:
+  containers:
+  - name: debug-container
+    image: busybox:latest
+    command: ["sleep", "3600"]
+    resources:
+      requests:
+        memory: "32Mi"
+        cpu: "10m"
+      limits:
+        memory: "64Mi"
+        cpu: "100m"

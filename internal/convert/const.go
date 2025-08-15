@@ -9,4 +9,7 @@ const (
 	MatrixKeyRunAsPrivileged           = "Run as privileged"
 	MatrixKeyEnvVar                    = "Environment variable"
 	MatrixKeyEnvVarSecret              = "Environment variable secret"
+	MatrixKeyAnnotations               = "Annotations"
+	MatrixKeyLabels                    = "Labels"
+	MatrixKeyNamespace                 = "Namespace"
 )

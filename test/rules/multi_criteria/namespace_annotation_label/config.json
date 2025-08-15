@@ -1,0 +1,21 @@
+{
+  "description": "Test multi-criteria rule (namespace + annotations + labels contain foo or bar)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "pass": [
+    "cronjobs/multi_criteria_no_match.yaml",
+    "cronjobs/normal.yaml",
+    "deployments/multi_criteria_no_match.yaml",
+    "deployments/normal.yaml",
+    "pods/multi_criteria_no_match.yaml",
+    "pods/normal.yaml"
+  ],
+  "deny": [
+    "cronjobs/multi_criteria_partial_match.yaml",
+    "cronjobs/multi_criteria_match_all.yaml",
+    "deployments/multi_criteria_partial_match.yaml",
+    "deployments/multi_criteria_match_all.yaml",
+    "pods/multi_criteria_partial_match.yaml",
+    "pods/multi_criteria_match_all.yaml"
+  ]
+}

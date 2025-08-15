@@ -1,0 +1,68 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  creationTimestamp: null
+  name: namespace-annotations-labels-all-contain-foo-or-bar
+spec:
+  backgroundAudit: true
+  expression: annotations() && cel_policy() && labels()
+  message: violate NeuVector rule (id=1006), comment namespace annotations labels all contain foo or bar
+  mode: protect
+  policies:
+    annotations:
+      module: registry://ghcr.io/kubewarden/policies/annotations:v0.1.0
+      settings:
+        criteria: "doesNotContainAnyOf"
+        values:
+          - foo
+          - bar
+    cel_policy:
+      module: registry://ghcr.io/kubewarden/policies/cel-policy:v1.3.4
+      settings:
+        validations:
+        - expression: |
+            has(object.metadata.namespace) && !(object.metadata.namespace in ["foo", "bar"])
+          message: |
+            Namespace must not be one of: "foo", "bar".
+    labels:
+      module: registry://ghcr.io/kubewarden/policies/labels:v0.1.0
+      settings:
+        criteria: "doesNotContainAnyOf"
+        values:
+          - foo
+          - bar
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+status:
+  policyStatus: ""

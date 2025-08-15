@@ -1,0 +1,21 @@
+{
+  "description": "Test single criteria rule (contain other than annotations foo and bar)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "pass": [
+    "cronjobs/annotations_foo_rbar.yaml",
+    "cronjobs/annotations_rfoo_rbar.yaml",
+    "deployments/annotations_foo_rbar.yaml",
+    "deployments/annotations_rfoo_rbar.yaml",
+    "pods/annotations_foo_rbar.yaml",
+    "pods/annotations_rfoo_rbar.yaml"
+  ],
+  "deny": [
+    "cronjobs/normal.yaml",
+    "cronjobs/annotations_foo_bar.yaml",
+    "deployments/normal.yaml",
+    "deployments/annotations_foo_bar.yaml",
+    "pods/normal.yaml",
+    "pods/annotations_foo_bar.yaml"
+  ]
+}

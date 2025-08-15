@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: annotations-rfoo-rbar-cronjob
+  namespace: default
+  annotations:
+    rfoo: "4"
+    rbar: "3"
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: annotations-rfoo-rbar-job
+          annotations:
+            rfoo: "4"
+            rbar: "3"
+        spec:
+          containers:
+            - name: nginx
+              image: nginx:latest
+              command: ["nginx", "-g", "daemon off;"]
+              resources:
+                requests:
+                  memory: "16Mi"
+                  cpu: "25m"
+          restartPolicy: OnFailure

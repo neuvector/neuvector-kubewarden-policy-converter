@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestBuildAnnotationsPolicySettings(t *testing.T) {
-	handler := NewAnnotationsPolicyHandler()
+func TestBuildLabelsPolicySettings(t *testing.T) {
+	handler := NewLabelsPolicyHandler()
 
 	tests := []struct {
 		name             string
@@ -21,7 +21,7 @@ func TestBuildAnnotationsPolicySettings(t *testing.T) {
 		{
 			name: "env var contains all",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleAnnotations,
+				Name:  RuleLabels,
 				Op:    nvdata.CriteriaOpContainsAll,
 				Value: "foo,bar",
 			},
@@ -32,7 +32,7 @@ func TestBuildAnnotationsPolicySettings(t *testing.T) {
 		{
 			name: "env var contains any",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleAnnotations,
+				Name:  RuleLabels,
 				Op:    nvdata.CriteriaOpContainsAny,
 				Value: "foo,bar",
 			},
@@ -43,7 +43,7 @@ func TestBuildAnnotationsPolicySettings(t *testing.T) {
 		{
 			name: "env var contains other than",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleAnnotations,
+				Name:  RuleLabels,
 				Op:    nvdata.CriteriaOpContainsOtherThan,
 				Value: "foo,bar",
 			},
@@ -54,7 +54,7 @@ func TestBuildAnnotationsPolicySettings(t *testing.T) {
 		{
 			name: "env var not contains any",
 			criterion: &nvapis.RESTAdmRuleCriterion{
-				Name:  RuleAnnotations,
+				Name:  RuleLabels,
 				Op:    nvdata.CriteriaOpNotContainsAny,
 				Value: "foo,bar",
 			},
@@ -80,8 +80,8 @@ func TestBuildAnnotationsPolicySettings(t *testing.T) {
 	}
 }
 
-func TestBuildAnnotationsPolicyGroupedPolicySettings(t *testing.T) {
-	handler := NewAnnotationsPolicyHandler()
+func TestBuildLabelsPolicyGroupedPolicySettings(t *testing.T) {
+	handler := NewLabelsPolicyHandler()
 
 	tests := []struct {
 		name             string
@@ -93,7 +93,7 @@ func TestBuildAnnotationsPolicyGroupedPolicySettings(t *testing.T) {
 			name: "env var contains all",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
 				{
-					Name:  RuleAnnotations,
+					Name:  RuleLabels,
 					Op:    nvdata.CriteriaOpContainsAll,
 					Value: "foo,bar",
 				},
@@ -106,7 +106,7 @@ func TestBuildAnnotationsPolicyGroupedPolicySettings(t *testing.T) {
 			name: "env var contains all",
 			criteria: []*nvapis.RESTAdmRuleCriterion{
 				{
-					Name:  RuleAnnotations,
+					Name:  RuleLabels,
 					Op:    nvdata.CriteriaOpContainsAny,
 					Value: "foo,bar",
 				},

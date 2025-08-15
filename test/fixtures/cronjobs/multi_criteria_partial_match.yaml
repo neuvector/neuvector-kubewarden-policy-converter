@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: multi-criteria-partial-match
+  namespace: bar
+  annotations:
+    environment: "staging"
+  labels:
+    app: "cleanup-job"
+spec:
+  schedule: "0 1 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cleanup-container
+            image: busybox:latest
+            command:
+            - /bin/sh
+            - -c
+            - echo "Cleanup job"
+          restartPolicy: OnFailure
