@@ -113,7 +113,7 @@ func TestProcessSingleRule(t *testing.T) {
 				require.True(t, ok, "Expected ClusterAdmissionPolicy, got %T", policy)
 				require.NotNil(t, caPolicy)
 				require.Equal(t, "ClusterAdmissionPolicy", caPolicy.Kind)
-				require.Equal(t, "valid-rule", caPolicy.Name)
+				require.Equal(t, "neuvector-rule-1001-conversion", caPolicy.Name)
 				require.Equal(t, policyServer, caPolicy.Spec.PolicyServer)
 				require.Equal(t, share.PolicyHostNamespacesPSPURI, caPolicy.Spec.PolicySpec.Module)
 			},

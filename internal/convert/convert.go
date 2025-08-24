@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 
@@ -77,8 +76,9 @@ func (r *RuleConverter) initSupportMatrix() {
 	}
 }
 
-func (r *RuleConverter) Convert(input io.Reader) error {
-	admissionRules, err := parseAdmissionRules(input)
+func (r *RuleConverter) Convert(ruleFile string) error {
+	loader := NewRuleParser(ruleFile)
+	admissionRules, err := loader.ParseRules()
 	if err != nil {
 		return fmt.Errorf("failed to parse NeuVector Admission rules: %w", err)
 	}
@@ -113,7 +113,6 @@ func (r *RuleConverter) convertRules(nvRules []*nvapis.RESTAdmissionRule) ([]rul
 	for _, rule := range nvRules {
 		result := r.convertRule(rule)
 		results = append(results, result)
-
 		if result.policy != nil {
 			policies = append(policies, result.policy)
 		}

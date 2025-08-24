@@ -21,7 +21,7 @@ func TestGeneratePolicyName(t *testing.T) {
 			rule: &nvapis.RESTAdmissionRule{
 				Comment: "test comment",
 			},
-			expected: "test-comment",
+			expected: "neuvector-rule-0-conversion",
 		},
 		{
 			name: "rule without comment",
@@ -36,7 +36,7 @@ func TestGeneratePolicyName(t *testing.T) {
 				Comment: "test comment with spaces",
 				ID:      123,
 			},
-			expected: "test-comment-with-spaces",
+			expected: "neuvector-rule-123-conversion",
 		},
 		{
 			name: "rule with comment and spaces",
@@ -44,7 +44,7 @@ func TestGeneratePolicyName(t *testing.T) {
 				Comment: "test comment with spaces 787483 UIUJ",
 				ID:      123,
 			},
-			expected: "test-comment-with-spaces-787483-uiuj",
+			expected: "neuvector-rule-123-conversion",
 		},
 	}
 

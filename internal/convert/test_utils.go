@@ -1,7 +1,6 @@
 package convert
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -32,15 +31,8 @@ func verifyWithYaml(t *testing.T, ruleDir string) {
 	assert.YAMLEq(t, string(expectedPolicy), string(actualPolicy))
 }
 
-func LoadRule(ruleDir string) (io.Reader, error) {
-	rulePath := filepath.Join(ruleDir, "rule.json")
-	return os.Open(rulePath)
-}
-
 func testRuleConversion(t *testing.T, ruleDir string) {
 	t.Helper()
-	rule, err := LoadRule(ruleDir)
-	require.NoError(t, err)
 
 	converter := NewRuleConverter(share.ConversionConfig{
 		Mode:            ModeProtect,
@@ -49,7 +41,8 @@ func testRuleConversion(t *testing.T, ruleDir string) {
 		OutputFile:      OutputFile,
 	})
 
-	err = converter.Convert(rule)
+	rulePath := filepath.Join(ruleDir, "rule.json")
+	err := converter.Convert(rulePath)
 	require.NoError(t, err)
 	defer os.Remove(OutputFile)
 
