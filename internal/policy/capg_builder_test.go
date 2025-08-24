@@ -47,7 +47,7 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 			handlers: map[string]share.PolicyHandler{
 				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
 			},
-			expectedPolicyName:  "single-criterion-test",
+			expectedPolicyName:  "neuvector-rule-1234-conversion",
 			expectedPoliciesLen: 1,
 			expectedMode:        "protect",
 			expectedMessage:     "violate NeuVector rule (id=1234), comment Single Criterion Test",
@@ -80,7 +80,7 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
 				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
 			},
-			expectedPolicyName:  "multiple-same-module",
+			expectedPolicyName:  "neuvector-rule-1235-conversion",
 			expectedPoliciesLen: 1,
 			expectedMode:        "monitor",
 			expectedMessage:     "violate NeuVector rule (id=1235), comment Multiple Same Module",

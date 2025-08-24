@@ -17,15 +17,16 @@ limitations under the License.
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
-	"io"
 	"log"
 	"os"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/convert"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 const appDescription = `
@@ -34,73 +35,59 @@ nvrules2kw converts NeuVector Admission Control rules into Kubewarden ClusterAdm
 Use "nvrules2kw <command> --help" for details on each command.
 `
 
-//nolint:funlen // No need to split this function
 func main() {
 	var commands = []*cli.Command{
 		{
 			Name:  "convert",
-			Usage: "Convert NeuVector rules to Kubewarden policies",
+			Usage: "Convert NeuVector Admission Control rules into Kubewarden policies",
+			UsageText: `convert [OPTIONS] [INPUT_FILE] - specifies the input file:
+			  - JSON: rules.json exported from the NeuVector UI
+			  - YAML: one or more NvAdmissionControlSecurityRule CRD objects`,
 			Flags: []cli.Flag{
-				&cli.StringFlag{
-					Name:  "rulefile",
-					Usage: "Path to the NeuVector rules JSON file. If not specified, read from stdin.",
-				},
 				&cli.StringFlag{
 					Name:  "policyserver",
 					Value: "default",
-					Usage: "Bound to Policy Server",
+					Usage: "Name of the PolicyServer to bind the generated policies to",
 				},
 				&cli.BoolFlag{
 					Name:  "backgroundaudit",
-					Usage: "Whether the policy is used in audit checks",
 					Value: true,
+					Usage: "Run the generated policies in audit (background) mode",
 				},
 				&cli.StringFlag{
 					Name:  "output",
-					Usage: "Output file for the generated policy (default: stdout)",
+					Value: "policies.yaml",
+					Usage: "Path to the output file (use '-' for stdout)",
 				},
 				&cli.StringFlag{
 					Name:  "mode",
-					Usage: "Execution mode of this policy, either \"protect\" or \"monitor\"",
 					Value: "protect",
+					Usage: "Execution mode of the policies: 'protect' or 'monitor'",
 				},
 				&cli.BoolFlag{
 					Name:  "show-summary",
-					Usage: "Show the conversion results summary table",
-					Value: false,
+					Usage: "Display a summary table of the conversion results",
 				},
 			},
-			Before: func(c *cli.Context) error {
-				mode := c.String("mode")
+			Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+				mode := cmd.String("mode")
 				if mode != "protect" && mode != "monitor" {
-					return fmt.Errorf("invalid mode: %s. Allowed values are \"protect\" or \"monitor\"", mode)
+					return ctx, fmt.Errorf("invalid mode: %s. Allowed values are \"protect\" or \"monitor\"", mode)
 				}
-				return nil
+				return ctx, nil
 			},
-			Action: func(c *cli.Context) error {
-				ruleFile := c.String("rulefile")
-				policyServer := c.String("policyserver")
-				backgroundAudit := c.Bool("backgroundaudit")
-				outputFile := c.String("output")
-				mode := c.String("mode")
-				showSummary := c.Bool("show-summary")
-
-				var input io.Reader
-				if ruleFile != "" {
-					file, err := os.Open(ruleFile)
-					if err != nil {
-						return fmt.Errorf("error opening file: %w", err)
-					}
-					defer file.Close()
-					input = file
-				} else {
-					stat, _ := os.Stdin.Stat()
-					if (stat.Mode() & os.ModeCharDevice) == 0 {
-						input = os.Stdin
-					} else {
-						cli.ShowCommandHelpAndExit(c, "convert", 1)
-					}
+			Action: func(_ context.Context, cmd *cli.Command) error {
+				args := cmd.Args().Slice()
+				if len(args) == 0 {
+					return errors.New("input file is required")
 				}
+
+				ruleFile := args[len(args)-1]
+				policyServer := cmd.String("policyserver")
+				backgroundAudit := cmd.Bool("backgroundaudit")
+				outputFile := cmd.String("output")
+				mode := cmd.String("mode")
+				showSummary := cmd.Bool("show-summary")
 
 				converter := convert.NewRuleConverter(share.ConversionConfig{
 					OutputFile:      outputFile,
@@ -110,7 +97,7 @@ func main() {
 					ShowSummary:     showSummary,
 				})
 
-				if err := converter.Convert(input); err != nil {
+				if err := converter.Convert(ruleFile); err != nil {
 					return fmt.Errorf("error processing rules: %w", err)
 				}
 
@@ -120,7 +107,7 @@ func main() {
 		{
 			Name:  "support",
 			Usage: "Show supported criteria matrix",
-			Action: func(_ *cli.Context) error {
+			Action: func(_ context.Context, _ *cli.Command) error {
 				converter := convert.NewRuleConverter(share.ConversionConfig{})
 
 				return converter.ShowRules()
@@ -128,7 +115,7 @@ func main() {
 		},
 	}
 
-	app := &cli.App{
+	cmd := &cli.Command{
 		Name:        "nvrules2kw",
 		Usage:       "Convert NeuVector Admission Control Rules to Kubewarden Policies",
 		UsageText:   "nvrules2kw [global options] command [command options] [arguments...]",
@@ -136,7 +123,7 @@ func main() {
 		Commands:    commands,
 	}
 
-	if err := app.Run(os.Args); err != nil {
+	if err := cmd.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

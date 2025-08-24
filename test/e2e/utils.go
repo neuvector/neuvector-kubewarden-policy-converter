@@ -135,16 +135,16 @@ func runConverterBinary(rule, policies string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), converterTimeout)
 	defer cancel()
 
-	// #nosec G204 -- parameters come from controlled test files, not user input
-	cmd := exec.CommandContext(ctx, ConverterBinary,
+	args := []string{
 		"convert",
-		"--rulefile", rule,
 		"--output", policies,
 		"--mode", "protect",
 		"--policyserver", PolicyServer,
 		"--backgroundaudit", strconv.FormatBool(BackgroundAudit),
-	)
+		rule,
+	}
 
+	cmd := exec.CommandContext(ctx, ConverterBinary, args...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("converter binary failed: %w, output: %s", err, string(output))

@@ -2,7 +2,6 @@ package policy
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
@@ -64,13 +63,9 @@ func (b *BaseBuilder) BuildRules() []admissionregistrationv1.RuleWithOperations 
 	}
 }
 
-// If user has the comment in the rule, use it as the policy name.
-// Otherwise, use the rule id as the policy name.
-// The policy name should be unique.
+// generatePolicyName generates a unique policy name based on the rule ID.
+// Helps user to identify the nv rule is converted to which policy.
 func (b *BaseBuilder) generatePolicyName(rule *nvapis.RESTAdmissionRule) string {
-	if rule.Comment != "" {
-		return strings.ReplaceAll(strings.ToLower(rule.Comment), " ", "-")
-	}
 	return fmt.Sprintf("neuvector-rule-%d-conversion", rule.ID)
 }
 

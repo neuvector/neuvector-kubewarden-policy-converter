@@ -46,7 +46,7 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 			handlers: map[string]share.PolicyHandler{
 				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
 			},
-			expectedPolicyName: "test-policy",
+			expectedPolicyName: "neuvector-rule-1243-conversion",
 			expectedModule:     share.PolicyHostNamespacesPSPURI,
 			expectedSettings: map[string]interface{}{
 				"allow_host_network": true,

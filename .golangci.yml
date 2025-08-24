@@ -74,7 +74,7 @@ linters:
     - gocritic # provides diagnostics that check for bugs, performance and style issues
     - gocyclo # computes and checks the cyclomatic complexity of functions
     - godot # checks if comments end in a period
-    - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod
+    # - gomoddirectives # manages the use of 'replace', 'retract', and 'excludes' directives in go.mod // for now, we don't use this directive because some NV dependency issue
     - goprintffuncname # checks that printf-like functions are named with f at the end
     - gosec # inspects source code for security problems
     - govet # reports suspicious constructs, such as Printf calls whose arguments do not align with the format string

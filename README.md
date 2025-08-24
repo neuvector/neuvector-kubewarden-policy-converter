@@ -35,9 +35,9 @@ go build -o nvrules2kw
 
 ### 📥 Fetch NeuVector Admission Control Rules
 
-You can obtain the rules in two ways:
+You will get `rules.json` (Option 1) or `rules.yaml` (Option 2).
 
-#### Option 1: Using the REST API
+### Option 1: REST API
 
 ```bash
 curl -k \
@@ -47,14 +47,18 @@ curl -k \
   -o rules.json
 ```
 
-#### Option 2: From the NeuVector Console
+### Option 2: Console UI
 
-Navigate to the Admission Control Rules page in the NeuVector console and click **Export**, then save the file locally.
+1. Navigate to **Policy → Admission Control Rules** in the NeuVector console.
+2. Click **Export** and save the file.
 
-For reference, see the example below:
-![NeuVector Admission Control Panel](assets/nv_admission_control_panel.png)
+### Example(where to click Export):
+![NeuVector Admission Control Panel](internal/assets/nv_admission_control_panel.png)
 
-Here you will get as either `rules.json`(from option 1) or `rules.json`(from option 2). Both formats are supported.
+> ⚠️ **Warning (NeuVector ≤ 5.4.6)**
+> See [FAQ: Rule IDs and Exports](docs/FAQ.md#rule-ids-and-exports) for details.
+> In versions prior to 5.4.7, exported rules do **not** include IDs.
+> To preserve IDs, re-export from a cluster running **5.4.7+**.
 
 ---
 ### 🔄 Convert to Kubewarden Policy CR

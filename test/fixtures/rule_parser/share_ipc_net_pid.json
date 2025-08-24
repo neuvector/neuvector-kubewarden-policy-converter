@@ -1,0 +1,67 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny IPC sharing with host",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "shareIpcWithHost",
+                    "op": "=",
+                    "path": "shareIpcWithHost",
+                    "value": "true"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1000,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        },
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny network sharing with host",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "shareNetWithHost",
+                    "op": "=",
+                    "path": "shareNetWithHost",
+                    "value": "true"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1001,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        },
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny PID sharing with host",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "sharePidWithHost",
+                    "op": "=",
+                    "path": "sharePidWithHost",
+                    "value": "true"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1002,
+            "rule_mode": "monitor",
+            "rule_type": "deny"
+        }
+    ]
+}

@@ -19,20 +19,10 @@ package convert
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"strings"
 
-	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
 )
-
-func parseAdmissionRules(reader io.Reader) (*nvapis.RESTAdmissionRulesData, error) {
-	var data nvapis.RESTAdmissionRulesData
-	if err := json.NewDecoder(reader).Decode(&data); err != nil {
-		return nil, fmt.Errorf("failed to decode JSON: %w", err)
-	}
-	return &data, nil
-}
 
 func normalizeOpName(input string) string {
 	if input == nvdata.CriteriaOpEqual {

@@ -1,0 +1,37 @@
+apiVersion: neuvector.com/v1
+kind: NvAdmissionControlSecurityRule
+metadata:
+  creationTimestamp: null
+  name: local
+spec:
+  rules:
+  - action: deny
+    containers:
+    - containers
+    criteria:
+    - name: shareIpcWithHost
+      op: =
+      path: shareIpcWithHost
+      value: "true"
+    disabled: false
+    rule_mode: ""
+  - action: deny
+    containers:
+    - containers
+    criteria:
+    - name: shareNetWithHost
+      op: =
+      path: shareNetWithHost
+      value: "true"
+    disabled: false
+    rule_mode: ""
+  - action: deny
+    containers:
+    - containers
+    criteria:
+    - name: sharePidWithHost
+      op: =
+      path: sharePidWithHost
+      value: "true"
+    disabled: false
+    rule_mode: ""
