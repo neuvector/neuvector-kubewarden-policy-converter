@@ -6,7 +6,7 @@ require (
 	github.com/kubewarden/kubewarden-controller v1.28.0
 	github.com/neuvector/neuvector v0.0.0-20250424215328-c459e5c7e4e8
 	github.com/olekukonko/tablewriter v1.0.9
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v2 v2.27.7
 	k8s.io/api v0.33.4
 	k8s.io/apimachinery v0.33.4
