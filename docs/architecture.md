@@ -13,7 +13,7 @@ The system uses a factory pattern to create appropriate Kubewarden policies base
 #### `CAPBuilder` (Single Policy Builder)
 - **Purpose**: Creates single `ClusterAdmissionPolicy` for single criterion rules
 - **Use Case**: Rules with single criterion
-- **Example**: Rule contains one criterion for namespace restrictions on resources.
+- **Example**: Rule contains one criterion for namespace restrictions on resources, and may include a namespace selector to scope enforcement.
 - **Output**: Individual Kubewarden policy
 
 #### `CAPGBuilder` (Group Policy Builder)
