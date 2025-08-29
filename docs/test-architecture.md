@@ -22,7 +22,7 @@ test/
     ├── multi_criteria/                               # Complex multi-condition rules
     │   ├── namespace_foo_annotation_contain_all/     # Multi-criteria test cases
     │   │   ├── rule.json         # NeuVector rules example
-    |   |   ├── policy.yaml       # Converted policy YAML result
+    |   |   ├── policy.yaml       # Converted policy YAML result (for Unit-test)
     │   │   └── configs.json      # Test configurations
     │   └── resource_limits/
     └── single_criterion/         # Simple single-condition rules
@@ -96,7 +96,6 @@ Contains NeuVector admission rules in their native format:
 - **`rule_mode`**: Enforcement level and behavior
   - `"protect"`: Actively block non-compliant resources
   - `"monitor"`: Log violations but allow resources through
-  - `""` (empty): Use default behavior based on rule_type
 
 - **`comment`**: Human-readable rule description
   - Used for generating policy names and documentation
@@ -143,8 +142,8 @@ Defines test scenarios with expected outcomes:
   - Relative path from test directory to fixture files
 
 ##### Test Cases
-- **`pass`**: Array of test fixtures that should be **ALLOWED** by the policy
-  - Resources that comply with the rule and should pass validation
+- **`accept`**: Array of test fixtures that should be **ALLOWED** by the policy
+  - Resources that comply with the rule and should accept validation
   - Example: `["deployments/normal.yaml", "pods/normal.yaml"]`
 
 - **`deny`**: Array of test fixtures that should be **REJECTED** by the policy
@@ -227,57 +226,7 @@ cd test/rules/single_criterion/your_policy_type
 }
 ```
 
-#### Step 4: Create Test Policy (`policy.yaml`)
-```yaml
-apiVersion: policies.kubewarden.io/v1
-kind: ClusterAdmissionPolicy
-metadata:
-  creationTimestamp: null
-  name: neuvector-rule-1000-conversion
-spec:
-  backgroundAudit: true
-  mode: protect
-  module: registry://ghcr.io/kubewarden/policies/container-running-as-user:v1.0.4
-  mutating: false
-  policyServer: default
-  rules:
-  - apiGroups:
-    - ""
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - pods
-  - apiGroups:
-    - apps
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - deployments
-    - replicasets
-    - daemonsets
-    - statefulsets
-  - apiGroups:
-    - batch
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - jobs
-    - cronjobs
-  settings: {}
-status:
-  policyStatus: ""
-```
-
-#### Step 5: Create Test Fixtures
+#### Step 4: Create Test Fixtures
 ```bash
 # Create corresponding YAML manifests
 touch test/fixtures/pods/allowed_resource.yaml
@@ -374,68 +323,7 @@ cd test/rules/multi_criteria/your_policy_combination
 }
 ```
 
-#### Step 4: Create Test Policy (`policy.yaml`)
-```yaml
-apiVersion: policies.kubewarden.io/v1
-kind: ClusterAdmissionPolicyGroup
-metadata:
-  creationTimestamp: null
-  name: deny-both-ipc-and-network-sharing-with-host
-spec:
-  backgroundAudit: true
-  expression: allow_privilege_escalation_psp() && container_running_as_user() && pod_privileged()
-  message: violate NeuVector rule (id=1002), comment Deny both IPC and network sharing
-    with host
-  mode: protect
-  policies:
-    pod_privileged:
-      module: registry://ghcr.io/kubewarden/policies/pod-privileged:v1.0.3
-      settings: {}
-    allow_privilege_escalation_psp:
-      module: registry://ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v1.0.0
-      settings:
-        default_allow_privilege_escalation: true
-    container_running_as_user:
-      module: registry://ghcr.io/kubewarden/policies/container-running-as-user:v1.0.4
-      settings: {}
-  policyServer: default
-  rules:
-  - apiGroups:
-    - ""
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - pods
-  - apiGroups:
-    - apps
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - deployments
-    - replicasets
-    - daemonsets
-    - statefulsets
-  - apiGroups:
-    - batch
-    apiVersions:
-    - v1
-    operations:
-    - CREATE
-    - UPDATE
-    resources:
-    - jobs
-    - cronjobs
-status:
-  policyStatus: ""
-```
-
-#### Step 5: Create Test Fixtures
+#### Step 4: Create Test Fixtures
 ```bash
 # Create corresponding YAML manifests
 touch test/fixtures/pods/allowed_resource.yaml
