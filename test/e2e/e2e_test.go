@@ -47,8 +47,10 @@ func verifyWithYaml(t *testing.T, ruleDir string) {
 	expectedPolicyPath := filepath.Join(ruleDir, ExpectedPolicy)
 	expectedPolicy, err := os.ReadFile(expectedPolicyPath)
 	require.NoError(t, err)
+	
 	actualPolicy, err := os.ReadFile(OutputFile)
 	require.NoError(t, err)
+	
 	assert.YAMLEq(t, string(expectedPolicy), string(actualPolicy))
 }
 
