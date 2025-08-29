@@ -147,7 +147,7 @@ Defines test scenarios with expected outcomes:
   - Resources that comply with the rule and should pass validation
   - Example: `["deployments/normal.yaml", "pods/normal.yaml"]`
 
-- **`deny`**: Array of test fixtures that should be **BLOCKED** by the policy
+- **`deny`**: Array of test fixtures that should be **REJECTED** by the policy
   - Resources that violate the rule and should be rejected
   - Example: `["pods/run_as_root.yaml", "deployments/privileged.yaml"]`
 
