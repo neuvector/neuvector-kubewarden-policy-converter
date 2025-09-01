@@ -10,7 +10,7 @@ type ConversionConfig struct {
 	PolicyServer    string
 	Mode            string
 	BackgroundAudit bool
-	Verbose         bool
+	ShowSummary     bool
 }
 
 // PolicyHandler defines the interface that each policy handler must implement

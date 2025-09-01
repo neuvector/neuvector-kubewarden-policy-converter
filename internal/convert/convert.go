@@ -39,7 +39,7 @@ type RuleConverter struct {
 	handlers      map[string]share.PolicyHandler
 	supportMatrix map[string]share.PolicyHandler
 	policyFactory *policy.Factory
-	verbose       bool
+	showSummary   bool
 }
 
 const (
@@ -51,7 +51,7 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 	rc := &RuleConverter{
 		config:        config,
 		policyFactory: policy.NewFactory(),
-		verbose:       config.Verbose,
+		showSummary:   config.ShowSummary,
 	}
 
 	rc.initHandlers()
@@ -94,7 +94,7 @@ func (r *RuleConverter) Convert(input io.Reader) error {
 		return fmt.Errorf("failed to write output YAML: %w", err)
 	}
 
-	if r.verbose {
+	if r.showSummary {
 		err = r.renderResultsTable(results)
 		if err != nil {
 			return fmt.Errorf("failed to render results table: %w", err)

@@ -4,16 +4,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
+	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
-	kwctlExecPath = "../../bin/kwctl"
-	kwctlTimeout  = 30 * time.Second
+	kwctlExecPath    = "../../bin/kwctl"
+	kwctlTimeout     = 30 * time.Second
+	converterTimeout = 30 * time.Second
+	PolicyServer     = "default"
+	BackgroundAudit  = true
+	ConverterBinary  = "../../bin/nvrules2kw"
 )
 
 // Config is the configuration for a rule.
@@ -21,7 +29,7 @@ type Config struct {
 	Description   string   `json:"description"`
 	TestWorkspace string   `json:"testWorkspace"`
 	RunKwctl      bool     `json:"runKwctl"` // Whether to run kwctl to verify the rule
-	Pass          []string `json:"pass"`     // List of files that should pass after run kwctl
+	Accept        []string `json:"accept"`   // List of files that should pass after run kwctl
 	Deny          []string `json:"deny"`     // List of files that should deny after run kwctl
 }
 
@@ -33,19 +41,28 @@ type kwctlResponse struct {
 	} `json:"status,omitempty"`
 }
 
-func hasRequiredRuleFiles(path string) error {
-	configPath := filepath.Join(path, "config.json")
-	rulePath := filepath.Join(path, "rule.json")
-
-	// Check if both files exist
-	if _, err := os.Stat(configPath); err != nil {
-		return err
+// verifyWithKwctl verifies the output policy with kwctl,
+// pass resources should be allowed, deny resources should be denied.
+func verifyWithKwctl(t *testing.T, config *Config, outputPath string) {
+	t.Helper()
+	for _, testCase := range []struct {
+		accept    bool
+		resources []string
+	}{
+		{true, config.Accept},
+		{false, config.Deny},
+	} {
+		for _, resource := range testCase.resources {
+			resourcePath := filepath.Join(config.TestWorkspace, resource)
+			allowed, err := runKwctl(resourcePath, outputPath)
+			require.NoError(t, err, "error running kwctl for resource %s: %s", resource, err)
+			if testCase.accept {
+				assert.True(t, allowed, "resource %s should be accepted", resource)
+			} else {
+				assert.False(t, allowed, "resource %s should be denied", resource)
+			}
+		}
 	}
-	if _, err := os.Stat(rulePath); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func loadConfig(ruleDir string) (*Config, error) {
@@ -63,11 +80,6 @@ func loadConfig(ruleDir string) (*Config, error) {
 		return nil, err
 	}
 	return &config, nil
-}
-
-func loadRule(ruleDir string) (io.Reader, error) {
-	rulePath := filepath.Join(ruleDir, "rule.json")
-	return os.Open(rulePath)
 }
 
 func runKwctl(resourcePath, policyPath string) (bool, error) {
@@ -116,4 +128,44 @@ func runKwctl(resourcePath, policyPath string) (bool, error) {
 		return false, fmt.Errorf("failed to unmarshal kwctl response: %w", err)
 	}
 	return response.Allowed, nil
+}
+
+func runConverterBinary(rule, policies string) error {
+	// Create context with timeout for security
+	ctx, cancel := context.WithTimeout(context.Background(), converterTimeout)
+	defer cancel()
+
+	// #nosec G204 -- parameters come from controlled test files, not user input
+	cmd := exec.CommandContext(ctx, ConverterBinary,
+		"convert",
+		"--rulefile", rule,
+		"--output", policies,
+		"--mode", "protect",
+		"--policyserver", PolicyServer,
+		"--backgroundaudit", strconv.FormatBool(BackgroundAudit),
+	)
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("converter binary failed: %w, output: %s", err, string(output))
+	}
+
+	return nil
+}
+
+func testRuleConversion(t *testing.T, ruleDir string) {
+	t.Helper()
+	config, err := loadConfig(ruleDir)
+	require.NoError(t, err)
+
+	rulePath := filepath.Join(ruleDir, "rule.json")
+	outputPath := filepath.Join(ruleDir, "output.yaml")
+
+	err = runConverterBinary(rulePath, outputPath)
+	require.NoError(t, err)
+	defer os.Remove(outputPath)
+
+	if config.RunKwctl {
+		verifyWithKwctl(t, config, outputPath)
+	}
 }
