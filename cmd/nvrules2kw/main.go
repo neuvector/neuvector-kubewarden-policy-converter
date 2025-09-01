@@ -65,8 +65,8 @@ func main() {
 					Value: "protect",
 				},
 				&cli.BoolFlag{
-					Name:  "verbose",
-					Usage: "Verbose mode, show the results table",
+					Name:  "show-summary",
+					Usage: "Show the conversion results summary table",
 					Value: false,
 				},
 			},
@@ -83,7 +83,7 @@ func main() {
 				backgroundAudit := c.Bool("backgroundaudit")
 				outputFile := c.String("output")
 				mode := c.String("mode")
-				verbose := c.Bool("verbose")
+				showSummary := c.Bool("show-summary")
 
 				var input io.Reader
 				if ruleFile != "" {
@@ -107,7 +107,7 @@ func main() {
 					Mode:            mode,
 					PolicyServer:    policyServer,
 					BackgroundAudit: backgroundAudit,
-					Verbose:         verbose,
+					ShowSummary:     showSummary,
 				})
 
 				if err := converter.Convert(input); err != nil {

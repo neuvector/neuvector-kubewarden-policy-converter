@@ -1,0 +1,57 @@
+package convert
+
+import (
+	"io"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+const (
+	ModeProtect     = "protect"
+	PolicyServer    = "default"
+	BackgroundAudit = true
+
+	ExpectedPolicy = "policy.yaml"
+	OutputFile     = "output.yaml"
+)
+
+// VerifyWithYaml verifies the output policy with the expected policy.
+func verifyWithYaml(t *testing.T, ruleDir string) {
+	expectedPolicyPath := filepath.Join(ruleDir, ExpectedPolicy)
+	expectedPolicy, err := os.ReadFile(expectedPolicyPath)
+	require.NoError(t, err)
+
+	actualPolicy, err := os.ReadFile(OutputFile)
+	require.NoError(t, err)
+
+	assert.YAMLEq(t, string(expectedPolicy), string(actualPolicy))
+}
+
+func LoadRule(ruleDir string) (io.Reader, error) {
+	rulePath := filepath.Join(ruleDir, "rule.json")
+	return os.Open(rulePath)
+}
+
+func testRuleConversion(t *testing.T, ruleDir string) {
+	t.Helper()
+	rule, err := LoadRule(ruleDir)
+	require.NoError(t, err)
+
+	converter := NewRuleConverter(share.ConversionConfig{
+		Mode:            ModeProtect,
+		PolicyServer:    PolicyServer,
+		BackgroundAudit: BackgroundAudit,
+		OutputFile:      OutputFile,
+	})
+
+	err = converter.Convert(rule)
+	require.NoError(t, err)
+	defer os.Remove(OutputFile)
+
+	verifyWithYaml(t, ruleDir)
+}

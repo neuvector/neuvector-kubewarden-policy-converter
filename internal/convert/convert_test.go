@@ -303,3 +303,14 @@ func TestValidateAndFilterRule(t *testing.T) {
 		})
 	}
 }
+
+func TestConvetToHostNamespacePolicy(t *testing.T) {
+	t.Helper()
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/share_host_ipc/not_allow_share_host_ipc",
+		"../../test/rules/single_criterion/share_host_network/not_allow_share_host_network",
+		"../../test/rules/single_criterion/share_host_pid/not_allow_share_host_pid",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
