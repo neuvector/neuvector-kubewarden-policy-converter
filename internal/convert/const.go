@@ -7,4 +7,5 @@ const (
 	MatrixKeyAllowPrivilegedEscalation = "Allow privilege escalation"
 	MatrixKeyRunAsRoot                 = "Run as root"
 	MatrixKeyRunAsPrivileged           = "Run as privileged"
+	MatrixKeyStorageClass              = "Storage class"
 )

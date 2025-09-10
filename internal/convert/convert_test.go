@@ -259,6 +259,15 @@ func TestConvertSingleCriterion_RunAsRoot(t *testing.T) {
 	testRuleConversion(t, ruleDir)
 }
 
+func TestConvertSingleCriterion_PVCStorageClass(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/pvc_storage_class/contains_any",
+		"../../test/rules/single_criterion/pvc_storage_class/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */

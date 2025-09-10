@@ -40,3 +40,12 @@ func TestConvertSingleCriterion_RunAsRoot(t *testing.T) {
 	ruleDir := "../rules/single_criterion/run_as_root/not_allow_run_as_root"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertSingleCriterion_PVCStorageClass(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/pvc_storage_class/contains_any",
+		"../../test/rules/single_criterion/pvc_storage_class/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
