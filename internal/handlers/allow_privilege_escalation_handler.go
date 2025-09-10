@@ -19,10 +19,11 @@ const (
 func NewAllowPrivilegedEscalationHandler() *AllowPrivilegedEscalationHandler {
 	return &AllowPrivilegedEscalationHandler{
 		BasePolicyHandler: BasePolicyHandler{
-			Unsupported:  false,
-			SupportedOps: map[string]bool{nvdata.CriteriaOpEqual: true},
-			Name:         share.ExtractModuleName(PolicyAllowPrivEscalationURI),
-			Module:       PolicyAllowPrivEscalationURI,
+			Unsupported:        false,
+			SupportedOps:       map[string]bool{nvdata.CriteriaOpEqual: true},
+			Name:               share.ExtractModuleName(PolicyAllowPrivEscalationURI),
+			ApplicableResource: ResourceWorkload,
+			Module:             PolicyAllowPrivEscalationURI,
 		},
 	}
 }

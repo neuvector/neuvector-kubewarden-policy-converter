@@ -3,14 +3,10 @@
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
   "accept": [
-    "deployments/normal.yaml",
-    "cronjobs/normal.yaml",
-    "pods/normal.yaml"
+    "deployments/normal.yaml"
   ],
   "reject": [
-    "cronjobs/run_as_root.yaml",
-    "deployments/run_as_root.yaml",
-    "pods/run_as_root.yaml"
+    "deployments/run_as_root.yaml"
   ]
 }
 

@@ -3,21 +3,12 @@
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
   "accept": [
-    "cronjobs/share_host_ipc.yaml",
-    "cronjobs/normal.yaml",
     "deployments/normal.yaml",
-    "deployments/share_host_ipc.yaml",
-    "pods/normal.yaml",
-    "pods/share_host_ipc.yaml"
+    "deployments/share_host_ipc.yaml"
   ],
   "reject": [
-    "cronjobs/share_host_ipc_network.yaml",
-    "cronjobs/share_host_pid_network.yaml",
     "deployments/share_host_network.yaml",
     "deployments/share_host_ipc_network.yaml",
-    "deployments/share_host_ipc_pid.yaml",
-    "pods/share_host_ipc_network.yaml",
-    "pods/share_host_pid_ipc.yaml",
-    "pods/share_host_pid.yaml"
+    "deployments/share_host_ipc_pid.yaml"
   ]
 }

@@ -21,9 +21,10 @@ type CAPGBuilder struct {
 
 func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) (Policy, error) {
 	var (
-		policies   = policiesv1.PolicyGroupMembersWithContext{}
-		conditions []string
-		matchConds []admissionregistrationv1.MatchCondition
+		policies            = policiesv1.PolicyGroupMembersWithContext{}
+		conditions          []string
+		matchConds          []admissionregistrationv1.MatchCondition
+		applicableResources = []string{}
 	)
 
 	// Group criteria by their policy module
@@ -35,9 +36,11 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 			return nil, fmt.Errorf("no handler found for criterion: %s", criterion.Name)
 		}
 
+		applicableResources = append(applicableResources, handler.GetApplicableResource())
 		module := handler.GetModule()
 		moduleGroups[module] = append(moduleGroups[module], criterion)
 	}
+	sort.Strings(applicableResources) // Ensure the resources are sorted in fixed order
 
 	for module, criteria := range moduleGroups {
 		// Get handler from the first criterion (all criteria in this group use the same handler)
@@ -77,7 +80,7 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 			ClusterPolicyGroupSpec: policiesv1.ClusterPolicyGroupSpec{
 				GroupSpec: policiesv1.GroupSpec{
 					Message:         fmt.Sprintf("violate NeuVector rule (id=%d), comment %s", rule.ID, rule.Comment),
-					Rules:           b.BuildRules(),
+					Rules:           b.BuildRules(applicableResources),
 					Mode:            policiesv1.PolicyMode(b.getRuleModule(rule, config)),
 					PolicyServer:    config.PolicyServer,
 					BackgroundAudit: config.BackgroundAudit,

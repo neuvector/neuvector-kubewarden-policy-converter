@@ -1,5 +1,5 @@
 # Binaries
-bin
+bin/
 
 # e2e cluster logs
 test/e2e/logs

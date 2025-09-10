@@ -3,6 +3,7 @@ package policy
 import (
 	"fmt"
 
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
@@ -17,7 +18,7 @@ const (
 type Policy interface{} // *policiesv1.ClusterAdmissionPolicy | *policiesv1.ClusterAdmissionPolicyGroup
 
 type Builder interface {
-	BuildRules() []admissionregistrationv1.RuleWithOperations
+	BuildRules(resources []string) []admissionregistrationv1.RuleWithOperations
 
 	// It will be used to generate a single policy or a policy group.
 	GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) (Policy, error)
@@ -25,7 +26,43 @@ type Builder interface {
 
 type BaseBuilder struct{}
 
-func (b *BaseBuilder) BuildRules() []admissionregistrationv1.RuleWithOperations {
+// BuildRules determines which Kubernetes resources to apply admission rules to.
+func (b *BaseBuilder) BuildRules(resources []string) []admissionregistrationv1.RuleWithOperations {
+	rules := []admissionregistrationv1.RuleWithOperations{}
+	resourcesMap := make(map[string]struct{}, len(resources))
+	for _, resource := range resources {
+		// Avoid duplicate resources
+		if _, ok := resourcesMap[resource]; ok {
+			continue
+		}
+		resourcesMap[resource] = struct{}{}
+		switch resource {
+		case handlers.ResourcePVC:
+			rules = append(rules, b.BuildPVCRules()...)
+		case handlers.ResourceWorkload:
+			rules = append(rules, b.BuildWorkloadRules()...)
+		}
+	}
+
+	return rules
+}
+
+func (b *BaseBuilder) BuildPVCRules() []admissionregistrationv1.RuleWithOperations {
+	return []admissionregistrationv1.RuleWithOperations{
+		{
+			Operations: []admissionregistrationv1.OperationType{
+				admissionregistrationv1.Create,
+			},
+			Rule: admissionregistrationv1.Rule{
+				APIGroups:   []string{""},
+				APIVersions: []string{"v1"},
+				Resources:   []string{"persistentvolumeclaims"},
+			},
+		},
+	}
+}
+
+func (b *BaseBuilder) BuildWorkloadRules() []admissionregistrationv1.RuleWithOperations {
 	return []admissionregistrationv1.RuleWithOperations{
 		{
 			Operations: []admissionregistrationv1.OperationType{

@@ -7,12 +7,18 @@ import (
 	nvapis "github.com/neuvector/neuvector/controller/api"
 )
 
+const (
+	ResourcePVC      = "pvc"
+	ResourceWorkload = "workload"
+)
+
 // BasePolicyHandler provides base implementation for PolicyHandler interface.
 type BasePolicyHandler struct {
-	Name         string
-	Module       string
-	Unsupported  bool
-	SupportedOps map[string]bool
+	Name               string
+	Module             string
+	Unsupported        bool
+	ApplicableResource string
+	SupportedOps       map[string]bool
 }
 
 func (h *BasePolicyHandler) Validate(rule *nvapis.RESTAdmRuleCriterion) error {
@@ -38,4 +44,8 @@ func (h *BasePolicyHandler) GetSupportedOps() map[string]bool {
 
 func (h *BasePolicyHandler) GetModule() string {
 	return h.Module
+}
+
+func (h *BasePolicyHandler) GetApplicableResource() string {
+	return h.ApplicableResource
 }

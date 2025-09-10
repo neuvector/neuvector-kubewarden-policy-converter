@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (PVC storage class not contains any foo or bar)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "pvcs/pvc_storage_class_foo.yaml",
+    "pvcs/pvc_storage_class_bar.yaml"
+  ],
+  "reject": [
+    "pvcs/pvc_storage_class_fast.yaml",
+    "pvcs/pvc_storage_class_random.yaml"
+  ]
+}
