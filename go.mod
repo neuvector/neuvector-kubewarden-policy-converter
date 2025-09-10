@@ -8,7 +8,7 @@ require (
 	github.com/olekukonko/tablewriter v1.0.9
 	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v3 v3.4.1
-	go.yaml.in/yaml/v4 v4.0.0-rc.1
+	go.yaml.in/yaml/v4 v4.0.0-rc.2
 	k8s.io/api v0.33.4
 	k8s.io/apimachinery v0.33.4
 	sigs.k8s.io/yaml v1.6.0
