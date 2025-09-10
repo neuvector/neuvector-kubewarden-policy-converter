@@ -117,7 +117,7 @@ GLOBAL OPTIONS:
 
 ## Support matrix
 
-You can use the `support` command to view the support matrix.
+You can use the `support` command to view the support matrix. See [support matrix doc](docs/SUPPORT_MATRIX.md) for more details.
 
 ```
 nvrules2kw support

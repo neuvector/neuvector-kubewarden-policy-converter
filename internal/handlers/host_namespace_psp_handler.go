@@ -29,10 +29,11 @@ const (
 func NewHostNamespaceHandler() *HostNamespaceHandler {
 	return &HostNamespaceHandler{
 		BasePolicyHandler: BasePolicyHandler{
-			Unsupported:  false,
-			SupportedOps: map[string]bool{nvdata.CriteriaOpEqual: true},
-			Name:         share.ExtractModuleName(PolicyHostNamespacesPSPURI),
-			Module:       PolicyHostNamespacesPSPURI,
+			Unsupported:        false,
+			SupportedOps:       map[string]bool{nvdata.CriteriaOpEqual: true},
+			Name:               share.ExtractModuleName(PolicyHostNamespacesPSPURI),
+			ApplicableResource: ResourceWorkload,
+			Module:             PolicyHostNamespacesPSPURI,
 		},
 	}
 }

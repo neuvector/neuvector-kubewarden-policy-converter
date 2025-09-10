@@ -25,6 +25,7 @@ import (
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/convert"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/support"
 
 	"github.com/urfave/cli/v3"
 )
@@ -108,9 +109,7 @@ func main() {
 			Name:  "support",
 			Usage: "Show supported criteria matrix",
 			Action: func(_ context.Context, _ *cli.Command) error {
-				converter := convert.NewRuleConverter(share.ConversionConfig{})
-
-				return converter.ShowRules()
+				return support.RenderSupport()
 			},
 		},
 	}

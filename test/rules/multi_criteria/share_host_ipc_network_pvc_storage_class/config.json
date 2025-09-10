@@ -1,0 +1,17 @@
+{
+  "description": "Test multi-criteria rule (deny IPC and network sharing, and specific PVC storage classes)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/normal.yaml",
+    "pvcs/pvc_storage_class_fast.yaml",
+    "pvcs/pvc_storage_class_random.yaml"
+  ],
+  "reject": [
+    "deployments/share_host_ipc_network.yaml",
+    "deployments/share_host_ipc_pid.yaml",
+    "deployments/share_host_network.yaml",
+    "pvcs/pvc_storage_class_foo.yaml",
+    "pvcs/pvc_storage_class_bar.yaml"
+  ]
+}

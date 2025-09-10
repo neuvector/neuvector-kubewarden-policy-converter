@@ -20,6 +20,13 @@ type CAPBuilder struct {
 }
 
 func (b *CAPBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) (Policy, error) {
+	// Use handler to process criterion
+	criterion := rule.Criteria[0]
+	handler, exists := b.handlers[criterion.Name]
+	if !exists {
+		return nil, fmt.Errorf("no handler found for criterion: %s", criterion.Name)
+	}
+
 	policy := policiesv1.ClusterAdmissionPolicy{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       clusterAdmissionPolicyKind,
@@ -31,19 +38,12 @@ func (b *CAPBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share
 		Spec: policiesv1.ClusterAdmissionPolicySpec{
 			PolicySpec: policiesv1.PolicySpec{
 				MatchConditions: []admissionregistrationv1.MatchCondition{},
-				Rules:           b.BuildRules(),
+				Rules:           b.BuildRules([]string{handler.GetApplicableResource()}),
 				Mode:            policiesv1.PolicyMode(b.getRuleModule(rule, config)),
 				PolicyServer:    config.PolicyServer,
 				BackgroundAudit: config.BackgroundAudit,
 			},
 		},
-	}
-
-	// Use handler to process criterion
-	criterion := rule.Criteria[0]
-	handler, exists := b.handlers[criterion.Name]
-	if !exists {
-		return nil, fmt.Errorf("no handler found for criterion: %s", criterion.Name)
 	}
 
 	// Get module from handler
