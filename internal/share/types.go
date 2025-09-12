@@ -28,6 +28,9 @@ type PolicyHandler interface {
 	// GetModule returns the Kubewarden policy module for this criterion
 	GetModule() string
 
+	// GetApplicableResource returns the resources that the policy is applicable to (e.g. "pvc", "workload")
+	GetApplicableResource() string
+
 	// BuildPolicySettings builds the policy settings for one criterion or multiple criteria that map to the same module
 	BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error)
 }

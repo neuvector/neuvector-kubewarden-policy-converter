@@ -22,10 +22,14 @@ const (
 func NewPVCStorageClassHandler() *PVCStorageClassHandler {
 	return &PVCStorageClassHandler{
 		BasePolicyHandler: BasePolicyHandler{
-			Unsupported:  false,
-			SupportedOps: map[string]bool{nvdata.CriteriaOpContainsAny: true, nvdata.CriteriaOpNotContainsAny: true},
-			Name:         share.ExtractModuleName(PolicyPVCStorageClassURI),
-			Module:       PolicyPVCStorageClassURI,
+			Unsupported: false,
+			SupportedOps: map[string]bool{
+				nvdata.CriteriaOpContainsAny:    true,
+				nvdata.CriteriaOpNotContainsAny: true,
+			},
+			Name:               share.ExtractModuleName(PolicyPVCStorageClassURI),
+			ApplicableResource: ResourcePVC,
+			Module:             PolicyPVCStorageClassURI,
 		},
 	}
 }

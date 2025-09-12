@@ -36,7 +36,6 @@ import (
 type RuleConverter struct {
 	config        share.ConversionConfig
 	handlers      map[string]share.PolicyHandler
-	supportMatrix map[string]share.PolicyHandler
 	policyFactory *policy.Factory
 	showSummary   bool
 }
@@ -54,7 +53,6 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 	}
 
 	rc.initHandlers()
-	rc.initSupportMatrix()
 	rc.policyFactory.SetHandlers(rc.handlers)
 
 	return rc
@@ -69,18 +67,6 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
 		handlers.RuleRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
 		handlers.RuleStorageClass:              handlers.NewPVCStorageClassHandler(),
-	}
-}
-
-func (r *RuleConverter) initSupportMatrix() {
-	r.supportMatrix = map[string]share.PolicyHandler{
-		MatrixKeyShareIPC:                  handlers.NewHostNamespaceHandler(),
-		MatrixKeyShareNetwork:              handlers.NewHostNamespaceHandler(),
-		MatrixKeySharePID:                  handlers.NewHostNamespaceHandler(),
-		MatrixKeyAllowPrivilegedEscalation: handlers.NewAllowPrivilegedEscalationHandler(),
-		MatrixKeyRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
-		MatrixKeyRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
-		MatrixKeyStorageClass:              handlers.NewPVCStorageClassHandler(),
 	}
 }
 
@@ -246,39 +232,4 @@ func (r *RuleConverter) outputPolicies(policies []Policy, filePath string) error
 	}
 
 	return os.WriteFile(filePath, buf.Bytes(), 0600)
-}
-
-func (r *RuleConverter) ShowRules() error {
-	table := tablewriter.NewTable(os.Stdout,
-		tablewriter.WithConfig(tablewriter.Config{
-			Row: tw.CellConfig{
-				Formatting:   tw.CellFormatting{AutoWrap: tw.WrapNormal},
-				Alignment:    tw.CellAlignment{Global: tw.AlignLeft},
-				ColMaxWidths: tw.CellWidth{Global: defaultColumnWidth},
-			},
-		}),
-	)
-	table.Header([]string{"Criterion Name", "Supported", "Kubewarden Module"})
-
-	for criterionName, handler := range r.supportMatrix {
-		supportStatus := "Yes"
-		if handler == nil || handler.IsUnsupported() {
-			supportStatus = "No"
-		}
-		module := ""
-		if handler != nil {
-			module = handler.GetModule()
-		}
-		err := table.Append([]string{criterionName, supportStatus, module})
-		if err != nil {
-			return fmt.Errorf("failed to append data: %w", err)
-		}
-	}
-
-	err := table.Render()
-	if err != nil {
-		return fmt.Errorf("failed to render table: %w", err)
-	}
-
-	return nil
 }

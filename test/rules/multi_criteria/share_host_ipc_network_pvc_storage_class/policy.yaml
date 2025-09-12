@@ -1,0 +1,67 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  creationTimestamp: null
+  name: neuvector-rule-1002-conversion
+spec:
+  backgroundAudit: true
+  expression: host_namespaces_psp() && persistentvolumeclaim_storageclass_policy()
+  message: violate NeuVector rule (id=1002), comment Deny both IPC and network sharing
+    with host
+  mode: protect
+  policies:
+    host_namespaces_psp:
+      module: registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0
+      settings:
+        allow_host_ipc: false
+        allow_host_network: false
+        allow_host_pid: true
+    persistentvolumeclaim_storageclass_policy:
+      module: registry://ghcr.io/kubewarden/policies/persistentvolumeclaim-storageclass-policy:v1.1.0
+      settings:
+        deniedStorageClasses:
+        - foo
+        - bar
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - persistentvolumeclaims
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+status:
+  policyStatus: ""

@@ -18,10 +18,11 @@ const (
 func NewPodPrivilegedHandler() *PodPrivilegedHandler {
 	return &PodPrivilegedHandler{
 		BasePolicyHandler: BasePolicyHandler{
-			Unsupported:  false,
-			SupportedOps: map[string]bool{nvdata.CriteriaOpEqual: true},
-			Name:         share.ExtractModuleName(PolicyPodPrivilegedURI),
-			Module:       PolicyPodPrivilegedURI,
+			Unsupported:        false,
+			SupportedOps:       map[string]bool{nvdata.CriteriaOpEqual: true},
+			Name:               share.ExtractModuleName(PolicyPodPrivilegedURI),
+			ApplicableResource: ResourceWorkload,
+			Module:             PolicyPodPrivilegedURI,
 		},
 	}
 }

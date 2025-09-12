@@ -18,10 +18,11 @@ const (
 func NewContainerRunningAsUserHandler() *ContainerRunningAsUserHandler {
 	return &ContainerRunningAsUserHandler{
 		BasePolicyHandler: BasePolicyHandler{
-			Unsupported:  false,
-			SupportedOps: map[string]bool{nvdata.CriteriaOpEqual: true},
-			Name:         share.ExtractModuleName(PolicyContainerRunningAsUserURI),
-			Module:       PolicyContainerRunningAsUserURI,
+			Unsupported:        false,
+			SupportedOps:       map[string]bool{nvdata.CriteriaOpEqual: true},
+			Name:               share.ExtractModuleName(PolicyContainerRunningAsUserURI),
+			ApplicableResource: ResourceWorkload,
+			Module:             PolicyContainerRunningAsUserURI,
 		},
 	}
 }

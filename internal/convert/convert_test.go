@@ -290,3 +290,8 @@ func TestConvertMultiCriteria_ShareHostPIDAndNetwork(t *testing.T) {
 	ruleDir := "../../test/rules/multi_criteria/share_host_pid_network"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertMultiCriteria_ShareHostIPCAndNetworkAndPVCStorageClass(t *testing.T) {
+	ruleDir := "../../test/rules/multi_criteria/share_host_ipc_network_pvc_storage_class"
+	testRuleConversion(t, ruleDir)
+}
