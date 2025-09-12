@@ -23,11 +23,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/neuvector/neuvector-kubewarden-policy-converter/docs"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/convert"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/support"
 
-	"github.com/charmbracelet/glamour"
 	"github.com/urfave/cli/v3"
 )
 
@@ -37,7 +36,6 @@ nvrules2kw converts NeuVector Admission Control rules into Kubewarden ClusterAdm
 Use "nvrules2kw <command> --help" for details on each command.
 `
 
-//nolint:funlen // CLI command definitions require extensive configuration
 func main() {
 	var commands = []*cli.Command{
 		{
@@ -111,27 +109,7 @@ func main() {
 			Name:  "support",
 			Usage: "Show supported criteria matrix",
 			Action: func(_ context.Context, _ *cli.Command) error {
-				if len(docs.Support) == 0 {
-					return errors.New(
-						"embedded support.md is empty: check //go:embed path (path is relative to support_embed.go)",
-					)
-				}
-
-				renderer, err := glamour.NewTermRenderer(
-					glamour.WithStandardStyle("dark"),
-					glamour.WithInlineTableLinks(true),
-				)
-				if err != nil {
-					return fmt.Errorf("failed to create renderer: %w", err)
-				}
-
-				rendered, err := renderer.Render(string(docs.Support))
-				if err != nil {
-					return fmt.Errorf("failed to render markdown: %w", err)
-				}
-
-				_, err = os.Stdout.WriteString(rendered)
-				return err
+				return support.RenderSupport()
 			},
 		},
 	}
