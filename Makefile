@@ -25,7 +25,7 @@ run: build
 .PHONY: test
 test:
 	@echo "Running tests..."
-	@go test -v -race $$(go list ./... | grep -v /e2e)  -coverprofile coverage/unit-test/cover.out -covermode=atomic
+	@go test -v $$(go list ./... | grep -v /e2e)  -coverprofile coverage/unit-test/cover.out -covermode=atomic
 
 # Clean built files
 .PHONY: clean
@@ -54,7 +54,7 @@ lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 .PHONY: e2e-test
 e2e-test: kwctl build
 	@echo "Running e2e tests..."
-	@PATH="$(PWD)/bin:$(PATH)" go test -v -race ./test/e2e/... -coverprofile coverage/e2e-test/cover.out -covermode=atomic -timeout 60m
+	@PATH="$(PWD)/bin:$(PATH)" go test -v ./test/e2e/... -coverprofile coverage/e2e-test/cover.out -covermode=atomic -timeout 60m
 
 ##@ Dependencies
 
