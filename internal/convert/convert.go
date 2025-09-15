@@ -18,8 +18,10 @@ package convert
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -37,6 +39,7 @@ type RuleConverter struct {
 	config        share.ConversionConfig
 	handlers      map[string]share.PolicyHandler
 	policyFactory *policy.Factory
+	logger        *slog.Logger
 	showSummary   bool
 }
 
@@ -50,6 +53,7 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 		config:        config,
 		policyFactory: policy.NewFactory(),
 		showSummary:   config.ShowSummary,
+		logger:        slog.New(slog.NewTextHandler(os.Stdout, nil)),
 	}
 
 	rc.initHandlers()
@@ -95,6 +99,11 @@ func (r *RuleConverter) Convert(ruleFile string) error {
 		}
 	}
 
+	if r.config.OutputFile != "-" {
+		r.logger.InfoContext(context.Background(), "Conversion done", "output_file", r.config.OutputFile)
+	} else {
+		r.logger.InfoContext(context.Background(), "Conversion done", "output_file", "stdout")
+	}
 	return nil
 }
 
