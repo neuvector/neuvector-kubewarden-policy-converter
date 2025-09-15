@@ -1,13 +1,17 @@
 package convert
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -229,6 +233,48 @@ func TestValidateAndFilterRule(t *testing.T) {
 			require.Equal(t, tt.expectedError, err)
 		})
 	}
+}
+
+// TestOutputPolicies_Stdout reads the test policy and rule, and converts the rule to stdout.
+// Ensure the output is the same as the test policy, and no file is created.
+func TestOutputPolicies_Stdout(t *testing.T) {
+	testPolicy := "../../test/rules/single_criterion/share_host_ipc/not_allow_share_host_ipc/policy.yaml"
+	testRule := "../../test/rules/single_criterion/share_host_ipc/not_allow_share_host_ipc/rule.json"
+
+	testPolicyBytes, err := os.ReadFile(testPolicy)
+	require.NoError(t, err)
+
+	oldStdout := os.Stdout
+
+	r, w, err := os.Pipe()
+	require.NoError(t, err)
+	//nolint:reassign // reassign is needed to capture the output for testing purposes
+	os.Stdout = w
+
+	policyServer := "default"
+	converter := NewRuleConverter(share.ConversionConfig{
+		PolicyServer:    policyServer,
+		OutputFile:      "-",
+		Mode:            "protect",
+		BackgroundAudit: true,
+		ShowSummary:     false,
+	})
+	err = converter.Convert(testRule)
+	require.NoError(t, err)
+
+	w.Close()
+	//nolint:reassign // reassign is needed to capture the output for testing purposes
+	os.Stdout = oldStdout
+
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, r)
+	require.NoError(t, err)
+
+	assert.Equal(t, buf.String(), string(testPolicyBytes))
+
+	// Ensure no file is created, including the default output file name, and - for stdout.
+	assert.NoFileExists(t, "policies.yaml")
+	assert.NoFileExists(t, "-")
 }
 
 /*
