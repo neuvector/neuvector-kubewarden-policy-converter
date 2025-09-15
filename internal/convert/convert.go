@@ -238,7 +238,7 @@ func (r *RuleConverter) outputPolicies(policies []Policy, filePath string) error
 		}
 	}
 
-	if filePath == "" {
+	if filePath == "-" {
 		_, err := os.Stdout.Write(buf.Bytes())
 		return err
 	}
