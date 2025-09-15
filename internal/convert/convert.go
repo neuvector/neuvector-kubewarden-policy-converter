@@ -101,9 +101,8 @@ func (r *RuleConverter) Convert(ruleFile string) error {
 
 	if r.config.OutputFile != "-" {
 		r.logger.InfoContext(context.Background(), "Conversion done", "output_file", r.config.OutputFile)
-	} else {
-		r.logger.InfoContext(context.Background(), "Conversion done", "output_file", "stdout")
 	}
+
 	return nil
 }
 
