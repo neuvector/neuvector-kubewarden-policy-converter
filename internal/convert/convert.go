@@ -71,6 +71,8 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleRunAsRoot:                 handlers.NewContainerRunningAsUserHandler(),
 		handlers.RuleRunAsPrivileged:           handlers.NewPodPrivilegedHandler(),
 		handlers.RuleStorageClass:              handlers.NewPVCStorageClassHandler(),
+		handlers.RuleEnvVars:                   handlers.NewEnvVarHandler(),
+		handlers.RuleEnvVarSecret:              handlers.NewEnvVarSecretHandler(),
 	}
 }
 

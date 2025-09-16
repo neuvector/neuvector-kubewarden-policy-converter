@@ -30,7 +30,7 @@ type Config struct {
 	TestWorkspace string   `json:"testWorkspace"`
 	RunKwctl      bool     `json:"runKwctl"` // Whether to run kwctl to verify the rule
 	Accept        []string `json:"accept"`   // List of files that should accept after run kwctl
-	Reject        []string `json:"reject"`   // List of files that should deny after run kwctl
+	Reject        []string `json:"reject"`   // List of files that should reject after run kwctl
 }
 
 type kwctlResponse struct {
