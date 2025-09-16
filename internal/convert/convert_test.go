@@ -314,6 +314,22 @@ func TestConvertSingleCriterion_PVCStorageClass(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_EnvVar(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/env_var/contains_all",
+		"../../test/rules/single_criterion/env_var/contains_any",
+		"../../test/rules/single_criterion/env_var/contains_other_than",
+		"../../test/rules/single_criterion/env_var/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
+func TestConvertSingleCriterion_EnvVarSecret(t *testing.T) {
+	ruleDir := "../../test/rules/single_criterion/env_var_secret/secret_forbid"
+	testRuleConversion(t, ruleDir)
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */

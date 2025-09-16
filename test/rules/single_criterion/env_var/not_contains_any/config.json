@@ -1,0 +1,15 @@
+{
+  "description": "Test single criteria rule (not contain any of the env vars)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/env_var_foo_bar.yaml",
+    "deployments/env_var_foo_rbar.yaml"
+  ],
+  "reject": [
+    "deployments/normal.yaml",
+    "deployments/env_var_rfoo_rbar.yaml"
+  ]
+}
+
+

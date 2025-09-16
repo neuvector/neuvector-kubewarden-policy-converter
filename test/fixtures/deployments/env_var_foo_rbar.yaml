@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo-rbar-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: foo-rbar-pod
+  template:
+    metadata:
+      labels:
+        name: foo-rbar-pod
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          env:
+            - name: foo
+              value: "1"
+            - name: rbar
+              value: "2"
