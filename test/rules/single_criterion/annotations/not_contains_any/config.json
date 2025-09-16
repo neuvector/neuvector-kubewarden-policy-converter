@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (does not contain any of the annotations foo and bar)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/annotations_foo_bar.yaml",
+    "deployments/annotations_foo_rbar.yaml"
+  ],
+  "reject": [
+    "deployments/normal.yaml",
+    "deployments/annotations_rfoo_rbar.yaml"
+  ]
+}

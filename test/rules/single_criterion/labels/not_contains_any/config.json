@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (does not contain any of the labels foo and bar)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/labels_foo_bar.yaml",
+    "deployments/labels_foo_rbar.yaml"
+  ],
+  "reject": [
+    "deployments/normal.yaml",
+    "deployments/labels_rfoo_rbar.yaml"
+  ]
+}

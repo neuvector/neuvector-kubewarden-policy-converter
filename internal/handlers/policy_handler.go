@@ -12,6 +12,19 @@ const (
 	ResourceWorkload = "workload"
 )
 
+type CELValidation struct {
+	Expression string `json:"expression"`
+	Message    string `json:"message"`
+}
+
+const (
+	PolicySettingCriteria       = "criteria"
+	PolicySettingValues         = "values"
+	PolicySettingCELValidations = "validations"
+	PolicySettingCELExpression  = "expression"
+	PolicySettingCELMessage     = "message"
+)
+
 // BasePolicyHandler provides base implementation for PolicyHandler interface.
 type BasePolicyHandler struct {
 	Name               string

@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (should contain any of the namespace)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/namespace_foo.yaml",
+    "deployments/namespace_bar.yaml"
+  ],
+  "reject": [
+    "deployments/namespace_rbar.yaml",
+    "deployments/normal.yaml"
+  ]
+}

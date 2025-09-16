@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: labels-rfoo-rbar-deployment
+  namespace: default
+  labels:
+    rfoo: "4"
+    rbar: "3"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: labels-rfoo-rbar-app
+  template:
+    metadata:
+      labels:
+        app: labels-rfoo-rbar-app
+        rfoo: "4"
+        rbar: "3"
+    spec:
+      containers:
+      - name: app-container
+        image: nginx:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"

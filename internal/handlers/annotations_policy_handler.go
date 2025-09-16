@@ -1,4 +1,4 @@
-//nolint:dupl // Similar pattern like LabelsPolicyHandler by design
+//nolint:dupl // annotations and labels handlers have similar structure by design
 package handlers
 
 import (
@@ -12,20 +12,20 @@ import (
 	nvdata "github.com/neuvector/neuvector/share"
 )
 
-type EnvVarHandler struct {
+type AnnotationsPolicyHandler struct {
 	BasePolicyHandler
 
 	criteriaNegationMap map[string]string
 }
 
 const (
-	PolicyEnvironmentVariableURI = "registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1"
+	PolicyAnnotationsPolicyURI = "registry://ghcr.io/kubewarden/policies/annotations:v0.1.0"
 
-	RuleEnvVars = "envVars"
+	RuleAnnotations = "annotations"
 )
 
-func NewEnvVarHandler() *EnvVarHandler {
-	return &EnvVarHandler{
+func NewAnnotationsPolicyHandler() *AnnotationsPolicyHandler {
+	return &AnnotationsPolicyHandler{
 		BasePolicyHandler: BasePolicyHandler{
 			Unsupported: false,
 			SupportedOps: map[string]bool{
@@ -34,8 +34,8 @@ func NewEnvVarHandler() *EnvVarHandler {
 				nvdata.CriteriaOpContainsOtherThan: true,
 				nvdata.CriteriaOpNotContainsAny:    true,
 			},
-			Name:               share.ExtractModuleName(PolicyEnvironmentVariableURI),
-			Module:             PolicyEnvironmentVariableURI,
+			Name:               share.ExtractModuleName(PolicyAnnotationsPolicyURI),
+			Module:             PolicyAnnotationsPolicyURI,
 			ApplicableResource: ResourceWorkload,
 		},
 		criteriaNegationMap: map[string]string{
@@ -47,7 +47,7 @@ func NewEnvVarHandler() *EnvVarHandler {
 	}
 }
 
-func (h *EnvVarHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
+func (h *AnnotationsPolicyHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	if len(criteria) != 1 {
 		return nil, errors.New("only one criterion is allowed")
 	}
