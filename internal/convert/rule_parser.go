@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	nvapis "github.com/neuvector/neuvector/controller/api"
-	nvResource "github.com/neuvector/neuvector/controller/resource"
 
 	"go.yaml.in/yaml/v4"
 )
@@ -32,7 +31,7 @@ func NewRuleParser(filePath string) *RuleParser {
 }
 
 type K8sAdmissionRule struct {
-	Spec nvResource.NvSecurityAdmCtrlRules `json:"spec" yaml:"spec"`
+	Spec nvapis.NvSecurityAdmCtrlRules `json:"spec" yaml:"spec"`
 }
 
 func (p *RuleParser) ParseRules() (*nvapis.RESTAdmissionRulesData, error) {
@@ -93,7 +92,7 @@ func (p *RuleParser) getRuleID(conversionIDRef *uint32) uint32 {
 }
 
 func (p *RuleParser) convertNativeRuleToREST(
-	nativeRule *nvResource.NvSecurityAdmCtrlRule,
+	nativeRule *nvapis.NvSecurityAdmCtrlRule,
 ) (*nvapis.RESTAdmissionRule, error) {
 	if nativeRule == nil {
 		return nil, errors.New("native rule cannot be nil")
@@ -130,7 +129,7 @@ func (p *RuleParser) convertNativeRuleToREST(
 }
 
 func (p *RuleParser) convertToRESTFormat(
-	nativeRules nvResource.NvSecurityAdmCtrlRules,
+	nativeRules nvapis.NvSecurityAdmCtrlRules,
 ) (*nvapis.RESTAdmissionRulesData, error) {
 	restData := &nvapis.RESTAdmissionRulesData{
 		Rules: make([]*nvapis.RESTAdmissionRule, 0, len(nativeRules.Rules)),
