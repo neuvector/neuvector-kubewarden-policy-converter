@@ -2,11 +2,16 @@ package policy
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
+
 	nvapis "github.com/neuvector/neuvector/controller/api"
+	nvdata "github.com/neuvector/neuvector/share"
+
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -111,4 +116,22 @@ func (b *BaseBuilder) getRuleModule(rule *nvapis.RESTAdmissionRule, config share
 		return rule.RuleMode
 	}
 	return config.Mode
+}
+
+func (b *BaseBuilder) buildNamespaceSelector(criterion *nvapis.RESTAdmRuleCriterion) *metav1.LabelSelector {
+	operator := metav1.LabelSelectorOpIn
+
+	if criterion.Op == nvdata.CriteriaOpContainsAny {
+		operator = metav1.LabelSelectorOpNotIn
+	}
+
+	return &metav1.LabelSelector{
+		MatchExpressions: []metav1.LabelSelectorRequirement{
+			{
+				Key:      "metadata.namespace",
+				Operator: operator,
+				Values:   strings.Split(criterion.Value, ","),
+			},
+		},
+	}
 }

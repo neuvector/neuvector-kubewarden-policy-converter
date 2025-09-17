@@ -1,0 +1,13 @@
+{
+  "description": "Test single-criterion rule with a namespace selector: reject containers using specific images (nginx, redis) and limit to the namespace (foo, bar)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/normal.yaml",
+    "deployments/image_nginx_namespace_bar.yaml"
+  ],
+  "reject": [
+    "deployments/image_nginx.yaml",
+    "deployments/image_redis.yaml"
+  ]
+}

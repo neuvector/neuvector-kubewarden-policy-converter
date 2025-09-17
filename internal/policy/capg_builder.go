@@ -1,11 +1,13 @@
 package policy
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
@@ -42,10 +44,19 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 	}
 	sort.Strings(applicableResources) // Ensure the resources are sorted in fixed order
 
+	var namespaceSelector *metav1.LabelSelector
 	for module, criteria := range moduleGroups {
 		// Get handler from the first criterion (all criteria in this group use the same handler)
 		handler := b.handlers[criteria[0].Name]
 		policyName := share.ExtractModuleName(module)
+
+		if criteria[0].Name == handlers.RuleNamespace {
+			if len(criteria) > 1 {
+				return nil, errors.New("rule skipped: contains multiple namespace selectors")
+			}
+			namespaceSelector = b.buildNamespaceSelector(criteria[0])
+			continue
+		}
 
 		settings, err := handler.BuildPolicySettings(criteria)
 		if err != nil {
@@ -89,6 +100,7 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 				},
 				Policies: policies,
 			},
+			NamespaceSelector: namespaceSelector,
 		},
 	}
 

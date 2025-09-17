@@ -48,3 +48,20 @@ func testRuleConversion(t *testing.T, ruleDir string) {
 
 	verifyWithYaml(t, ruleDir)
 }
+
+func testRuleConversionWithFail(t *testing.T, ruleDir string, mode string) {
+	t.Helper()
+
+	converter := NewRuleConverter(share.ConversionConfig{
+		Mode:            mode,
+		PolicyServer:    PolicyServer,
+		BackgroundAudit: BackgroundAudit,
+		OutputFile:      OutputFile,
+	})
+
+	rulePath := filepath.Join(ruleDir, "rule.json")
+	err := converter.Convert(rulePath)
+
+	require.Error(t, err)
+	require.NoFileExists(t, OutputFile)
+}

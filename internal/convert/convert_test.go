@@ -370,6 +370,21 @@ func TestConvertSingleCriterion_AnnotationsRule(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_NamespaceRule(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/namespace_selector/image_namespace_contain_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/namespace/contains_any",
+		"../../test/rules/single_criterion/namespace/not_contains_any",
+	} {
+		testRuleConversionWithFail(t, ruleDir, "audit")
+	}
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */
@@ -390,5 +405,10 @@ func TestConvertMultiCriteria_ShareHostIPCPIDAndNetwork(t *testing.T) {
 
 func TestConvertMultiCriteria_ShareHostPIDAndNetwork(t *testing.T) {
 	ruleDir := "../../test/rules/multi_criteria/share_host_pid_network"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertMultiCriteria_ImageAndImageRegistryNamespaceContainAny(t *testing.T) {
+	ruleDir := "../../test/rules/namespace_selector/image_and_image_registry_namespace_contain_any"
 	testRuleConversion(t, ruleDir)
 }
