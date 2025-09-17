@@ -1,0 +1,31 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny nginx redis images or docker.io quay.io registries",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "image",
+                    "op": "containsAny",
+                    "path": "image",
+                    "value": "nginx,redis"
+                },
+                {
+                    "name": "namespace",
+                    "op": "containsAny",
+                    "path": "namespace",
+                    "value": "foo,bar"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1000,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        }
+    ]
+}

@@ -105,3 +105,8 @@ func TestConvertSingleCriterion_AnnotationsRule(t *testing.T) {
 		testRuleConversion(t, ruleDir)
 	}
 }
+
+func TestConvertSingleCriterion_NamespaceRule(t *testing.T) {
+	ruleDir := "../rules/namespace_selector/image_namespace_contain_any"
+	testRuleConversion(t, ruleDir)
+}

@@ -1,0 +1,15 @@
+{
+  "description": "Test multi-criteria rule with a namespace selector: deny containers with specific images (nginx, redis) OR from specific registries (docker.io, quay.io)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/normal.yaml",
+    "deployments/image_nginx_namespace_bar.yaml"
+  ],
+  "reject": [
+    "deployments/image_nginx.yaml",
+    "deployments/image_redis.yaml",
+    "deployments/registry_docker_io.yaml",
+    "deployments/registry_quay_io.yaml"
+  ]
+}

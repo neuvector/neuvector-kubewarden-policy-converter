@@ -103,6 +103,46 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 			handlers:      map[string]share.PolicyHandler{},
 			expectedError: errors.New("no handler found for criterion: unknownCriterion"),
 		},
+		{
+			name: "error when handler has multiple namespace selectors",
+			rule: &nvapis.RESTAdmissionRule{
+				ID:      1243,
+				Comment: "Test Policy",
+				Criteria: []*nvapis.RESTAdmRuleCriterion{
+					{
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
+						Value: "true",
+					},
+					{
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
+						Value: "false",
+					},
+					{
+						Name:  handlers.RuleNamespace,
+						Op:    nvdata.CriteriaOpContainsAny,
+						Value: "test1",
+					},
+					{
+						Name:  handlers.RuleNamespace,
+						Op:    nvdata.CriteriaOpContainsAny,
+						Value: "test2",
+					},
+				},
+			},
+			config: share.ConversionConfig{
+				PolicyServer:    "test-server",
+				Mode:            "monitor",
+				BackgroundAudit: false,
+			},
+			handlers: map[string]share.PolicyHandler{
+				handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
+				handlers.RuleNamespace:    handlers.NewNamespaceHandler(),
+			},
+			expectedError: errors.New("rule skipped: contains multiple namespace selectors"),
+		},
 	}
 
 	for _, tt := range tests {
