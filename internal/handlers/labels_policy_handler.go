@@ -11,7 +11,7 @@ import (
 	nvdata "github.com/neuvector/neuvector/share"
 )
 
-type AnnotationsPolicyHandler struct {
+type LabelsPolicyHandler struct {
 	BasePolicyHandler
 
 	// criteriaNegationMap maps criteria operations to their negated forms for deny-action neuvector rule conversion.
@@ -20,13 +20,13 @@ type AnnotationsPolicyHandler struct {
 }
 
 const (
-	PolicyAnnotationsPolicyURI = "registry://ghcr.io/kubewarden/policies/annotations:v0.1.2"
+	PolicyLabelsPolicyURI = "registry://ghcr.io/kubewarden/policies/labels:v0.1.2"
 
-	RuleAnnotations = "annotations"
+	RuleLabels = "labels"
 )
 
-func NewAnnotationsPolicyHandler() *AnnotationsPolicyHandler {
-	return &AnnotationsPolicyHandler{
+func NewLabelsPolicyHandler() *LabelsPolicyHandler {
+	return &LabelsPolicyHandler{
 		BasePolicyHandler: BasePolicyHandler{
 			Unsupported: false,
 			SupportedOps: map[string]bool{
@@ -35,8 +35,8 @@ func NewAnnotationsPolicyHandler() *AnnotationsPolicyHandler {
 				nvdata.CriteriaOpContainsOtherThan: true,
 				nvdata.CriteriaOpNotContainsAny:    true,
 			},
-			Name:               share.ExtractModuleName(PolicyAnnotationsPolicyURI),
-			Module:             PolicyAnnotationsPolicyURI,
+			Name:               share.ExtractModuleName(PolicyLabelsPolicyURI),
+			Module:             PolicyLabelsPolicyURI,
 			ApplicableResource: ResourceWorkload,
 		},
 		criteriaNegationMap: map[string]string{
@@ -48,7 +48,7 @@ func NewAnnotationsPolicyHandler() *AnnotationsPolicyHandler {
 	}
 }
 
-func (h *AnnotationsPolicyHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
+func (h *LabelsPolicyHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	if len(criteria) != 1 {
 		return nil, errors.New("only one criterion is allowed")
 	}

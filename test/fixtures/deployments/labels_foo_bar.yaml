@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: labels-foo-bar-deployment
+  namespace: default
+  labels:
+    foo: "1"
+    bar: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: labels-foo-bar-app
+  template:
+    metadata:
+      labels:
+        app: labels-foo-bar-app
+        foo: "1"
+        bar: "2"
+    spec:
+      containers:
+      - name: app-container
+        image: nginx:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"

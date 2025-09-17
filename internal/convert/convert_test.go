@@ -348,6 +348,17 @@ func TestConvertSingleCriterion_ImageRegistryRule(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_LabelsRule(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/labels/contains_all",
+		"../../test/rules/single_criterion/labels/contains_any",
+		"../../test/rules/single_criterion/labels/contains_other_than",
+		"../../test/rules/single_criterion/labels/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 func TestConvertSingleCriterion_AnnotationsRule(t *testing.T) {
 	for _, ruleDir := range []string{
 		"../../test/rules/single_criterion/annotations/contains_all",
