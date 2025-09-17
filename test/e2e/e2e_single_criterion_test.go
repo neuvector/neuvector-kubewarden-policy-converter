@@ -83,3 +83,14 @@ func TestConvertSingleCriterion_EnvVarSecret(t *testing.T) {
 	ruleDir := "../rules/single_criterion/env_var_secret/secret_forbid"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertSingleCriterion_AnnotationsRule(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/annotations/contains_all",
+		"../../test/rules/single_criterion/annotations/contains_any",
+		"../../test/rules/single_criterion/annotations/contains_other_than",
+		"../../test/rules/single_criterion/annotations/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}

@@ -12,7 +12,7 @@ This document details the support matrix, including the available operators, acc
 |--------------------------------|:----------:|:----------------------------------:|
 | [Add customized criterion](#add-customized-criterion) |            |                                    |
 | [Allow privilege escalation](#allow-privilege-escalation) |  ✅ Completed   | `allow-privilege-escalation-psp:v1.0.0` |
-| [Annotations](#annotations)    |  ✅ Completed   | `annotations:v0.1.0` |
+| [Annotations](#annotations)    |  ✅ Completed   | `annotations:v0.1.2` |
 | [Count high severity CVE](#count-high-severity-cve) |            |                                    |
 | [Count high severity CVE with fix](#count-high-severity-cve-with-fix) |          |                                    |
 | [Count medium severity CVE](#count-medium-severity-cve) |            |                                    |
@@ -70,7 +70,7 @@ This document details the support matrix, including the available operators, acc
 
 ## Annotations
 
-**Status:** ✅ Completed | **Kubewarden Module:** `annotations:v0.1.0`
+**Status:** ✅ Completed | **Kubewarden Module:** `annotations:v0.1.2`
 
 | Operator            | Values | Notes |
 | ------------------- | ------ | ----- |

@@ -75,6 +75,7 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleEnvVarSecret:              handlers.NewEnvVarSecretHandler(),
 		handlers.RuleImage:                     handlers.NewTrustedReposHandler(),
 		handlers.RuleImageRegistry:             handlers.NewTrustedReposHandler(),
+		handlers.RuleAnnotations:               handlers.NewAnnotationsPolicyHandler(),
 	}
 }
 
