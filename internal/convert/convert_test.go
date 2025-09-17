@@ -348,6 +348,17 @@ func TestConvertSingleCriterion_ImageRegistryRule(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_AnnotationsRule(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/annotations/contains_all",
+		"../../test/rules/single_criterion/annotations/contains_any",
+		"../../test/rules/single_criterion/annotations/contains_other_than",
+		"../../test/rules/single_criterion/annotations/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */

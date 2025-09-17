@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: annotations-foo-bar-deployment
+  namespace: default
+  annotations:
+    foo: "1"
+    bar: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: annotations-foo-bar-app
+  template:
+    metadata:
+      labels:
+        app: annotations-foo-bar-app
+      annotations:
+        foo: "1"
+        bar: "2"
+    spec:
+      containers:
+      - name: app-container
+        image: nginx:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
