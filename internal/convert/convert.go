@@ -73,6 +73,8 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleStorageClass:              handlers.NewPVCStorageClassHandler(),
 		handlers.RuleEnvVars:                   handlers.NewEnvVarHandler(),
 		handlers.RuleEnvVarSecret:              handlers.NewEnvVarSecretHandler(),
+		handlers.RuleImage:                     handlers.NewTrustedReposHandler(),
+		handlers.RuleImageRegistry:             handlers.NewTrustedReposHandler(),
 	}
 }
 

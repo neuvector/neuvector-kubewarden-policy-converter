@@ -1,0 +1,57 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  creationTimestamp: null
+  name: neuvector-rule-1000-conversion
+spec:
+  backgroundAudit: true
+  expression: trusted_repos()
+  message: violate NeuVector rule (id=1000), comment Deny nginx redis images or docker.io quay.io registries
+  mode: protect
+  policies:
+    trusted_repos:
+      module: registry://ghcr.io/kubewarden/policies/trusted-repos:v2.0.1
+      settings:
+        images:
+          reject:
+            - nginx
+            - redis
+        registries:
+          reject:
+            - docker.io
+            - quay.io
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+status:
+  policyStatus: ""

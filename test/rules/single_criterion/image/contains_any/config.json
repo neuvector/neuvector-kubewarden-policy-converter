@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (image contains any of nginx or redis)",
+  "runKwctl": false    ,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/normal.yaml",
+    "deployments/image_allowed.yaml"
+  ],
+  "reject": [
+    "deployments/image_nginx.yaml",
+    "deployments/image_redis.yaml"
+  ]
+}

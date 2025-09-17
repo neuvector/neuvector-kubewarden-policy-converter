@@ -41,6 +41,24 @@ func TestConvertSingleCriterion_RunAsRoot(t *testing.T) {
 	testRuleConversion(t, ruleDir)
 }
 
+func TestConvertSingleCriterion_ImageRule(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../rules/single_criterion/image/contains_any",
+		"../rules/single_criterion/image/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
+func TestConvertSingleCriterion_ImageRegistryRule(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../rules/single_criterion/image_registry/contains_any",
+		"../rules/single_criterion/image_registry/not_contains_any",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 func TestConvertSingleCriterion_PVCStorageClass(t *testing.T) {
 	for _, ruleDir := range []string{
 		"../../test/rules/single_criterion/pvc_storage_class/contains_any",
