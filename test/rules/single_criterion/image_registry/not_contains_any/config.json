@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (image registry does not contain docker.io or quay.io)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/registry_docker_io.yaml",
+    "deployments/registry_quay_io.yaml"
+  ],
+  "reject": [
+    "deployments/normal.yaml",
+    "deployments/registry_internal.yaml"
+  ]
+}
