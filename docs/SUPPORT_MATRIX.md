@@ -27,7 +27,7 @@ This document details the support matrix, including the available operators, acc
 | [Image scanned](#image-scanned) |            |                                    |
 | [Image signed](#image-signed)  |            |                                    |
 | [Image sigstore verifiers](#image-sigstore-verifiers) | ❌ Not Support |                                    |
-| [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.0` |
+| [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.2` |
 | [Modules](#modules)            |            |                                    |
 | [Mount Volumes](#mount-volumes) |            |                                    |
 | [Namespace](#namespace)        |  ✅ Completed   | `cel-policy:v1.3.4` |
@@ -256,7 +256,7 @@ This document details the support matrix, including the available operators, acc
 
 ## Labels
 
-**Status:** ✅ Completed | **Kubewarden Module:** `labels:v0.1.0`
+**Status:** ✅ Completed | **Kubewarden Module:** `labels:v0.1.2`
 
 | Operator            | Values | Notes |
 | ------------------- | ------ | ----- |
