@@ -6,7 +6,7 @@ metadata:
 spec:
   backgroundAudit: true
   mode: protect
-  module: registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1
+  module: registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.2
   mutating: false
   policyServer: default
   rules:
@@ -42,7 +42,7 @@ spec:
     - jobs
     - cronjobs
   settings:
-    criteria: "containsOtherThan"
+    criteria: "doesNotContainOtherThan"
     values:
       - foo
       - bar

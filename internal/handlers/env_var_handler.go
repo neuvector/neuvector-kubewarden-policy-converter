@@ -14,11 +14,13 @@ import (
 type EnvVarHandler struct {
 	BasePolicyHandler
 
+	// criteriaNegationMap maps criteria operations to their negated forms for deny-action neuvector rule conversion.
+	// Since converter only support deny actions, positive criteria must be converted to negative counterparts.
 	criteriaNegationMap map[string]string
 }
 
 const (
-	PolicyEnvironmentVariableURI = "registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.1"
+	PolicyEnvironmentVariableURI = "registry://ghcr.io/kubewarden/policies/environment-variable-policy:v3.0.2"
 
 	RuleEnvVars = "envVars"
 )
@@ -40,7 +42,7 @@ func NewEnvVarHandler() *EnvVarHandler {
 		criteriaNegationMap: map[string]string{
 			nvdata.CriteriaOpContainsAll:       "doesNotContainAllOf",
 			nvdata.CriteriaOpContainsAny:       "doesNotContainAnyOf",
-			nvdata.CriteriaOpContainsOtherThan: "containsOtherThan",
+			nvdata.CriteriaOpContainsOtherThan: "doesNotContainOtherThan",
 			nvdata.CriteriaOpNotContainsAny:    "containsAnyOf",
 		},
 	}

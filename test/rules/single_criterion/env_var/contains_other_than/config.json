@@ -3,12 +3,12 @@
   "runKwctl": true,
   "testWorkspace": "../fixtures/",
   "accept": [
-    "deployments/env_var_foo_rbar.yaml",
-    "deployments/env_var_rfoo_rbar.yaml"
-  ],
-  "reject": [
     "deployments/normal.yaml",
     "deployments/env_var_foo_bar.yaml"
+  ],
+  "reject": [
+    "deployments/env_var_foo_rbar.yaml",
+    "deployments/env_var_rfoo_rbar.yaml"
   ]
 }
 
