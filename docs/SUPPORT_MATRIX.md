@@ -19,7 +19,7 @@ This document details the support matrix, including the available operators, acc
 | [CVE names](#cve-names)        |            |                                    |
 | [CVE score](#cve-score)        |            |                                    |
 | [Environment variables with secrets](#environment-variables-with-secrets) |  ⚠️ Partial   | `env-variable-secrets-scanner:v1.0.5` |
-| [Environment variables](#environment-variables) |  ✅ Completed   | `environment-variable-policy:v3.0.1` |
+| [Environment variables](#environment-variables) |  ✅ Completed   | `environment-variable-policy:v3.0.2` |
 | [Image](#image)                |  ✅ Completed   | `trusted-repos:v2.0.1` |
 | [Image compliance violations](#image-compliance-violations) |            |                                    |
 | [Image without OS information](#image-without-os-information) |            |                                    |
@@ -172,7 +172,7 @@ This document details the support matrix, including the available operators, acc
 
 ## Environment variables
 
-**Status:** ✅ Completed | **Kubewarden Module:** `environment-variable-policy:v3.0.1`
+**Status:** ✅ Completed | **Kubewarden Module:** `environment-variable-policy:v3.0.2`
 
 | Operator            | Values | Notes |
 | ------------------- | ------ | ----- |

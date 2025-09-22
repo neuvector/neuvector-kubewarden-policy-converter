@@ -53,7 +53,7 @@ func TestEnvVarPolicySettingsConversion(t *testing.T) {
 				},
 			},
 			expectedSettings: []byte(
-				`{"criteria":"containsOtherThan","values":["foo","bar"]}`,
+				`{"criteria":"doesNotContainOtherThan","values":["foo","bar"]}`,
 			),
 		},
 		{
