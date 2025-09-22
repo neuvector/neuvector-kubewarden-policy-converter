@@ -6,7 +6,7 @@ require (
 	github.com/charmbracelet/glamour v0.10.0
 	github.com/kubewarden/kubewarden-controller v1.28.0
 	github.com/neuvector/neuvector v0.0.0-20250913040914-6e08b93e0015
-	github.com/olekukonko/tablewriter v1.0.9
+	github.com/olekukonko/tablewriter v1.1.0
 	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v3 v3.4.1
 	go.yaml.in/yaml/v4 v4.0.0-rc.2
