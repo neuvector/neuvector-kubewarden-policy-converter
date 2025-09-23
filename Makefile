@@ -12,7 +12,7 @@ all: build
 build:
 	@echo "Building $(APP_NAME)..."
 	@mkdir -p $(BIN_DIR)
-	GO111MODULE=on go build -o $(BIN_DIR)/$(APP_NAME) $(CMD_DIR)
+	CGO_ENABLED=0 GO111MODULE=on go build -o $(BIN_DIR)/$(APP_NAME) $(CMD_DIR)
 	@echo "Built binary at $(BIN_DIR)/$(APP_NAME)"
 
 # Run the app
