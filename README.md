@@ -13,7 +13,6 @@ This tool simplifies the migration from NeuVector's admission control model to [
 - Optionally enable audit/background enforcement
 - Display a summary table showing the status of each rule conversion
 
-
 ## Quick Start
 
 This guide provides step-by-step instructions to set up and execute **`nvrules2kw`**, help you convert NeuVector Admission Control Rules into Kubewarden Policies within your environment.
@@ -26,11 +25,9 @@ You can either:
 
 * Download the latest release binary from the [Releases](https://github.com/neuvector/neuvector-kubewarden-policy-converter/releases) page, or
 * Build from source:
-
 ```bash
-go build -o nvrules2kw
+make build
 ```
-
 ---
 
 ### 📥 Fetch NeuVector Admission Control Rules
@@ -51,9 +48,15 @@ curl -k \
 
 1. Navigate to **Policy → Admission Control Rules** in the NeuVector console.
 2. Click **Export** and save the file.
+3. **⚠️ Important**: When exporting rules from NeuVector, you **must** check **"Include configurations"**, otherwise the converter cannot process them correctly.
 
-### Example(where to click Export):
-![NeuVector Admission Control Panel](internal/assets/nv_admission_control_panel.png)
+### Export Process:
+
+1. **Click Export in the Admission Control Rules panel:**
+   ![NeuVector Admission Control Panel](internal/assets/nv_admission_control_panel.png)
+
+2. **In the export dialog, check "Include configurations":**
+   ![Export Dialog - Include Configurations](internal/assets/nv_export_check_include_config.png)
 
 > ⚠️ **Warning (NeuVector ≤ 5.4.6)**
 > See [FAQ: Rule IDs and Exports](docs/FAQ.md#rule-ids-and-exports) for details.
@@ -63,17 +66,39 @@ curl -k \
 ---
 ### 🔄 Convert to Kubewarden Policy CR
 
-You can now convert your rule file using:
+#### Updated CLI Usage
+
+The CLI has been updated. The new usage is:
 
 ```bash
-nvrules2kw convert --rulefile rules.json --output policies.yaml
+nvrules2kw convert <yaml_file>
 ```
+
+**Examples:**
+```bash
+# Convert rules from a YAML file (output defaults to policies.yaml)
+nvrules2kw convert rules.yaml
+
+# Convert rules from a JSON file
+nvrules2kw convert rules.json
+
+# Specify custom output file
+nvrules2kw convert rules.yaml --output my-policies.yaml
+```
+
+By default, the output will be written to `policies.yaml`.
 
 ---
 
 ### 📊 Summary Table: Column Descriptions
 
-This table appears after running the `convert` command and shows the status of each rule processed.
+This table appears after running the `convert` command with the `--show-summary` flag and shows the status of each rule processed.
+
+Example with summary table:
+
+```bash
+nvrules2kw convert rules.yaml --show-summary
+```
 
 ```
 +------+--------+---------------------------------+
@@ -117,22 +142,10 @@ GLOBAL OPTIONS:
 
 ## Support matrix
 
-You can use the `support` command to view the support matrix. See [support matrix doc](docs/SUPPORT_MATRIX.md) for more details.
+You can use the `nvrules2kw support` command to view the support matrix. See [support matrix doc](docs/SUPPORT_MATRIX.md) for more details.
 
-```
-nvrules2kw support
-```
+---
+## Note
+- **Avoid double enforcement.** After converting NeuVector admission control rules to Kubewarden policies, disable the matching NeuVector rules.
 
-The following table shows the support matrix:
-
-```
-┌─────────────────────────────┬───────────┬───────────────────────────────────────────────────────────────────┐
-│       CRITERION NAME        │ SUPPORTED │                         KUBEWARDEN MODULE                         │
-├─────────────────────────────┼───────────┼───────────────────────────────────────────────────────────────────┤
-│ Share host's IPC namespaces │ Yes       │ registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0 │
-│ Share host's Network        │ Yes       │ registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0 │
-│ Share host's PID namespaces │ Yes       │ registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.0 │
-└─────────────────────────────┴───────────┴───────────────────────────────────────────────────────────────────┘
-
-```
-
+![Disable NeuVector rules](internal/assets/nv_disable_all_admission_rules.png)
