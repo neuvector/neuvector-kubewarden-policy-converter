@@ -84,9 +84,31 @@ nvrules2kw convert rules.json
 
 # Specify custom output file
 nvrules2kw convert rules.yaml --output my-policies.yaml
+
+# Override all rules to monitor mode (useful for testing)
+nvrules2kw convert rules.yaml --mode monitor
 ```
 
 By default, the output will be written to `policies.yaml`.
+
+---
+
+### ⚙️ Mode Resolution
+
+The effective enforcement mode for each converted policy is determined by the following priority:
+
+**Priority: CLI `--mode` > File-defined mode > Default mode (`protect`)**
+
+#### Examples
+
+| Case | Format | CLI Mode  | File Mode | Effective Mode           |
+|:----:|:------:|-----------|-----------|--------------------------|
+| A    | yaml   | monitor   | protect   | **monitor** (CLI overrides) |
+| B    | yaml   | ""        | monitor   | **monitor**              |
+| C    | yaml   | ""        | protect   | **protect**              |
+| D    | json   | monitor   | ""        | **monitor** (CLI overrides) |
+| E    | json   | protect   | ""        | **protect** (CLI overrides) |
+| F    | json   | ""        | ""        | **protect** (default)    |
 
 ---
 
