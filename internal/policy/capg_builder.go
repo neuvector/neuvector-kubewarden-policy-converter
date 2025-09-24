@@ -92,7 +92,7 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 				GroupSpec: policiesv1.GroupSpec{
 					Message:         fmt.Sprintf("violate NeuVector rule (id=%d), comment %s", rule.ID, rule.Comment),
 					Rules:           b.BuildRules(applicableResources),
-					Mode:            policiesv1.PolicyMode(b.getRuleModule(rule, config)),
+					Mode:            policiesv1.PolicyMode(b.getRulelMode(rule, config)),
 					PolicyServer:    config.PolicyServer,
 					BackgroundAudit: config.BackgroundAudit,
 					MatchConditions: matchConds,

@@ -49,7 +49,7 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 			},
 			expectedPolicyName:  "neuvector-rule-1234-conversion",
 			expectedPoliciesLen: 1,
-			expectedMode:        "protect",
+			expectedMode:        "monitor",
 			expectedMessage:     "violate NeuVector rule (id=1234), comment Single Criterion Test",
 			expectedError:       nil,
 		},

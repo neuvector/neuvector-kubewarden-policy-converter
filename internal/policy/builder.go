@@ -18,6 +18,7 @@ const (
 	kwAPIVersion                    = "policies.kubewarden.io/v1"
 	clusterAdmissionPolicyKind      = "ClusterAdmissionPolicy"
 	clusterAdmissionPolicyGroupKind = "ClusterAdmissionPolicyGroup"
+	defaultMode                     = "protect"
 )
 
 type Policy interface{} // *policiesv1.ClusterAdmissionPolicy | *policiesv1.ClusterAdmissionPolicyGroup
@@ -111,11 +112,17 @@ func (b *BaseBuilder) generatePolicyName(rule *nvapis.RESTAdmissionRule) string 
 	return fmt.Sprintf("neuvector-rule-%d-conversion", rule.ID)
 }
 
-func (b *BaseBuilder) getRuleModule(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) string {
+// getRulelMode determines the effective admission rule mode based on priority:
+// CLI mode > File-defined mode > Default mode.
+func (b *BaseBuilder) getRulelMode(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) string {
+	if config.Mode != "" {
+		return config.Mode
+	}
+
 	if rule.RuleMode != "" {
 		return rule.RuleMode
 	}
-	return config.Mode
+	return defaultMode
 }
 
 func (b *BaseBuilder) buildNamespaceSelector(criterion *nvapis.RESTAdmRuleCriterion) *metav1.LabelSelector {

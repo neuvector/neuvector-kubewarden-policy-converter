@@ -15,7 +15,6 @@ import (
 
 const (
 	DefaultRuleBaseID = 1000
-	defaultRuleMode   = "protect"
 )
 
 type RuleParser struct {
@@ -31,7 +30,7 @@ func NewRuleParser(filePath string) *RuleParser {
 }
 
 type K8sAdmissionRule struct {
-	Spec nvapis.NvSecurityAdmCtrlRules `json:"spec" yaml:"spec"`
+	Spec nvapis.NvSecurityAdmCtrlSpec `json:"spec" yaml:"spec"`
 }
 
 func (p *RuleParser) ParseRules() (*nvapis.RESTAdmissionRulesData, error) {
@@ -93,6 +92,7 @@ func (p *RuleParser) getRuleID(conversionIDRef *uint32) uint32 {
 
 func (p *RuleParser) convertNativeRuleToREST(
 	nativeRule *nvapis.NvSecurityAdmCtrlRule,
+	nativeConfig *nvapis.NvSecurityAdmCtrlConfig,
 ) (*nvapis.RESTAdmissionRule, error) {
 	if nativeRule == nil {
 		return nil, errors.New("native rule cannot be nil")
@@ -102,19 +102,20 @@ func (p *RuleParser) convertNativeRuleToREST(
 		ID:         p.getRuleID(nativeRule.ConversionIdRef),
 		Criteria:   nativeRule.Criteria,
 		RuleType:   nvapis.ValidatingDenyRuleType,
-		RuleMode:   defaultRuleMode,
 		Critical:   false,
 		Disable:    false,
 		Comment:    "",
 		Containers: nativeRule.Containers,
 	}
 
-	if nativeRule.Action != nil {
-		restRule.RuleType = *nativeRule.Action
+	if nativeRule.RuleMode == nil || *nativeRule.RuleMode == "" {
+		restRule.RuleMode = *nativeConfig.Mode
+	} else {
+		restRule.RuleMode = *nativeRule.RuleMode
 	}
 
-	if nativeRule.RuleMode != nil {
-		restRule.RuleMode = *nativeRule.RuleMode
+	if nativeRule.Action != nil {
+		restRule.RuleType = *nativeRule.Action
 	}
 
 	if nativeRule.Comment != nil {
@@ -129,14 +130,14 @@ func (p *RuleParser) convertNativeRuleToREST(
 }
 
 func (p *RuleParser) convertToRESTFormat(
-	nativeRules nvapis.NvSecurityAdmCtrlRules,
+	nativeRules nvapis.NvSecurityAdmCtrlSpec,
 ) (*nvapis.RESTAdmissionRulesData, error) {
 	restData := &nvapis.RESTAdmissionRulesData{
 		Rules: make([]*nvapis.RESTAdmissionRule, 0, len(nativeRules.Rules)),
 	}
 
 	for i, nativeRule := range nativeRules.Rules {
-		restRule, err := p.convertNativeRuleToREST(nativeRule)
+		restRule, err := p.convertNativeRuleToREST(nativeRule, nativeRules.Config)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert rule at index %d: %w", i, err)
 		}

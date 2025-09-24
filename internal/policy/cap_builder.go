@@ -69,7 +69,7 @@ func (b *CAPBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share
 			PolicySpec: policiesv1.PolicySpec{
 				Rules:           b.BuildRules(applicableResources),
 				MatchConditions: []admissionregistrationv1.MatchCondition{},
-				Mode:            policiesv1.PolicyMode(b.getRuleModule(rule, config)),
+				Mode:            policiesv1.PolicyMode(b.getRulelMode(rule, config)),
 				Module:          policyHandler.GetModule(),
 				PolicyServer:    config.PolicyServer,
 				BackgroundAudit: config.BackgroundAudit,

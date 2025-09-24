@@ -18,7 +18,7 @@
             "critical": false,
             "disable": false,
             "id": 1000,
-            "rule_mode": "protect",
+            "rule_mode": "monitor",
             "rule_type": "deny"
         },
         {

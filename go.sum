@@ -142,8 +142,8 @@ github.com/muesli/termenv v0.16.0 h1:S5AlUN9dENB57rsbnkPyfdGuWIlkmzJjbFf0Tf5FWUc
 github.com/muesli/termenv v0.16.0/go.mod h1:ZRfOIKPFDYQoDFF4Olj7/QJbW60Ol/kL1pU3VfY/Cnk=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
-github.com/neuvector/neuvector v0.0.0-20250913040914-6e08b93e0015 h1:3aSG+61rD2ru3r1cnyjWVUO08CmvBc81LkB9t71r9ts=
-github.com/neuvector/neuvector v0.0.0-20250913040914-6e08b93e0015/go.mod h1:ziawxmrkXyzEyCweBDq+g1HmH7s0vfxkWbvojkfa8ZY=
+github.com/neuvector/neuvector v0.0.0-20251001210109-c33c2ea14522 h1:ZSWl8w/aZjrTViSsh9qulZpRD6HFrx0p99oJnkfPS44=
+github.com/neuvector/neuvector v0.0.0-20251001210109-c33c2ea14522/go.mod h1:ziawxmrkXyzEyCweBDq+g1HmH7s0vfxkWbvojkfa8ZY=
 github.com/olekukonko/errors v1.1.0 h1:RNuGIh15QdDenh+hNvKrJkmxxjV4hcS50Db478Ou5sM=
 github.com/olekukonko/errors v1.1.0/go.mod h1:ppzxA5jBKcO1vIpCXQ9ZqgDh8iwODz6OXIGKU8r5m4Y=
 github.com/olekukonko/ll v0.0.9 h1:Y+1YqDfVkqMWuEQMclsF9HUR5+a82+dxJuL1HHSRpxI=

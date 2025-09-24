@@ -56,7 +56,7 @@ func TestGeneratePolicyName(t *testing.T) {
 	}
 }
 
-func TestGetRuleModule(t *testing.T) {
+func TestGetRulelMode(t *testing.T) {
 	builder := BaseBuilder{}
 
 	tests := []struct {
@@ -66,17 +66,17 @@ func TestGetRuleModule(t *testing.T) {
 		expected string
 	}{
 		{
-			name: "rule with rule mode",
+			name: "CLI mode overrides rule mode",
 			rule: &nvapis.RESTAdmissionRule{
 				RuleMode: "protect",
 			},
 			config: share.ConversionConfig{
 				Mode: "monitor",
 			},
-			expected: "protect",
+			expected: "monitor",
 		},
 		{
-			name: "rule without rule mode",
+			name: "CLI mode used when rule mode is not set",
 			rule: &nvapis.RESTAdmissionRule{
 				RuleMode: "",
 			},
@@ -85,11 +85,31 @@ func TestGetRuleModule(t *testing.T) {
 			},
 			expected: "monitor",
 		},
+		{
+			name: "Rule mode used when CLI mode is not provided",
+			rule: &nvapis.RESTAdmissionRule{
+				RuleMode: "protect",
+			},
+			config: share.ConversionConfig{
+				Mode: "",
+			},
+			expected: "protect",
+		},
+		{
+			name: "Default mode used when both CLI and rule modes are not set",
+			rule: &nvapis.RESTAdmissionRule{
+				RuleMode: "",
+			},
+			config: share.ConversionConfig{
+				Mode: "",
+			},
+			expected: "protect",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := builder.getRuleModule(tt.rule, tt.config)
+			actual := builder.getRulelMode(tt.rule, tt.config)
 			require.Equal(t, tt.expected, actual)
 		})
 	}
