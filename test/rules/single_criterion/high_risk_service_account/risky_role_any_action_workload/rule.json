@@ -1,0 +1,25 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "saBindRiskyRole",
+                    "op": "containsAny",
+                    "path": "saBindRiskyRole",
+                    "value": "risky_role_any_action_workload"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1000,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        }
+    ]
+}

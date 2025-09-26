@@ -1,0 +1,18 @@
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: rbac.authorization.k8s.io
+        name: null
+        namespace: null
+        resource: roles
+        subresource: null
+        verb: '*'
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":true,"reason":"RBAC: allowed by ClusterRoleBinding \"risky-binding\" of ClusterRole \"risky-role\" to ServiceAccount \"high-risk-service-account/default\""}'

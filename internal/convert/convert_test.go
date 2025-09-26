@@ -385,6 +385,18 @@ func TestConvertSingleCriterion_NamespaceRule(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_HighRiskServiceAccount(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/high_risk_service_account/risky_role_any_action_rbac",
+		"../../test/rules/single_criterion/high_risk_service_account/risky_role_any_action_workload",
+		"../../test/rules/single_criterion/high_risk_service_account/risky_role_create_pod",
+		"../../test/rules/single_criterion/high_risk_service_account/risky_role_exec_into_container",
+		"../../test/rules/single_criterion/high_risk_service_account/risky_role_view_secret",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */

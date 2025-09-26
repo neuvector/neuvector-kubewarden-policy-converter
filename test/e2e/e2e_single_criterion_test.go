@@ -110,3 +110,15 @@ func TestConvertSingleCriterion_NamespaceRule(t *testing.T) {
 	ruleDir := "../rules/namespace_selector/image_namespace_contain_any"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertSingleCriterion_HighRiskServiceAccount(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../rules/single_criterion/high_risk_service_account/risky_role_any_action_rbac",
+		"../rules/single_criterion/high_risk_service_account/risky_role_any_action_workload",
+		"../rules/single_criterion/high_risk_service_account/risky_role_create_pod",
+		"../rules/single_criterion/high_risk_service_account/risky_role_exec_into_container",
+		"../rules/single_criterion/high_risk_service_account/risky_role_view_secret",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}

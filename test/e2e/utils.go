@@ -26,11 +26,13 @@ const (
 
 // Config is the configuration for a rule.
 type Config struct {
-	Description   string   `json:"description"`
-	TestWorkspace string   `json:"testWorkspace"`
-	RunKwctl      bool     `json:"runKwctl"` // Whether to run kwctl to verify the rule
-	Accept        []string `json:"accept"`   // List of files that should accept after run kwctl
-	Reject        []string `json:"reject"`   // List of files that should reject after run kwctl
+	Description                        string   `json:"description"`
+	TestWorkspace                      string   `json:"testWorkspace"`
+	RunKwctl                           bool     `json:"runKwctl"`                           // Whether to run kwctl to verify the rule
+	Accept                             []string `json:"accept"`                             // List of files that should accept after run kwctl
+	Reject                             []string `json:"reject"`                             // List of files that should reject after run kwctl
+	RejectHostCapabilitiesInteractions *string  `json:"rejectHostCapabilitiesInteractions"` // Replay kubernetes capabilities interactions for reject resources
+	AcceptHostCapabilitiesInteractions *string  `json:"acceptHostCapabilitiesInteractions"` // Replay kubernetes capabilities interactions for accept resources
 }
 
 type kwctlResponse struct {
@@ -48,13 +50,20 @@ func verifyWithKwctl(t *testing.T, config *Config, outputPath string) {
 	for _, testCase := range []struct {
 		accept    bool
 		resources []string
+		hostCaps  *string
 	}{
-		{true, config.Accept},
-		{false, config.Reject},
+		{true, config.Accept, config.AcceptHostCapabilitiesInteractions},
+		{false, config.Reject, config.RejectHostCapabilitiesInteractions},
 	} {
 		for _, resource := range testCase.resources {
 			resourcePath := filepath.Join(config.TestWorkspace, resource)
-			allowed, err := runKwctl(resourcePath, outputPath)
+
+			replayHostCapabilitiesInteractions := ""
+			if testCase.hostCaps != nil {
+				replayHostCapabilitiesInteractions = filepath.Join(config.TestWorkspace, *testCase.hostCaps)
+			}
+
+			allowed, err := runKwctl(resourcePath, outputPath, replayHostCapabilitiesInteractions)
 			require.NoError(t, err, "error running kwctl for resource %s: %s", resource, err)
 			if testCase.accept {
 				assert.True(t, allowed, "resource %s should be accepted", resource)
@@ -82,7 +91,7 @@ func loadConfig(ruleDir string) (*Config, error) {
 	return &config, nil
 }
 
-func runKwctl(resourcePath, policyPath string) (bool, error) {
+func runKwctl(resourcePath, policyPath, replayHostCapabilitiesInteractions string) (bool, error) {
 	if _, err := os.Stat(resourcePath); err != nil {
 		return false, fmt.Errorf("resource file does not exist: %w", err)
 	}
@@ -115,8 +124,17 @@ func runKwctl(resourcePath, policyPath string) (bool, error) {
 		return false, fmt.Errorf("failed to write temp file: %w", err)
 	}
 
-	//nolint:gosec // File paths are validated and temp file is safely created
-	kwctlCmd := exec.CommandContext(ctx, kwctlExecPath, "run", "-r", tempFile.Name(), policyPath)
+	args := []string{
+		"run",
+		"-r", tempFile.Name(),
+		policyPath,
+	}
+
+	if replayHostCapabilitiesInteractions != "" {
+		args = append(args, "--replay-host-capabilities-interactions", replayHostCapabilitiesInteractions)
+	}
+
+	kwctlCmd := exec.CommandContext(ctx, kwctlExecPath, args...)
 	output, err = kwctlCmd.Output()
 	if err != nil {
 		return false, fmt.Errorf("kwctl run failed: %w", err)

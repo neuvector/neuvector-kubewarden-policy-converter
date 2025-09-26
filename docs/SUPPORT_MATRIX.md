@@ -35,7 +35,7 @@ This document details the support matrix, including the available operators, acc
 | [Resource Limit Configuration](#resource-limit-configuration) |            |                                    |
 | [Run as privileged](#run-as-privileged) |  ✅ Completed   | `pod-privileged:v1.0.3`            |
 | [Run as root](#run-as-root)    |  ✅ Completed   | `container-running-as-user:v1.0.4` |
-| [Service Account Bound high risk role](#service-account-bound-high-risk-role) |      |                                    |
+| [Service Account Bound high risk role](#service-account-bound-high-risk-role) | ✅ Completed | `high-risk-service-account:v0.1.2` |
 | [Share host IPC namespaces](#share-host-ip-namespaces) |  ✅ Completed   | `host-namespaces-psp:v1.1.0`       |
 | [Share host network](#share-host-network) |  ✅ Completed   | `host-namespaces-psp:v1.1.0`       |
 | [Share host PID namespace](#share-host-pid-namespace) |  ✅ Completed   | `host-namespaces-psp:v1.1.0`       |
@@ -376,11 +376,12 @@ This document details the support matrix, including the available operators, acc
 
 ## Service Account Bound high risk role
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed Support | **Kubewarden Module:** `high-risk-service-account:v0.1.2`
 
 | Operator         | Values | Notes |
 | ---------------- | ------ | ----- |
-| `containsTagAny` |        |       |
+| `containsTagAny` |    `risky_role_create_pod`,`risky_role_exec_into_container`,`risky_role_view_secret`,`risky_role_any_action_workload`,`risky_role_any_action_rbac`    |       |
+
 
 ---
 
