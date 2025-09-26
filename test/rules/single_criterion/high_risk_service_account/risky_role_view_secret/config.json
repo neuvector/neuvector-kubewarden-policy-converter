@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (risky role view secret)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "rejectHostCapabilitiesInteractions": "hostcapabilities_interactions/secret_get_permissions.yaml",
+  "acceptHostCapabilitiesInteractions": "hostcapabilities_interactions/risky_role_view_secret.yaml",
+  "accept": [
+    "deployments/normal.yaml"
+  ],
+  "reject": [
+    "deployments/high_risk_service_account.yaml"
+  ]
+}

@@ -1,0 +1,234 @@
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: ''
+        name: null
+        namespace: null
+        resource: pods
+        subresource: null
+        verb: '*'
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: ''
+        name: null
+        namespace: null
+        resource: pods/log
+        subresource: null
+        verb: '*'
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: deployments
+        subresource: null
+        verb: list
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: deployments
+        subresource: null
+        verb: get
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: statefulsets
+        subresource: null
+        verb: list
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: statefulsets
+        subresource: null
+        verb: get
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: daemonsets
+        subresource: null
+        verb: list
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: daemonsets
+        subresource: null
+        verb: get
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: replicasets
+        subresource: null
+        verb: list
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: apps
+        name: null
+        namespace: null
+        resource: replicasets
+        subresource: null
+        verb: get
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: batch
+        name: null
+        namespace: null
+        resource: jobs
+        subresource: null
+        verb: '*'
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: batch
+        name: null
+        namespace: null
+        resource: cronjobs
+        subresource: null
+        verb: '*'
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'
+- type: Exchange
+  request: |
+    !KubernetesCanI
+    request:
+      groups: null
+      resource_attributes:
+        group: autoscaling
+        name: null
+        namespace: null
+        resource: horizontalpodautoscalers
+        subresource: null
+        verb: '*'
+        version: null
+      user: system:serviceaccount:default:high-risk-service-account
+    disable_cache: false
+  response:
+    type: Success
+    payload: '{"allowed":false}'

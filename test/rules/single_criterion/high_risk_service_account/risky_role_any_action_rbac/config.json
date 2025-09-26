@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (risky role any action rbac)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "rejectHostCapabilitiesInteractions": "hostcapabilities_interactions/deployment_get_permissions.yaml",
+  "acceptHostCapabilitiesInteractions": "hostcapabilities_interactions/risky_role_any_action_rbac.yaml",
+  "accept": [
+    "deployments/normal.yaml"
+  ],
+  "reject": [
+    "deployments/high_risk_service_account.yaml"
+  ]
+}

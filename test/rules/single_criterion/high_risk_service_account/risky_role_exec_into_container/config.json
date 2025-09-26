@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (risky role exec into container)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "rejectHostCapabilitiesInteractions": "hostcapabilities_interactions/pod_exec_permissions.yaml",
+  "acceptHostCapabilitiesInteractions": "hostcapabilities_interactions/risky_role_exec_into_container.yaml",
+  "accept": [
+    "deployments/normal.yaml"
+  ],
+  "reject": [
+    "deployments/high_risk_service_account.yaml"
+  ]
+}

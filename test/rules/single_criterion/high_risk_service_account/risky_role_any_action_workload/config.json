@@ -1,0 +1,13 @@
+{
+  "description": "Test single criteria rule (risky role any action workload)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "rejectHostCapabilitiesInteractions": "hostcapabilities_interactions/pod_any_action_workload_permissions.yaml",
+  "acceptHostCapabilitiesInteractions": "hostcapabilities_interactions/risky_role_any_action_workload.yaml",
+  "accept": [
+    "deployments/normal.yaml"
+  ],
+  "reject": [
+    "deployments/high_risk_service_account.yaml"
+  ]
+}
