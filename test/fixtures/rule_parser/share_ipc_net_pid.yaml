@@ -1,7 +1,6 @@
 apiVersion: neuvector.com/v1
 kind: NvAdmissionControlSecurityRule
 metadata:
-  creationTimestamp: null
   name: local
 spec:
   rules:
