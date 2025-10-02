@@ -1,7 +1,6 @@
 apiVersion: policies.kubewarden.io/v1
 kind: ClusterAdmissionPolicy
 metadata:
-  creationTimestamp: null
   name: neuvector-rule-1000-conversion
 spec:
   backgroundAudit: true
