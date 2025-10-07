@@ -28,3 +28,8 @@ func TestConvertMultiCriteria_ImageAndImageRegistryNamespaceContainAny(t *testin
 	ruleDir := "../rules/namespace_selector/image_and_image_registry_namespace_contain_any"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertMultiCriteria_PSPBestPractice(t *testing.T) {
+	ruleDir := "../rules/multi_criteria/psp_best_practice"
+	testRuleConversion(t, ruleDir)
+}
