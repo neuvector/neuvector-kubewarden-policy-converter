@@ -69,7 +69,7 @@ KWCTL := $(LOCALBIN)/kwctl
 
 ## Tool Versions
 GOLANGCI_LINT_VERSION ?= v2.3.0
-KWCTL_VERSION := v1.28.1
+KWCTL_VERSION := v1.29.1
 
 .PHONY: golangci-lint
 golangci-lint: $(GOLANGCI_LINT) ## Download golangci-lint locally if necessary.

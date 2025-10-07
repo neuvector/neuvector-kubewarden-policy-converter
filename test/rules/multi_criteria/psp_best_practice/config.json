@@ -1,0 +1,16 @@
+{
+  "description": "Test PSP Best Practice rule: deny containers that violate Pod Security Policy best practices (share host namespaces, run as privileged/root, allow privilege escalation)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/normal.yaml"
+  ],
+  "reject": [
+    "deployments/share_host_ipc.yaml",
+    "deployments/share_host_network.yaml",
+    "deployments/share_host_pid.yaml",
+    "deployments/run_as_privileged.yaml",
+    "deployments/run_as_root.yaml",
+    "deployments/privileged_escalation.yaml"
+  ]
+}

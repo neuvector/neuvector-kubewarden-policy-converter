@@ -31,7 +31,7 @@ This document details the support matrix, including the available operators, acc
 | [Modules](#modules)            |            |                                    |
 | [Mount Volumes](#mount-volumes) |            |                                    |
 | [Namespace](#namespace)        |  ✅ Completed   | `cel-policy:v1.3.4` |
-| [PSP best practice](#psp-best-practice) |            |                                    |
+| [PSP best practice](#psp-best-practice) |     ✅ Completed       | `allow-privilege-escalation-psp:v1.0.0`, `container-running-as-user:v1.0.4`, `host-namespaces-psp:v1.1.0`, `pod-privileged:v1.0.3` |
 | [Resource Limit Configuration](#resource-limit-configuration) |            |                                    |
 | [Run as privileged](#run-as-privileged) |  ✅ Completed   | `pod-privileged:v1.0.3`            |
 | [Run as root](#run-as-root)    |  ✅ Completed   | `container-running-as-user:v1.0.4` |
@@ -305,8 +305,13 @@ This document details the support matrix, including the available operators, acc
 ---
 
 ## PSP best practice
+**Status:** ✅ Completed
 
-**Status:** TBD | **Kubewarden Module:**
+**Kubewarden Module:**
+- allow-privilege-escalation-psp:v1.0.0
+- container-running-as-user:v1.0.4
+- host-namespaces-psp:v1.1.0
+- pod-privileged:v1.0.3
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |

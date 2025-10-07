@@ -27,6 +27,7 @@ import (
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/metacriterion"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/policy"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
@@ -36,11 +37,12 @@ import (
 )
 
 type RuleConverter struct {
-	config        share.ConversionConfig
-	handlers      map[string]share.PolicyHandler
-	policyFactory *policy.Factory
-	logger        *slog.Logger
-	showSummary   bool
+	config         share.ConversionConfig
+	policyFactory  *policy.Factory
+	logger         *slog.Logger
+	showSummary    bool
+	handlers       map[string]share.PolicyHandler
+	metaCriterions map[string]metacriterion.MetaCriterion
 }
 
 const (
@@ -57,6 +59,7 @@ func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
 	}
 
 	rc.initHandlers()
+	rc.initMetaCriterions()
 	rc.policyFactory.SetHandlers(rc.handlers)
 
 	return rc
@@ -78,7 +81,12 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleNamespace:                 handlers.NewNamespaceHandler(),
 		handlers.RuleHighRiskServiceAccount:    handlers.NewHighRiskServiceAccountHandler(),
 		handlers.RuleLabels:                    handlers.NewLabelsPolicyHandler(),
-		handlers.RuleAnnotations:               handlers.NewAnnotationsPolicyHandler(),
+		handlers.RuleAnnotations:               handlers.NewAnnotationsPolicyHandler()}
+}
+
+func (r *RuleConverter) initMetaCriterions() {
+	r.metaCriterions = map[string]metacriterion.MetaCriterion{
+		metacriterion.RulePSPBestPractices: metacriterion.NewPSPBestPracticeMetaCriterion(),
 	}
 }
 
@@ -114,6 +122,29 @@ func (r *RuleConverter) Convert(ruleFile string) error {
 	return nil
 }
 
+// expandMetaCriterion processes and expands meta criteria in admission rules.
+// In NeuVector, meta criteria are used to group related criteria into a single entity.
+//
+// This function modifies the nvRule object IN-PLACE by expanding any meta criterion
+// definitions into their concrete counterparts.
+func (r *RuleConverter) expandMetaCriterion(nvRule *nvapis.RESTAdmissionRule) error {
+	var criteria []*nvapis.RESTAdmRuleCriterion
+
+	for _, criterion := range nvRule.Criteria {
+		if ruleToEquivalentCriteria, exists := r.metaCriterions[criterion.Name]; exists {
+			if !ruleToEquivalentCriteria.GetSupportedOps()[criterion.Op] {
+				return fmt.Errorf("%s: %s", share.MsgUnsupportedCriteriaOperator, criterion.Op)
+			}
+			criteria = append(criteria, ruleToEquivalentCriteria.Expand()...)
+		} else {
+			criteria = append(criteria, criterion)
+		}
+	}
+
+	nvRule.Criteria = criteria
+	return nil
+}
+
 func (r *RuleConverter) convertRules(nvRules []*nvapis.RESTAdmissionRule) ([]ruleParsingResult, []Policy) {
 	var (
 		results  []ruleParsingResult
@@ -121,6 +152,11 @@ func (r *RuleConverter) convertRules(nvRules []*nvapis.RESTAdmissionRule) ([]rul
 	)
 
 	for _, rule := range nvRules {
+		err := r.expandMetaCriterion(rule)
+		if err != nil {
+			results = append(results, ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()})
+			continue
+		}
 		result := r.convertRule(rule)
 		results = append(results, result)
 		if result.policy != nil {

@@ -1,0 +1,25 @@
+{
+    "rules": [
+        {
+            "category": "Kubernetes",
+            "cfg_type": "user_created",
+            "comment": "Deny nginx redis images or docker.io quay.io registries",
+            "containers": [
+                "containers"
+            ],
+            "criteria": [
+                {
+                    "name": "pspCompliance",
+                    "op": "=",
+                    "path": "pspCompliance",
+                    "value": "true"
+                }
+            ],
+            "critical": false,
+            "disable": false,
+            "id": 1000,
+            "rule_mode": "protect",
+            "rule_type": "deny"
+        }
+    ]
+}
