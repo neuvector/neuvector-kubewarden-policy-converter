@@ -22,9 +22,9 @@ This document details the support matrix, including the available operators, acc
 | [Environment variables](#environment-variables) |  ✅ Completed   | `environment-variable-policy:v3.0.2` |
 | [Image](#image)                |  ✅ Completed   | `trusted-repos:v2.0.1` |
 | [Image compliance violations](#image-compliance-violations) |            |                                    |
-| [Image without OS information](#image-without-os-information) |            |                                    |
+| [Image without OS information](#image-without-os-information) | ❌ Not Support |                                    |
 | [Image registry](#image-registry) |  ✅ Completed   | `trusted-repos:v2.0.1` |
-| [Image scanned](#image-scanned) |            |                                    |
+| [Image scanned](#image-scanned) | |                                    |
 | [Image signed](#image-signed)  |            |                                    |
 | [Image sigstore verifiers](#image-sigstore-verifiers) | ❌ Not Support |                                    |
 | [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.2` |
@@ -208,12 +208,9 @@ This document details the support matrix, including the available operators, acc
 
 ## Image without OS information
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ❌ Not Support
 
-| Operator | Values          | Notes |
-| -------- | --------------- | ----- |
-| `=`      | `true`, `false` |       |
-
+**Note:** NeuVector checks only for the presence of OS info, offering no security benefit. Migration will occur if requested.
 ---
 
 ## Image registry
@@ -234,7 +231,6 @@ This document details the support matrix, including the available operators, acc
 | Operator | Values          | Notes |
 | -------- | --------------- | ----- |
 | `=`      | `true`, `false` |       |
-
 ---
 
 ## Image signed
