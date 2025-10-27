@@ -8,7 +8,7 @@ require (
 	github.com/neuvector/neuvector v0.0.0-20251001210109-c33c2ea14522
 	github.com/olekukonko/tablewriter v1.1.0
 	github.com/stretchr/testify v1.11.1
-	github.com/urfave/cli/v3 v3.4.1
+	github.com/urfave/cli/v3 v3.5.0
 	go.yaml.in/yaml/v4 v4.0.0-rc.2
 	k8s.io/api v0.34.1
 	k8s.io/apimachinery v0.34.1
