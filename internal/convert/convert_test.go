@@ -397,6 +397,31 @@ func TestConvertSingleCriterion_HighRiskServiceAccount(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_ImageScanned(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/image_scanned/disable_not_scanned_image_deployment",
+		"../../test/rules/single_criterion/image_scanned/allow_not_scanned_image_deployment",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
+func TestConvertSingleCriterion_HighCVECount(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/high_cve_count",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
+func TestConvertSingleCriterion_MedCVECount(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/med_cve_count",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */
@@ -427,5 +452,10 @@ func TestConvertMultiCriteria_ImageAndImageRegistryNamespaceContainAny(t *testin
 
 func TestConvertMultiCriteria_PSPBestPractice(t *testing.T) {
 	ruleDir := "../../test/rules/multi_criteria/psp_best_practice"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertMultiCriteria_ImageCVE(t *testing.T) {
+	ruleDir := "../../test/rules/multi_criteria/image_cve"
 	testRuleConversion(t, ruleDir)
 }

@@ -35,10 +35,12 @@ func testRuleConversion(t *testing.T, ruleDir string) {
 	t.Helper()
 
 	converter := NewRuleConverter(share.ConversionConfig{
-		Mode:            ModeProtect,
-		PolicyServer:    PolicyServer,
-		BackgroundAudit: BackgroundAudit,
-		OutputFile:      OutputFile,
+		Mode:               ModeProtect,
+		PolicyServer:       PolicyServer,
+		BackgroundAudit:    BackgroundAudit,
+		OutputFile:         OutputFile,
+		VulReportNamespace: "default",
+		Platform:           "amd64",
 	})
 
 	rulePath := filepath.Join(ruleDir, "rule.json")

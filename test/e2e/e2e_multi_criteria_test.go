@@ -33,3 +33,8 @@ func TestConvertMultiCriteria_PSPBestPractice(t *testing.T) {
 	ruleDir := "../rules/multi_criteria/psp_best_practice"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertMultiCriteria_ImageCVE(t *testing.T) {
+	ruleDir := "../rules/multi_criteria/image_cve"
+	testRuleConversion(t, ruleDir)
+}

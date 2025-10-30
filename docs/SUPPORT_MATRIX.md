@@ -13,9 +13,9 @@ This document details the support matrix, including the available operators, acc
 | [Add customized criterion](#add-customized-criterion) |            |                                    |
 | [Allow privilege escalation](#allow-privilege-escalation) |  ✅ Completed   | `allow-privilege-escalation-psp:v1.0.0` |
 | [Annotations](#annotations)    |  ✅ Completed   | `annotations:v0.1.2` |
-| [Count high severity CVE](#count-high-severity-cve) |            |                                    |
+| [Count high severity CVE](#count-high-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.0` |
 | [Count high severity CVE with fix](#count-high-severity-cve-with-fix) |          |                                    |
-| [Count medium severity CVE](#count-medium-severity-cve) |            |                                    |
+| [Count medium severity CVE](#count-medium-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.0` |
 | [CVE names](#cve-names)        |            |                                    |
 | [CVE score](#cve-score)        |  ❌ Not Support  |                                    |
 | [Environment variables with secrets](#environment-variables-with-secrets) |  ⚠️ Partial   | `env-variable-secrets-scanner:v1.0.5` |
@@ -24,7 +24,7 @@ This document details the support matrix, including the available operators, acc
 | [Image compliance violations](#image-compliance-violations) |            |                                    |
 | [Image without OS information](#image-without-os-information) | ❌ Not Support |                                    |
 | [Image registry](#image-registry) |  ✅ Completed   | `trusted-repos:v2.0.1` |
-| [Image scanned](#image-scanned) | |                                    |
+| [Image scanned](#image-scanned) | ✅ Completed | `image-cve-policy:v0.5.0` |
 | [Image signed](#image-signed)  |            |                                    |
 | [Image sigstore verifiers](#image-sigstore-verifiers) | ❌ Not Support |                                    |
 | [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.2` |
@@ -83,23 +83,22 @@ This document details the support matrix, including the available operators, acc
 
 ## Count high severity CVE
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed  | **Kubewarden Module:** `image-cve-policy:v0.5.0`
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
 | `>=`     |        |       |
 
-**Sub-option: publishDays**
 
-| Operator | Values | Notes |
-| -------- | ------ | ----- |
-| `>=`     |        |       |
+**Sub-option: publishDays** ❌ Not Support
+
+**Note:** Every CVE is in scope and must not be ignored, regardless of how long ago it was published.
 
 ---
 
 ## Count high severity CVE with fix
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed  | **Kubewarden Module:**
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
@@ -115,17 +114,15 @@ This document details the support matrix, including the available operators, acc
 
 ## Count medium severity CVE
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed  | **Kubewarden Module:** `image-cve-policy:v0.5.0`
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
 | `>=`     |        |       |
 
-**Sub-option: publishDays**
+**Sub-option: publishDays** ❌ Not Support
 
-| Operator | Values | Notes |
-| -------- | ------ | ----- |
-| `>=`     |        |       |
+**Note:** Every CVE is in scope and must not be ignored, regardless of how long ago it was published.
 
 ---
 
@@ -226,7 +223,10 @@ This document details the support matrix, including the available operators, acc
 
 ## Image scanned
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed | **Kubewarden Module:** `image-cve-policy:v0.5.0`
+
+
+**Note:** In NeuVector, setting image scanned to true allows not scanned images to deploy. Set `ignoreMissingVulnerabilityReport` to  true to have the same behavior. By default, not scanned images are rejected.
 
 | Operator | Values          | Notes |
 | -------- | --------------- | ----- |

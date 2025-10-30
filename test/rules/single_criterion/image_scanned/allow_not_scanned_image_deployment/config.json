@@ -1,0 +1,10 @@
+{
+  "description": "Test single criteria rule (allow not scanned image deployment)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "acceptHostCapabilitiesInteractions": "hostcapabilities_interactions/deploy_not_scanned_image.yaml",
+  "accept": [
+    "deployments/image_cve_counts.yaml",
+    "deployments/normal.yaml"
+  ]
+}

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distroless-app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: distroless-app
+  template:
+    metadata:
+      labels:
+        app: distroless-app
+    spec:
+      containers:
+      - name: app
+        image: index.docker.io/openeuler/distroless:latest@sha256:fbcbb9af45d5167083d5f4cc07e2cb79951c76625fd5b1391f424b806befda29
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi

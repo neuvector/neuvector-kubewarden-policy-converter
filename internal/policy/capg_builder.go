@@ -72,6 +72,10 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 			},
 		}
 
+		if ctxResources := handler.GetContextAwareResources(); len(ctxResources) > 0 {
+			member.ContextAwareResources = ctxResources
+		}
+
 		policies[policyName] = member
 		conditions = append(conditions, fmt.Sprintf("%s()", policyName))
 	}

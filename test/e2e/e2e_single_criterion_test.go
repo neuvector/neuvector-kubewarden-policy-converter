@@ -122,3 +122,22 @@ func TestConvertSingleCriterion_HighRiskServiceAccount(t *testing.T) {
 		testRuleConversion(t, ruleDir)
 	}
 }
+
+func TestConvertSingleCriterion_ImageScanned(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../rules/single_criterion/image_scanned/disable_not_scanned_image_deployment",
+		"../rules/single_criterion/image_scanned/allow_not_scanned_image_deployment",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
+func TestConvertSingleCriterion_HighCVECount(t *testing.T) {
+	ruleDir := "../rules/single_criterion/high_cve_count"
+	testRuleConversion(t, ruleDir)
+}
+
+func TestConvertSingleCriterion_MedCVECount(t *testing.T) {
+	ruleDir := "../rules/single_criterion/med_cve_count"
+	testRuleConversion(t, ruleDir)
+}

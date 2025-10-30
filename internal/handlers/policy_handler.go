@@ -3,6 +3,7 @@ package handlers
 import (
 	"errors"
 
+	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 )
@@ -14,11 +15,12 @@ const (
 
 // BasePolicyHandler provides base implementation for PolicyHandler interface.
 type BasePolicyHandler struct {
-	Name               string
-	Module             string
-	Unsupported        bool
-	ApplicableResource string
-	SupportedOps       map[string]bool
+	Name                  string
+	Module                string
+	Unsupported           bool
+	ApplicableResource    string
+	SupportedOps          map[string]bool
+	ContextAwareResources []policiesv1.ContextAwareResource
 }
 
 func (h *BasePolicyHandler) Validate(rule *nvapis.RESTAdmRuleCriterion) error {
@@ -48,4 +50,8 @@ func (h *BasePolicyHandler) GetModule() string {
 
 func (h *BasePolicyHandler) GetApplicableResource() string {
 	return h.ApplicableResource
+}
+
+func (h *BasePolicyHandler) GetContextAwareResources() []policiesv1.ContextAwareResource {
+	return h.ContextAwareResources
 }
