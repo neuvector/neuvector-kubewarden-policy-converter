@@ -81,5 +81,9 @@ func (b *CAPBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share
 		},
 	}
 
+	if ctxResources := policyHandler.GetContextAwareResources(); len(ctxResources) > 0 {
+		policy.Spec.ContextAwareResources = ctxResources
+	}
+
 	return &policy, nil
 }

@@ -1,16 +1,19 @@
 package share
 
 import (
+	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 )
 
 // ConversionConfig holds configuration for the conversion process.
 type ConversionConfig struct {
-	OutputFile      string
-	PolicyServer    string
-	Mode            string
-	BackgroundAudit bool
-	ShowSummary     bool
+	OutputFile         string
+	VulReportNamespace string
+	Platform           string
+	PolicyServer       string
+	Mode               string
+	BackgroundAudit    bool
+	ShowSummary        bool
 }
 
 // PolicyHandler defines the interface that each policy handler must implement
@@ -33,4 +36,7 @@ type PolicyHandler interface {
 
 	// BuildPolicySettings builds the policy settings for one criterion or multiple criteria that map to the same module
 	BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error)
+
+	// GetContextAwareResources returns the context aware resources for this criterion
+	GetContextAwareResources() []policiesv1.ContextAwareResource
 }

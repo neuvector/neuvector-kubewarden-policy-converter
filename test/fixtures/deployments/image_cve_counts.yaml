@@ -1,0 +1,43 @@
+# This deployment is used to test the image cve counts policy.
+# With the image: ghcr.io/kubewarden/sbomscanner/test-assets/golang:1.12-alpine@sha256:ea95bb81dab31807beac6c62824c048b1ee96b408f6097ea9dd0204e380f00b2
+# It has 10 high CVEs and 10 medium CVEs.
+# Total: 45 (UNKNOWN: 0, LOW: 2, MEDIUM: 10, HIGH: 29, CRITICAL: 4)
+# Total without fixes: 45 (UNKNOWN: 0, LOW: 2, MEDIUM: 10, HIGH: 29, CRITICAL: 4)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-test
+  namespace: default
+  labels:
+    app: golang-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golang-test
+  template:
+    metadata:
+      labels:
+        app: golang-test
+    spec:
+      containers:
+      - name: golang
+        image: ghcr.io/kubewarden/sbomscanner/test-assets/golang:1.12-alpine@sha256:ea95bb81dab31807beac6c62824c048b1ee96b408f6097ea9dd0204e380f00b2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - test -f /usr/local/go/bin/go
+          initialDelaySeconds: 5
+          periodSeconds: 10

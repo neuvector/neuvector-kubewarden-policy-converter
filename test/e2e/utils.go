@@ -159,6 +159,8 @@ func runConverterBinary(rule, policies string) error {
 		"--mode", "protect",
 		"--policyserver", PolicyServer,
 		"--backgroundaudit", strconv.FormatBool(BackgroundAudit),
+		"--vulreportnamespace", "default",
+		"--platform", "amd64",
 		rule,
 	}
 

@@ -1,0 +1,13 @@
+{
+  "description": "Test multi criteria rule (deny when medium / high severity CVE count if exceeds policy limit)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "rejectHostCapabilitiesInteractions": "hostcapabilities_interactions/high_vuls.yaml",
+  "acceptHostCapabilitiesInteractions": "hostcapabilities_interactions/zero_vuls.yaml",
+  "accept": [
+    "deployments/distroless.yaml"
+  ],
+  "reject": [
+    "deployments/image_cve_counts.yaml"
+  ]
+}

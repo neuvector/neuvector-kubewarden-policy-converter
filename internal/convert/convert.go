@@ -81,7 +81,20 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleNamespace:                 handlers.NewNamespaceHandler(),
 		handlers.RuleHighRiskServiceAccount:    handlers.NewHighRiskServiceAccountHandler(),
 		handlers.RuleLabels:                    handlers.NewLabelsPolicyHandler(),
-		handlers.RuleAnnotations:               handlers.NewAnnotationsPolicyHandler()}
+		handlers.RuleAnnotations:               handlers.NewAnnotationsPolicyHandler(),
+		handlers.RuleImageScanned: handlers.NewImageCVEHandler(
+			r.config.VulReportNamespace,
+			r.config.Platform,
+		),
+		handlers.RuleHighCVECount: handlers.NewImageCVEHandler(
+			r.config.VulReportNamespace,
+			r.config.Platform,
+		),
+		handlers.RuleMedCVECount: handlers.NewImageCVEHandler(
+			r.config.VulReportNamespace,
+			r.config.Platform,
+		),
+	}
 }
 
 func (r *RuleConverter) initMetaCriterions() {

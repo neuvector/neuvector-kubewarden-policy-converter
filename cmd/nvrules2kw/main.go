@@ -36,6 +36,7 @@ nvrules2kw converts NeuVector Admission Control rules into Kubewarden ClusterAdm
 Use "nvrules2kw <command> --help" for details on each command.
 `
 
+//nolint:funlen // The main function intentionally declares many arguments and flags for clarity and usability; it's acceptable to suppress the linter warning about function length here.
 func main() {
 	var commands = []*cli.Command{
 		{
@@ -49,6 +50,16 @@ func main() {
 					Name:  "policyserver",
 					Value: "default",
 					Usage: "Name of the PolicyServer to bind the generated policies to",
+				},
+				&cli.StringFlag{
+					Name:  "vulreportnamespace",
+					Value: "sbomscanner",
+					Usage: "Namespace where the vulnerability report is stored",
+				},
+				&cli.StringFlag{
+					Name:  "platform",
+					Value: "amd64",
+					Usage: "Architecture of the platform, must use values listed in the Go Language document for GOARCH (e.g.: amd64, arm64, s390x).",
 				},
 				&cli.BoolFlag{
 					Name:  "backgroundaudit",
@@ -89,19 +100,22 @@ func main() {
 				outputFile := cmd.String("output")
 				mode := cmd.String("mode")
 				showSummary := cmd.Bool("show-summary")
+				vulReportNamespace := cmd.String("vulreportnamespace")
+				platform := cmd.String("platform")
 
 				converter := convert.NewRuleConverter(share.ConversionConfig{
-					OutputFile:      outputFile,
-					Mode:            mode,
-					PolicyServer:    policyServer,
-					BackgroundAudit: backgroundAudit,
-					ShowSummary:     showSummary,
+					OutputFile:         outputFile,
+					Mode:               mode,
+					PolicyServer:       policyServer,
+					BackgroundAudit:    backgroundAudit,
+					ShowSummary:        showSummary,
+					VulReportNamespace: vulReportNamespace,
+					Platform:           platform,
 				})
 
 				if err := converter.Convert(ruleFile); err != nil {
 					return fmt.Errorf("error processing rules: %w", err)
 				}
-
 				return nil
 			},
 		},

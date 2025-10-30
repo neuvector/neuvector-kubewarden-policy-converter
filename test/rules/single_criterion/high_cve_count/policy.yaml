@@ -1,0 +1,55 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: neuvector-rule-1000-conversion
+spec:
+  backgroundAudit: true
+  mode: protect
+  module: registry://ghcr.io/kubewarden/policies/image-cve-policy:v0.5.0
+  mutating: false
+  contextAwareResources:
+    - apiVersion: storage.sbomscanner.kubewarden.io/v1alpha1
+      kind: VulnerabilityReport
+  policyServer: default
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - pods
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jobs
+    - cronjobs
+  settings:
+    platform:
+      arch: amd64
+      os: linux
+    vulnerabilityReportNamespace: default
+    maxSeverity:
+       high:
+         total: 4
+status:
+  policyStatus: ""
