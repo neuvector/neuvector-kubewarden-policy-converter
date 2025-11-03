@@ -17,7 +17,7 @@ This document details the support matrix, including the available operators, acc
 | [Count high severity CVE with fix](#count-high-severity-cve-with-fix) |          |                                    |
 | [Count medium severity CVE](#count-medium-severity-cve) |            |                                    |
 | [CVE names](#cve-names)        |            |                                    |
-| [CVE score](#cve-score)        |            |                                    |
+| [CVE score](#cve-score)        |  ❌ Not Support  |                                    |
 | [Environment variables with secrets](#environment-variables-with-secrets) |  ⚠️ Partial   | `env-variable-secrets-scanner:v1.0.5` |
 | [Environment variables](#environment-variables) |  ✅ Completed   | `environment-variable-policy:v3.0.2` |
 | [Image](#image)                |  ✅ Completed   | `trusted-repos:v2.0.1` |
@@ -28,7 +28,7 @@ This document details the support matrix, including the available operators, acc
 | [Image signed](#image-signed)  |            |                                    |
 | [Image sigstore verifiers](#image-sigstore-verifiers) | ❌ Not Support |                                    |
 | [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.2` |
-| [Modules](#modules)            |            |                                    |
+| [Modules](#modules)            |  ❌ Not Support  |                                    |
 | [Mount Volumes](#mount-volumes) |            |                                    |
 | [Namespace](#namespace)        |  ✅ Completed   | `cel-policy:v1.3.4` |
 | [PSP best practice](#psp-best-practice) |     ✅ Completed       | `allow-privilege-escalation-psp:v1.0.0`, `container-running-as-user:v1.0.4`, `host-namespaces-psp:v1.1.0`, `pod-privileged:v1.0.3` |
@@ -144,7 +144,9 @@ This document details the support matrix, including the available operators, acc
 
 ## CVE score
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ❌ Not Support
+
+**Note**: Current critical/high/medium settings should be enough, postpone this until we have some actual requests
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
@@ -269,7 +271,9 @@ This document details the support matrix, including the available operators, acc
 
 ## Modules
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ❌ Not Support
+
+**Note**: Postpone this until we have some actual requests
 
 | Operator            | Values | Notes |
 | ------------------- | ------ | ----- |
