@@ -89,7 +89,7 @@ func main() {
 				}
 				return ctx, nil
 			},
-			Action: func(_ context.Context, cmd *cli.Command) error {
+			Action: func(ctx context.Context, cmd *cli.Command) error {
 				args := cmd.Args().Slice()
 				if len(args) == 0 {
 					return errors.New("input file is required")
@@ -114,7 +114,7 @@ func main() {
 					Platform:           platform,
 				})
 
-				if err := converter.Convert(ruleFile); err != nil {
+				if err := converter.Convert(ctx, ruleFile); err != nil {
 					return fmt.Errorf("error processing rules: %w", err)
 				}
 				return nil

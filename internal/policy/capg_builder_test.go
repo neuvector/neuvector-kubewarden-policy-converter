@@ -3,6 +3,7 @@ package policy
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"testing"
 
 	v1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
@@ -100,8 +101,11 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 			config: share.ConversionConfig{
 				Mode: "monitor",
 			},
-			handlers:      map[string]share.PolicyHandler{},
-			expectedError: errors.New("no handler found for criterion: unknownCriterion"),
+			handlers: map[string]share.PolicyHandler{},
+			expectedError: fmt.Errorf(
+				"failed to group criteria by module: %w",
+				fmt.Errorf("no handler found for criterion: %s", "unknownCriterion"),
+			),
 		},
 		{
 			name: "error when handler has multiple namespace selectors",
@@ -142,6 +146,50 @@ func TestCAPGBuilder_GeneratePolicy(t *testing.T) {
 				handlers.RuleNamespace:    handlers.NewNamespaceHandler(),
 			},
 			expectedError: errors.New("rule skipped: contains multiple namespace selectors"),
+		},
+		{
+			name: "when custom rule criterion is mixed with other criteria, it is ignored, it will not be converted to a policy",
+			rule: &nvapis.RESTAdmissionRule{
+				ID:      1236,
+				Comment: "Mixed Criteria with Custom Rule",
+				Criteria: []*nvapis.RESTAdmRuleCriterion{
+					{
+						Name:  handlers.RuleShareIPC,
+						Op:    nvdata.CriteriaOpEqual,
+						Value: "true",
+					},
+					{
+						Name:      "",
+						Op:        nvdata.CriteriaOpExist,
+						Path:      "item.spec.initContainers",
+						Type:      "customPath",
+						Value:     "",
+						ValueType: "key",
+					},
+					{
+						Name:  handlers.RuleShareNetwork,
+						Op:    nvdata.CriteriaOpEqual,
+						Value: "false",
+					},
+				},
+			},
+			config: share.ConversionConfig{
+				PolicyServer:    "test-server",
+				Mode:            "monitor",
+				BackgroundAudit: false,
+			},
+			handlers: map[string]share.PolicyHandler{
+				handlers.RuleShareIPC:     handlers.NewHostNamespaceHandler(),
+				handlers.RuleShareNetwork: handlers.NewHostNamespaceHandler(),
+			},
+			expectedPolicyName:  "neuvector-rule-1236-conversion",
+			expectedPoliciesLen: 0,
+			expectedMode:        "monitor",
+			expectedError: fmt.Errorf(
+				"failed to group criteria by module: %w",
+				fmt.Errorf("no handler found for criterion: %s", ""),
+			),
+			expectedMessage: "violate NeuVector rule (id=1236), comment Mixed Criteria with Custom Rule",
 		},
 	}
 

@@ -10,7 +10,7 @@ This document details the support matrix, including the available operators, acc
 ## Summary
 | NV Criterion                   |   Status   |        Kubewarden Policy         |
 |--------------------------------|:----------:|:----------------------------------:|
-| [Add customized criterion](#add-customized-criterion) |            |                                    |
+| [Add customized criterion](#add-customized-criterion) | ⚠️ Partial | None |
 | [Allow privilege escalation](#allow-privilege-escalation) |  ✅ Completed   | `allow-privilege-escalation-psp:v1.0.0` |
 | [Annotations](#annotations)    |  ✅ Completed   | `annotations:v0.1.2` |
 | [Count high severity CVE](#count-high-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.0` |
@@ -50,11 +50,57 @@ This document details the support matrix, including the available operators, acc
 ---
 ## Add customized criterion
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ⚠️ Partial | **Kubewarden Module:** None
 
-| Operator | Values | Notes |
-| -------- | ------ | ----- |
-| *(none)* |        |       |
+**Note**: We currently support generating the Rego policy for you. Once it has been generated, follow the steps below to turn it into a valid Kubewarden policy. For further details, see the Distributing an OPA policy with Kubewarden guide: https://docs.kubewarden.io/tutorials/writing-policies/rego/open-policy-agent/distribute
+
+1. Locate the Rego policy file, usually under `rego_policies/nv_rule_ID.rego`.
+2. Clone the [opa-policy-template](https://github.com/kubewarden/opa-policy-template) repository, then copy the contents of `rego_policies/nv_rule_ID.rego` into `opa-policy-template/policy.rego`.
+3. In the `opa-policy-template` directory, run the following commands:
+   1. `OPA_V0_COMPATIBLE=true make policy.wasm` to generate `policy.wasm`.
+   2. `make annotated-policy.wasm` to annotate the module with Kubewarden metadata so it can be used by the PolicyServer.
+4. Push the annotated policy to your registry, for example:
+   `kwctl push annotated-policy.wasm registry://ghcr.io/{your}/policies/custom:v0.1.0`
+
+Apply a ClusterAdmissionPolicy similar to the template below.
+For example, if you want to use this custom policy for resources like Deployments and ReplicaSets:
+
+```bash
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: {policy name}
+spec:
+  backgroundAudit: true
+  mode: protect
+  module: registry://ghcr.io/{your}/policies/custom:v0.1.0
+  mutating: false
+  policyServer: default
+  namespaceSelector:
+    matchExpressions:
+    - key: metadata.namespace
+      operator: NotIn / In
+      values:
+      - foo
+      - bar
+  rules:
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+    - replicasets
+    - daemonsets
+    - statefulsets
+  settings: {}
+
+```
+
+With these steps, you end up with a working Kubewarden policy that enforces your custom rule.
 
 ---
 
