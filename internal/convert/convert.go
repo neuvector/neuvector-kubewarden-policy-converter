@@ -26,6 +26,7 @@ import (
 	"strconv"
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/customrule"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/metacriterion"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/policy"
@@ -103,22 +104,21 @@ func (r *RuleConverter) initMetaCriterions() {
 	}
 }
 
-func (r *RuleConverter) Convert(ruleFile string) error {
+func (r *RuleConverter) Convert(ctx context.Context, ruleFile string) error {
 	loader := NewRuleParser(ruleFile)
 	admissionRules, err := loader.ParseRules()
 	if err != nil {
 		return fmt.Errorf("failed to parse NeuVector Admission rules: %w", err)
 	}
 
-	results, policies := r.convertRules(admissionRules.Rules)
+	results, policies, regoPolicies := r.convertRules(ctx, admissionRules.Rules)
 
-	if len(policies) == 0 {
-		return errors.New("no valid policies generated from the input rules")
-	}
-
-	// output all collected policies
-	if err = r.outputPolicies(policies, r.config.OutputFile); err != nil {
-		return fmt.Errorf("failed to write output YAML: %w", err)
+	// Write all generated policies to the output file, but only if there are one or more policies
+	// Custom rules generate Rego files only, so policies may be empty
+	if len(policies) > 0 {
+		if err = r.outputPolicies(policies, r.config.OutputFile); err != nil {
+			return fmt.Errorf("failed to write output YAML: %w", err)
+		}
 	}
 
 	if r.showSummary {
@@ -128,8 +128,15 @@ func (r *RuleConverter) Convert(ruleFile string) error {
 		}
 	}
 
-	if r.config.OutputFile != "-" {
-		r.logger.InfoContext(context.Background(), "Conversion done", "output_file", r.config.OutputFile)
+	if regoPolicies > 0 {
+		r.logger.InfoContext(ctx, "rego policies generated",
+			"count", regoPolicies,
+			"directory", "rego_policies/",
+		)
+	}
+
+	if r.config.OutputFile != "-" && len(policies) > 0 {
+		r.logger.InfoContext(ctx, "Conversion done", "output_file", r.config.OutputFile)
 	}
 
 	return nil
@@ -158,25 +165,60 @@ func (r *RuleConverter) expandMetaCriterion(nvRule *nvapis.RESTAdmissionRule) er
 	return nil
 }
 
-func (r *RuleConverter) convertRules(nvRules []*nvapis.RESTAdmissionRule) ([]ruleParsingResult, []Policy) {
+func (r *RuleConverter) containsCustomRule(rule *nvapis.RESTAdmissionRule) bool {
+	for _, criterion := range rule.Criteria {
+		if customrule.IsCustomRule(criterion.Name) {
+			return true
+		}
+	}
+	return false
+}
+
+// convertCustomRule converts the neuvector rule contains one or more custom ruless to a Kubewarden policy.
+func (r *RuleConverter) convertCustomRule(rule *nvapis.RESTAdmissionRule) (ruleParsingResult, error) {
+	if err := customrule.BuildRegoPolicy(rule); err != nil {
+		return ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()}, err
+	}
+
+	return ruleParsingResult{
+		id:    rule.ID,
+		pass:  true,
+		notes: "Rego policy generated (no policy YAML for custom rule)",
+	}, nil
+}
+
+func (r *RuleConverter) convertRules(
+	ctx context.Context,
+	nvRules []*nvapis.RESTAdmissionRule,
+) ([]ruleParsingResult, []Policy, int) {
 	var (
-		results  []ruleParsingResult
-		policies []Policy
+		results      []ruleParsingResult
+		policies     []Policy
+		regoPolicies int
+		err          error
+		result       ruleParsingResult
 	)
 
 	for _, rule := range nvRules {
-		err := r.expandMetaCriterion(rule)
-		if err != nil {
+		if err = r.expandMetaCriterion(rule); err != nil {
 			results = append(results, ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()})
 			continue
 		}
-		result := r.convertRule(rule)
+		if r.containsCustomRule(rule) {
+			result, err = r.convertCustomRule(rule)
+			results = append(results, result)
+			if err == nil {
+				regoPolicies++
+			}
+			continue
+		}
+		result = r.convertRule(ctx, rule)
 		results = append(results, result)
 		if result.policy != nil {
 			policies = append(policies, result.policy)
 		}
 	}
-	return results, policies
+	return results, policies, regoPolicies
 }
 
 func (r *RuleConverter) validateRule(rule *nvapis.RESTAdmissionRule) error {
@@ -193,7 +235,13 @@ func (r *RuleConverter) validateRule(rule *nvapis.RESTAdmissionRule) error {
 	}
 
 	for _, criterion := range rule.Criteria {
-		handler, exists := r.handlers[criterion.Name]
+		criteriaName := criterion.Name
+		// Custom rule handler does not have a fixed criteria ops, so we do not validate it
+		if customrule.IsCustomRule(criterion.Name) {
+			continue
+		}
+
+		handler, exists := r.handlers[criteriaName]
 		if !exists {
 			return fmt.Errorf("%s: %s", share.MsgUnsupportedRuleCriteria, criterion.Name)
 		}
@@ -210,7 +258,7 @@ func (r *RuleConverter) validateRule(rule *nvapis.RESTAdmissionRule) error {
 	return nil
 }
 
-func (r *RuleConverter) convertRule(rule *nvapis.RESTAdmissionRule) ruleParsingResult {
+func (r *RuleConverter) convertRule(ctx context.Context, rule *nvapis.RESTAdmissionRule) ruleParsingResult {
 	err := r.validateRule(rule)
 	if err != nil {
 		return ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()}
@@ -218,6 +266,7 @@ func (r *RuleConverter) convertRule(rule *nvapis.RESTAdmissionRule) ruleParsingR
 
 	policyObj, err := r.policyFactory.GeneratePolicy(rule, r.config)
 	if err != nil {
+		r.logger.InfoContext(ctx, "error when generating Kubewarden policy", "error", err)
 		note := fmt.Sprintf("%s: %v", share.MsgRuleGenerateKWPolicyError, err)
 		return ruleParsingResult{id: rule.ID, pass: false, notes: note}
 	}

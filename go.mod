@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/charmbracelet/glamour v0.10.0
 	github.com/kubewarden/kubewarden-controller v1.31.0
-	github.com/neuvector/neuvector v0.0.0-20251001210109-c33c2ea14522
+	github.com/neuvector/neuvector v0.0.0-20251217082449-d56442cccfad
 	github.com/olekukonko/tablewriter v1.1.2
 	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v3 v3.6.1

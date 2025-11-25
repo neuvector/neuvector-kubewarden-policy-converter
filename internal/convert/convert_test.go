@@ -2,6 +2,7 @@ package convert
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -96,7 +97,7 @@ func TestProcessSingleRuleFailed(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := converter.convertRule(tt.rule)
+			result := converter.convertRule(context.Background(), tt.rule)
 			require.Equal(t, tt.expectedID, result.id)
 			require.Equal(t, tt.expectedPass, result.pass)
 			require.Equal(t, tt.expectedNotes, result.notes)
@@ -259,7 +260,7 @@ func TestOutputPolicies_Stdout(t *testing.T) {
 		BackgroundAudit: true,
 		ShowSummary:     false,
 	})
-	err = converter.Convert(testRule)
+	err = converter.Convert(context.Background(), testRule)
 	require.NoError(t, err)
 
 	w.Close()

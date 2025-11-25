@@ -32,18 +32,20 @@ func (b *CAPBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share
 		if !exists {
 			return nil, fmt.Errorf("no handler found for criterion: %s", criterion.Name)
 		}
+
+		// Handle namespace selector separately
 		if criterion.Name == handlers.RuleNamespace {
 			if namespaceSelector != nil {
 				return nil, errors.New("rule skipped: contains multiple namespace selectors")
 			}
 			namespaceSelector = b.buildNamespaceSelector(criterion)
-		} else {
-			policyHandler = handler
-			policyCriteria = append(policyCriteria, criterion)
-			applicableResources = append(applicableResources, handler.GetApplicableResource())
+			continue
 		}
-	}
 
+		policyHandler = handler
+		policyCriteria = append(policyCriteria, criterion)
+		applicableResources = append(applicableResources, handler.GetApplicableResource())
+	}
 	// Ignore rules that contain only namespace criteria as they don't represent meaningful policies
 	if policyHandler == nil {
 		return nil, errors.New(

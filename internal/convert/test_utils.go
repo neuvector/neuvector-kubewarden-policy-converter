@@ -1,6 +1,7 @@
 package convert
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -44,7 +45,7 @@ func testRuleConversion(t *testing.T, ruleDir string) {
 	})
 
 	rulePath := filepath.Join(ruleDir, "rule.json")
-	err := converter.Convert(rulePath)
+	err := converter.Convert(context.Background(), rulePath)
 	require.NoError(t, err)
 	defer os.Remove(OutputFile)
 
@@ -62,7 +63,7 @@ func testRuleConversionWithFail(t *testing.T, ruleDir string, mode string) {
 	})
 
 	rulePath := filepath.Join(ruleDir, "rule.json")
-	err := converter.Convert(rulePath)
+	err := converter.Convert(context.Background(), rulePath)
 
 	require.Error(t, err)
 	require.NoFileExists(t, OutputFile)

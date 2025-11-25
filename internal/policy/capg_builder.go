@@ -21,21 +21,17 @@ type CAPGBuilder struct {
 	handlers map[string]share.PolicyHandler
 }
 
-func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) (Policy, error) {
-	var (
-		policies            = policiesv1.PolicyGroupMembersWithContext{}
-		conditions          []string
-		matchConds          []admissionregistrationv1.MatchCondition
-		applicableResources = []string{}
-	)
-
+func (b *CAPGBuilder) groupCriteriaByModule(
+	rule *nvapis.RESTAdmissionRule,
+) (map[string][]*nvapis.RESTAdmRuleCriterion, []string, error) {
 	// Group criteria by their policy module
+	applicableResources := []string{}
 	moduleGroups := make(map[string][]*nvapis.RESTAdmRuleCriterion)
 	for _, criterion := range rule.Criteria {
 		// Group non-namespace criteria by their handler's module
 		handler, exists := b.handlers[criterion.Name]
 		if !exists {
-			return nil, fmt.Errorf("no handler found for criterion: %s", criterion.Name)
+			return nil, nil, fmt.Errorf("no handler found for criterion: %s", criterion.Name)
 		}
 
 		applicableResources = append(applicableResources, handler.GetApplicableResource())
@@ -43,6 +39,24 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 		moduleGroups[module] = append(moduleGroups[module], criterion)
 	}
 	sort.Strings(applicableResources) // Ensure the resources are sorted in fixed order
+	return moduleGroups, applicableResources, nil
+}
+
+func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config share.ConversionConfig) (Policy, error) {
+	var (
+		policies            = policiesv1.PolicyGroupMembersWithContext{}
+		conditions          []string
+		matchConds          []admissionregistrationv1.MatchCondition
+		moduleGroups        map[string][]*nvapis.RESTAdmRuleCriterion
+		applicableResources []string
+		settings            []byte
+		err                 error
+	)
+
+	moduleGroups, applicableResources, err = b.groupCriteriaByModule(rule)
+	if err != nil {
+		return nil, fmt.Errorf("failed to group criteria by module: %w", err)
+	}
 
 	var namespaceSelector *metav1.LabelSelector
 	for module, criteria := range moduleGroups {
@@ -58,7 +72,7 @@ func (b *CAPGBuilder) GeneratePolicy(rule *nvapis.RESTAdmissionRule, config shar
 			continue
 		}
 
-		settings, err := handler.BuildPolicySettings(criteria)
+		settings, err = handler.BuildPolicySettings(criteria)
 		if err != nil {
 			return nil, fmt.Errorf("failed to build policy settings: %w", err)
 		}

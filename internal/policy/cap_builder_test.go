@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	v1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/customrule"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
@@ -148,6 +149,32 @@ func TestCAPBuilder_GeneratePolicy(t *testing.T) {
 				handlers.RuleNamespace: handlers.NewNamespaceHandler(),
 			},
 			expectedError: errors.New("rule skipped: contains multiple namespace selectors"),
+		},
+		{
+			name: "error when rule contains only customPath criterion",
+			rule: &nvapis.RESTAdmissionRule{
+				ID:      1001,
+				Comment: "Custom Path Rule Test",
+				Criteria: []*nvapis.RESTAdmRuleCriterion{
+					{
+						Name:      customrule.RuleCustom,
+						Op:        nvdata.CriteriaOpContainsAll,
+						Path:      "item.spec.containers[_].name",
+						Type:      customrule.RuleCustom,
+						Value:     "nginx,redis",
+						ValueType: customrule.RuleCustom,
+					},
+				},
+			},
+			config: share.ConversionConfig{
+				PolicyServer:    "test-server",
+				Mode:            "monitor",
+				BackgroundAudit: false,
+			},
+			handlers: map[string]share.PolicyHandler{
+				handlers.RuleShareIPC: handlers.NewHostNamespaceHandler(),
+			},
+			expectedError: errors.New("no handler found for criterion: customPath"),
 		},
 	}
 
