@@ -1,0 +1,47 @@
+version: 2
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/nvrules2kw
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -X github.com/neuvector/neuvector-kubewarden-policy-converter/internal.Version={{.Version}}
+      - -X github.com/neuvector/neuvector-kubewarden-policy-converter/internal.BuildDate={{.Date}}
+      - -X github.com/neuvector/neuvector-kubewarden-policy-converter/internal.Tag={{.Tag}}
+signs:
+  - cmd: cosign
+    signature: "${artifact}.sigstore.json"
+    args:
+      - "sign-blob"
+      - "--bundle=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: all
+release:
+  use_existing_draft: true
+  extra_files:
+    - glob: dist/*.sig
+    - glob: dist/*.pem
+universal_binaries:
+  - replace: false
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+    wrap_in_directory: true
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  # Delegate Changelog to release-drafter
+  disable: true

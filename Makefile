@@ -3,6 +3,36 @@ APP_NAME := nvrules2kw
 CMD_DIR := ./cmd/$(APP_NAME)
 BIN_DIR := ./bin
 
+#retrieve go version details for version check
+GO_VERSION     := $(shell go version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
+GO_VERSION_MAJ := $(shell echo $(GO_VERSION) | cut -f1 -d'.')
+GO_VERSION_MIN := $(shell echo $(GO_VERSION) | cut -f2 -d'.')
+
+GOFMT ?= gofmt
+RM = rm
+
+GOBINPATH     := $(shell go env GOPATH)/bin
+COMMIT        := $(shell git rev-parse HEAD)
+DATE_FMT = +%Y%m%d
+ifdef SOURCE_DATE_EPOCH
+    BUILD_DATE ?= $(shell date -u -d "@$(SOURCE_DATE_EPOCH)" $(DATE_FMT))
+else
+    BUILD_DATE ?= $(shell date $(DATE_FMT))
+endif
+# TAG can be provided as an envvar (provided in the .spec file)
+TAG           ?= $(shell git describe --tags --exact-match HEAD 2> /dev/null)
+# CLOSEST_TAG can be provided as an envvar (provided in the .spec file)
+CLOSEST_TAG   ?= $(shell git describe --tags)
+# VERSION is inferred from CLOSEST_TAG
+# It accepts tags of type `vX.Y.Z`, `vX.Y.Z-(alpha|beta|rc|...)` and produces X.Y.Z
+VERSION       := $(shell echo $(CLOSEST_TAG) | sed -E 's/v(([0-9]\.?)+).*/\1/')
+TAGS          := development
+PROJECT_PATH  := github.com/neuvector/neuvector-kubewarden-policy-converter
+NVRULES2KW_LDFLAGS  = -ldflags "-X=$(PROJECT_PATH)/internal.Version=$(VERSION) \
+														-X=$(PROJECT_PATH)/internal.BuildDate=$(BUILD_DATE) \
+														-X=$(PROJECT_PATH)/internal.Tag=$(TAG) \
+														-X=$(PROJECT_PATH)/internal.ClosestTag=$(CLOSEST_TAG)"
+
 # Default target
 .PHONY: all
 all: build
@@ -12,7 +42,7 @@ all: build
 build:
 	@echo "Building $(APP_NAME)..."
 	@mkdir -p $(BIN_DIR)
-	CGO_ENABLED=0 GO111MODULE=on go build -o $(BIN_DIR)/$(APP_NAME) $(CMD_DIR)
+	CGO_ENABLED=0 go build $(NVRULES2KW_LDFLAGS) -tags $(TAGS) -o $(BIN_DIR)/$(APP_NAME) $(CMD_DIR)
 	@echo "Built binary at $(BIN_DIR)/$(APP_NAME)"
 
 # Run the app
