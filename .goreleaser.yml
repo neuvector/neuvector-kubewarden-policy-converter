@@ -1,0 +1,36 @@
+version: 2
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/nvrules2kw
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+signs:
+  - cmd: cosign
+    signature: "${artifact}.sigstore.json"
+    args:
+      - "sign-blob"
+      - "--bundle=${signature}"
+      - "${artifact}"
+      - "--yes"
+    artifacts: all
+release:
+  use_existing_draft: true
+  extra_files:
+    - glob: dist/*.sig
+    - glob: dist/*.pem
+archives:
+  - wrap_in_directory: true
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  # Delegate Changelog to release-drafter
+  disable: true
