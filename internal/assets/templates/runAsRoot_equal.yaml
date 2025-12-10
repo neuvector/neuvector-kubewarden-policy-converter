@@ -1,2 +1,0 @@
-run_as_user:
-  rule: MustRunAsNonRoot
