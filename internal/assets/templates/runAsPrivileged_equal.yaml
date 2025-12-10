@@ -1,2 +1,0 @@
-skip_init_containers: false
-skip_ephemeral_containers: false
