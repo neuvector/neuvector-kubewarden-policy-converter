@@ -11,7 +11,7 @@ require (
 	github.com/urfave/cli/v3 v3.6.1
 	go.yaml.in/yaml/v4 v4.0.0-rc.3
 	k8s.io/api v0.34.2
-	k8s.io/apimachinery v0.34.2
+	k8s.io/apimachinery v0.34.3
 	sigs.k8s.io/yaml v1.6.0
 )
 
