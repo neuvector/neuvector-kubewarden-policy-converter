@@ -23,6 +23,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/convert"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/support"
@@ -124,6 +125,15 @@ func main() {
 			Usage: "Show supported criteria matrix",
 			Action: func(_ context.Context, _ *cli.Command) error {
 				return support.RenderSupport()
+			},
+		},
+		{
+			Name:  "version",
+			Usage: "Print version information",
+			Action: func(_ context.Context, _ *cli.Command) error {
+				//nolint: forbidigo // it's fine to print to stdout
+				fmt.Printf("%s\n", internal.CurrentVersion().String())
+				return nil
 			},
 		},
 	}

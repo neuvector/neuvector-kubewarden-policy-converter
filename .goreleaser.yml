@@ -8,9 +8,15 @@ builds:
     main: ./cmd/nvrules2kw
     goos:
       - linux
+      - darwin
+      - windows
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -X github.com/neuvector/neuvector-kubewarden-policy-converter/internal/version.Version={{.Version}}
+      - -X github.com/neuvector/neuvector-kubewarden-policy-converter/internal/version.BuildDate={{.Date}}
+      - -X github.com/neuvector/neuvector-kubewarden-policy-converter/internal/version.GitCommit={{.Commit}}
 signs:
   - cmd: cosign
     signature: "${artifact}.sigstore.json"
