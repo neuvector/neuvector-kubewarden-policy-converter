@@ -1,0 +1,77 @@
+apiVersion: neuvector.com/v1
+kind: NvAdmissionControlSecurityRule
+metadata:
+  creationTimestamp: null
+  name: local
+spec:
+  config:
+    client_mode: service
+    enable: false
+    mode: monitor
+  rules:
+  - action: deny
+    containers:
+    - containers
+    conversion_id_ref: 1000
+    criteria:
+    - name: annotations
+      op: containsAll
+      path: annotations
+      value: foo
+    - name: cveHighCount
+      op: '>='
+      path: cveHighCount
+      value: "5"
+    disabled: false
+    rule_mode: ""
+  - action: deny
+    containers:
+    - containers
+    conversion_id_ref: 1001
+    criteria:
+    - name: cveHighCount
+      op: '>='
+      path: cveHighCount
+      value: "4"
+    disabled: false
+    rule_mode: ""
+  - action: deny
+    containers:
+    - containers
+    conversion_id_ref: 1002
+    criteria:
+    - name: customPath
+      op: containsAll
+      path: item.spec.initContainers[_].lifecycle.postStart.tcpSocket.host
+      type: customPath
+      value: localhost
+      value_type: string
+    - name: customPath
+      op: containsAny
+      path: item.spec.containers[_].image
+      type: customPath
+      value: redis:latest,nginx:latest,sbomscanner
+      value_type: string
+    - name: runAsPrivileged
+      op: =
+      path: runAsPrivileged
+      value: "true"
+      value_type: string
+    - name: imageScanned
+      op: =
+      path: imageScanned
+      value: "true"
+      value_type: string
+    disabled: false
+    rule_mode: protect
+  - action: allow
+    containers:
+    - containers
+    conversion_id_ref: 1004
+    criteria:
+    - name: cveHighCount
+      op: '>='
+      path: cveHighCount
+      value: "4"
+    disabled: false
+    rule_mode: ""
