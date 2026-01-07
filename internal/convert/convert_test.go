@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
@@ -27,13 +28,9 @@ func initMockHandlers() map[string]share.PolicyHandler {
 // TestProcessSingleRuleFailed cover the failed cases.
 func TestProcessSingleRuleFailed(t *testing.T) {
 	tests := []struct {
-		name               string
-		rule               *nvapis.RESTAdmissionRule
-		expectedID         uint32
-		expectedPass       bool
-		expectedNotes      string
-		expectedPolicyType interface{}
-		validatePolicy     func(t *testing.T, policy interface{}, policyServer string)
+		name          string
+		rule          *nvapis.RESTAdmissionRule
+		expectedError error
 	}{
 		{
 			name: "ID less than 1000 should be skipped",
@@ -48,9 +45,7 @@ func TestProcessSingleRuleFailed(t *testing.T) {
 				RuleType: "deny",
 				RuleMode: "protect",
 			},
-			expectedID:    999,
-			expectedPass:  false,
-			expectedNotes: share.MsgNeuVectorRuleOnly,
+			expectedError: errors.New(share.MsgNeuVectorRuleOnly),
 		},
 		{
 			name: "Non-existing criteria should be skipped",
@@ -66,9 +61,7 @@ func TestProcessSingleRuleFailed(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:    1001,
-			expectedPass:  false,
-			expectedNotes: fmt.Sprintf("%s: %s", share.MsgUnsupportedRuleCriteria, "annotations__NOT_EXIST"),
+			expectedError: fmt.Errorf("%s: %s", share.MsgUnsupportedRuleCriteria, "annotations__NOT_EXIST"),
 		},
 		{
 			name: "Invalid criteria operator should be skipped",
@@ -84,9 +77,7 @@ func TestProcessSingleRuleFailed(t *testing.T) {
 				CfgType:  "user_created",
 				RuleType: "deny",
 			},
-			expectedID:    1001,
-			expectedPass:  false,
-			expectedNotes: fmt.Sprintf("%s: %s", share.MsgUnsupportedCriteriaOperator, "containsAny_invalid"),
+			expectedError: fmt.Errorf("%s: %s", share.MsgUnsupportedCriteriaOperator, "containsAny_invalid"),
 		},
 	}
 
@@ -97,15 +88,12 @@ func TestProcessSingleRuleFailed(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := converter.convertRule(context.Background(), tt.rule)
-			require.Equal(t, tt.expectedID, result.id)
-			require.Equal(t, tt.expectedPass, result.pass)
-			require.Equal(t, tt.expectedNotes, result.notes)
-			require.Nil(t, result.policy)
+			policy, err := converter.convertRule(context.Background(), tt.rule)
+			require.Equal(t, tt.expectedError, err)
+			require.Nil(t, policy)
 		})
 	}
 }
-
 func TestValidateAndFilterRule(t *testing.T) {
 	tests := []struct {
 		name          string
@@ -234,6 +222,66 @@ func TestValidateAndFilterRule(t *testing.T) {
 			require.Equal(t, tt.expectedError, err)
 		})
 	}
+}
+
+// TestConvertRules_MockRulesYaml verifies that convertRules behaves correctly
+// for the combined NvAdmissionControlSecurityRule manifest under test/mock/rules.yaml.
+func TestConvertRules_MockRulesYaml(t *testing.T) {
+	t.Helper()
+
+	baseConfig := share.ConversionConfig{
+		Mode:               ModeProtect,
+		PolicyServer:       PolicyServer,
+		BackgroundAudit:    BackgroundAudit,
+		OutputFile:         OutputFile,
+		VulReportNamespace: "default",
+		Platform:           "amd64",
+	}
+
+	converter := NewRuleConverter(baseConfig)
+
+	rulePath := filepath.Join("..", "..", "test", "mock", "rules.yaml")
+	parser := NewRuleParser(rulePath)
+
+	rulesData, err := parser.ParseRules()
+	require.NoError(t, err)
+	require.NotNil(t, rulesData)
+	require.Len(t, rulesData.Rules, 4, "rules.yaml should produce four admission rules")
+
+	result := converter.convertRules(context.Background(), rulesData.Rules)
+
+	// First two rules are standard rules -> 2 YAML policies.
+	// Third rule contains customPath criteria -> 1 rego-only policy.
+	// Fourth rule is allow rule -> skipped (only deny rules are supported).
+	require.Len(t, result.Policies, 2, "expected two generated policies from rules.yaml")
+	require.Equal(t, 1, result.RegoCount, "expected one rego-only policy from rules.yaml")
+	require.Len(t, result.Summary, 4, "expected four summary entries for rules.yaml")
+
+	for i := range 3 {
+		assert.Equal(
+			t,
+			summaryEntryStatusOK,
+			result.Summary[i].status,
+			"expected rule %d to be converted successfully",
+			result.Summary[i].id,
+		)
+		assert.NotEmpty(t, result.Summary[i].notes)
+	}
+
+	assert.Equal(
+		t,
+		summaryEntryStatusSkipped,
+		result.Summary[3].status,
+		"expected rule %d (allow action) to be skipped",
+		result.Summary[3].id,
+	)
+	assert.NotEmpty(t, result.Summary[3].notes)
+	assert.Contains(
+		t,
+		result.Summary[3].notes,
+		share.MsgOnlyDenyRuleSupported,
+		"expected skip reason to mention only deny rules are supported",
+	)
 }
 
 // TestOutputPolicies_Stdout reads the test policy and rule, and converts the rule to stdout.

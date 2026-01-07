@@ -46,9 +46,18 @@ type RuleConverter struct {
 	metaCriterions map[string]metacriterion.MetaCriterion
 }
 
+type ConversionResult struct {
+	Policies  []Policy
+	RegoCount int
+	Summary   []summaryEntry
+}
+
 const (
 	defaultColumnWidth = 50
 	defaultNVRuleIDMax = 1000
+
+	summaryEntryStatusOK      = "OK"
+	summaryEntryStatusSkipped = "Skipped"
 )
 
 func NewRuleConverter(config share.ConversionConfig) *RuleConverter {
@@ -111,31 +120,31 @@ func (r *RuleConverter) Convert(ctx context.Context, ruleFile string) error {
 		return fmt.Errorf("failed to parse NeuVector Admission rules: %w", err)
 	}
 
-	results, policies, regoPolicies := r.convertRules(ctx, admissionRules.Rules)
+	result := r.convertRules(ctx, admissionRules.Rules)
 
 	// Write all generated policies to the output file, but only if there are one or more policies
 	// Custom rules generate Rego files only, so policies may be empty
-	if len(policies) > 0 {
-		if err = r.outputPolicies(policies, r.config.OutputFile); err != nil {
+	if len(result.Policies) > 0 {
+		if err = r.outputPolicies(result.Policies, r.config.OutputFile); err != nil {
 			return fmt.Errorf("failed to write output YAML: %w", err)
 		}
 	}
 
 	if r.showSummary {
-		err = r.renderResultsTable(results)
+		err = r.renderResultsTable(result.Summary)
 		if err != nil {
 			return fmt.Errorf("failed to render results table: %w", err)
 		}
 	}
 
-	if regoPolicies > 0 {
+	if result.RegoCount > 0 {
 		r.logger.InfoContext(ctx, "rego policies generated",
-			"count", regoPolicies,
+			"count", result.RegoCount,
 			"directory", "rego_policies/",
 		)
 	}
 
-	if r.config.OutputFile != "-" && len(policies) > 0 {
+	if r.config.OutputFile != "-" && len(result.Policies) > 0 {
 		r.logger.InfoContext(ctx, "Conversion done", "output_file", r.config.OutputFile)
 	}
 
@@ -174,51 +183,60 @@ func (r *RuleConverter) containsCustomRule(rule *nvapis.RESTAdmissionRule) bool 
 	return false
 }
 
-// convertCustomRule converts the neuvector rule contains one or more custom ruless to a Kubewarden policy.
-func (r *RuleConverter) convertCustomRule(rule *nvapis.RESTAdmissionRule) (ruleParsingResult, error) {
-	if err := customrule.BuildRegoPolicy(rule); err != nil {
-		return ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()}, err
-	}
-
-	return ruleParsingResult{
-		id:    rule.ID,
-		pass:  true,
-		notes: "Rego policy generated (no policy YAML for custom rule)",
-	}, nil
-}
-
 func (r *RuleConverter) convertRules(
 	ctx context.Context,
 	nvRules []*nvapis.RESTAdmissionRule,
-) ([]ruleParsingResult, []Policy, int) {
+) ConversionResult {
 	var (
-		results      []ruleParsingResult
-		policies     []Policy
-		regoPolicies int
-		err          error
-		result       ruleParsingResult
+		convertedPolicy Policy
+		policies        []Policy
+		regoCount       int
+		err             error
+		summary         []summaryEntry
 	)
 
 	for _, rule := range nvRules {
 		if err = r.expandMetaCriterion(rule); err != nil {
-			results = append(results, ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()})
+			summary = append(summary, summaryEntry{id: rule.ID, status: summaryEntryStatusSkipped, notes: err.Error()})
 			continue
 		}
 		if r.containsCustomRule(rule) {
-			result, err = r.convertCustomRule(rule)
-			results = append(results, result)
-			if err == nil {
-				regoPolicies++
+			err = customrule.BuildRegoPolicy(rule)
+			if err != nil {
+				summary = append(
+					summary,
+					summaryEntry{id: rule.ID, status: summaryEntryStatusSkipped, notes: err.Error()},
+				)
+				continue
 			}
+			summary = append(
+				summary,
+				summaryEntry{
+					id:     rule.ID,
+					status: summaryEntryStatusOK,
+					notes:  "Rego policy generated (no policy YAML for custom rule)",
+				},
+			)
+			regoCount++
 			continue
 		}
-		result = r.convertRule(ctx, rule)
-		results = append(results, result)
-		if result.policy != nil {
-			policies = append(policies, result.policy)
+		convertedPolicy, err = r.convertRule(ctx, rule)
+		if err != nil {
+			summary = append(summary, summaryEntry{id: rule.ID, status: summaryEntryStatusSkipped, notes: err.Error()})
+			continue
 		}
+		summary = append(
+			summary,
+			summaryEntry{id: rule.ID, status: summaryEntryStatusOK, notes: share.MsgRuleConvertedSuccessfully},
+		)
+		policies = append(policies, convertedPolicy)
 	}
-	return results, policies, regoPolicies
+
+	return ConversionResult{
+		Policies:  policies,
+		RegoCount: regoCount,
+		Summary:   summary,
+	}
 }
 
 func (r *RuleConverter) validateRule(rule *nvapis.RESTAdmissionRule) error {
@@ -258,17 +276,16 @@ func (r *RuleConverter) validateRule(rule *nvapis.RESTAdmissionRule) error {
 	return nil
 }
 
-func (r *RuleConverter) convertRule(ctx context.Context, rule *nvapis.RESTAdmissionRule) ruleParsingResult {
+func (r *RuleConverter) convertRule(ctx context.Context, rule *nvapis.RESTAdmissionRule) (Policy, error) {
 	err := r.validateRule(rule)
 	if err != nil {
-		return ruleParsingResult{id: rule.ID, pass: false, notes: err.Error()}
+		return nil, err
 	}
 
 	policyObj, err := r.policyFactory.GeneratePolicy(rule, r.config)
 	if err != nil {
 		r.logger.InfoContext(ctx, "error when generating Kubewarden policy", "error", err)
-		note := fmt.Sprintf("%s: %v", share.MsgRuleGenerateKWPolicyError, err)
-		return ruleParsingResult{id: rule.ID, pass: false, notes: note}
+		return nil, fmt.Errorf("%s: %w", share.MsgRuleGenerateKWPolicyError, err)
 	}
 
 	// Type assert to convert to our Policy interface
@@ -279,18 +296,13 @@ func (r *RuleConverter) convertRule(ctx context.Context, rule *nvapis.RESTAdmiss
 	case *policiesv1.ClusterAdmissionPolicyGroup:
 		policy = p
 	default:
-		return ruleParsingResult{id: rule.ID, pass: false, notes: "unexpected policy type"}
+		return nil, errors.New("unexpected policy type")
 	}
 
-	return ruleParsingResult{
-		id:     rule.ID,
-		pass:   true,
-		notes:  share.MsgRuleConvertedSuccessfully,
-		policy: policy,
-	}
+	return policy, nil
 }
 
-func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) error {
+func (r *RuleConverter) renderResultsTable(summary []summaryEntry) error {
 	table := tablewriter.NewTable(os.Stdout,
 		tablewriter.WithConfig(tablewriter.Config{
 			Row: tw.CellConfig{
@@ -301,15 +313,11 @@ func (r *RuleConverter) renderResultsTable(results []ruleParsingResult) error {
 		}),
 	)
 	table.Header([]string{"ID", "STATUS", "NOTES"})
-	for _, result := range results {
-		status := "OK"
-		if !result.pass {
-			status = "Skipped"
-		}
+	for _, entry := range summary {
 		data := []string{
-			strconv.FormatUint(uint64(result.id), 10),
-			status,
-			result.notes,
+			strconv.FormatUint(uint64(entry.id), 10),
+			entry.status,
+			entry.notes,
 		}
 		err := table.Append(data)
 		if err != nil {

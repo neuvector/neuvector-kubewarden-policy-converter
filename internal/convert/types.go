@@ -20,9 +20,8 @@ type Policy interface {
 	runtime.Object
 }
 
-type ruleParsingResult struct {
+type summaryEntry struct {
 	id     uint32
-	pass   bool
+	status string
 	notes  string
-	policy Policy // Either ClusterAdmissionPolicy or ClusterAdmissionPolicyGroup
 }
