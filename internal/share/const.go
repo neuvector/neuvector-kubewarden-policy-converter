@@ -8,5 +8,5 @@ const (
 	MsgUnsupportedRuleCriteria     = "unsupported criteria"
 	MsgUnsupportedCriteriaOperator = "unsupported operator"
 	MsgRuleParsingError            = "failed to parse rule"
-	MsgRuleGenerateKWPolicyError   = "failed to generate Kubewarden poilcy"
+	MsgRuleGenerateKWPolicyError   = "failed to generate Kubewarden policy"
 )
