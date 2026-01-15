@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-limit-cpu-1
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-limit-cpu-1
+  template:
+    metadata:
+      labels:
+        app: resource-limit-cpu-1
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.25
+        resources:
+          limits:
+            cpu: "1"
+

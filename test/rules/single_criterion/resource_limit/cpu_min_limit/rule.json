@@ -1,0 +1,34 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Deny pods whose container CPU limit is less than 1 core",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "resourceLimit",
+          "op": "",
+          "path": "resourceLimit",
+          "sub_criteria": [
+            {
+              "name": "cpuLimit",
+              "op": "<=",
+              "path": "cpuLimit",
+              "value": "1"
+            }
+          ],
+          "value": ""
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "protect",
+      "rule_type": "deny"
+    }
+  ]
+}
+

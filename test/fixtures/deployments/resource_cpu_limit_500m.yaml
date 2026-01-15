@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-limit-cpu-ok
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-limit-cpu-ok
+  template:
+    metadata:
+      labels:
+        app: resource-limit-cpu-ok
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.25
+        resources:
+          limits:
+            cpu: "500m"
+
+
