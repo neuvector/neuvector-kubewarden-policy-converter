@@ -1,0 +1,13 @@
+{
+  "description": "Deny workloads whose container memory request is less than 256Mi",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/resource_memory_request_128Mi.yaml"
+  ],
+  "reject": [
+    "deployments/resource_memory_request_512Mi.yaml"
+  ]
+}
+
+

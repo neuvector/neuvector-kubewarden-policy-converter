@@ -1,0 +1,20 @@
+{
+  "description": "Test single criteria rule (container CPU and memory resource limits/requests)",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/resource_cpu_limit_4_request_8_memory_limit_1450Mi_request_7Gi.yaml",
+    "deployments/resource_cpu_request_1.yaml",
+    "deployments/resource_cpu_request_2.yaml",
+    "deployments/resource_cpu_request_500m.yaml",
+    "deployments/resource_memory_request_128Mi.yaml",
+    "deployments/resource_memory_request_512Mi.yaml"
+  ],
+  "reject": [
+    "deployments/resource_cpu_limit_1.yaml",
+    "deployments/resource_cpu_limit_2.yaml",
+    "deployments/resource_cpu_limit_500m.yaml"
+  ]
+}
+
+

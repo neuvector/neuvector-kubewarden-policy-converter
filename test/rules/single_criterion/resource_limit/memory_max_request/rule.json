@@ -1,0 +1,38 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Deny pods whose container memory request is less than 512Mi",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "resourceLimit",
+          "op": "",
+          "path": "resourceLimit",
+          "sub_criteria": [
+            {
+              "name": "memoryRequest",
+              "op": ">",
+              "path": "memoryRequest",
+              "value": "268435456"
+            }
+          ],
+          "value": ""
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "protect",
+      "rule_type": "deny"
+    }
+  ]
+}
+
+
+
+
+

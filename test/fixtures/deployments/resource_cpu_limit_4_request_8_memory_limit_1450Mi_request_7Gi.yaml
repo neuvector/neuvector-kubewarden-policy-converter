@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-cpu-limit-4-request-8-memory-limit-1450mi-request-7gi
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-cpu-limit-4-request-8-memory-limit-1450mi-request-7gi
+  template:
+    metadata:
+      labels:
+        app: resource-cpu-limit-4-request-8-memory-limit-1450mi-request-7gi
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.25
+        resources:
+          limits:
+            cpu: "10"
+            memory: "8589934592"
+          requests:
+            cpu: "4"
+            memory: "2147483648"
+
