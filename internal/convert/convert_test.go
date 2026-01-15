@@ -471,6 +471,20 @@ func TestConvertSingleCriterion_MedCVECount(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_ResourceLimit(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/resource_limit/cpu_limit_only",
+		"../../test/rules/single_criterion/resource_limit/cpu_max_limit",
+		"../../test/rules/single_criterion/resource_limit/cpu_max_req",
+		"../../test/rules/single_criterion/resource_limit/cpu_min_limit",
+		"../../test/rules/single_criterion/resource_limit/cpu_min_req",
+		"../../test/rules/single_criterion/resource_limit/memory_max_request",
+		"../../test/rules/single_criterion/resource_limit/request_and_limit_cpu_memory",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 /*
 Multi-criteria conversion tests for compound rules and edge cases.
 */

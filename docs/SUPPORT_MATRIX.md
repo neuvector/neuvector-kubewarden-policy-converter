@@ -32,7 +32,7 @@ This document details the support matrix, including the available operators, acc
 | [Mount Volumes](#mount-volumes) |            |                                    |
 | [Namespace](#namespace)        |  ✅ Completed   | Implemented using Kubewarden Policy CR built-in namespace selector. |
 | [PSP best practice](#psp-best-practice) |     ✅ Completed       | `allow-privilege-escalation-psp:v1.0.0`, `container-running-as-user:v1.0.4`, `host-namespaces-psp:v1.1.0`, `pod-privileged:v1.0.3` |
-| [Resource Limit Configuration](#resource-limit-configuration) |            |                                    |
+| [Resource Limit Configuration](#resource-limit-configuration) |  ✅ Completed   | `container-resources:v1.3.1` |
 | [Run as privileged](#run-as-privileged) |  ✅ Completed   | `pod-privileged:v1.0.3`            |
 | [Run as root](#run-as-root)    |  ✅ Completed   | `container-running-as-user:v1.0.4` |
 | [Service Account Bound high risk role](#service-account-bound-high-risk-role) | ✅ Completed | `high-risk-service-account:v0.1.2` |
@@ -369,11 +369,11 @@ Implemented using Kubewarden Policy CR built-in namespace selector.
 
 ## Resource Limit Configuration
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed  | **Kubewarden Module:** `container-resources:v1.3.1`
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
-| *(none)* |        |       |
+|   `""`   |        |       |
 
 **Sub-options:**
 

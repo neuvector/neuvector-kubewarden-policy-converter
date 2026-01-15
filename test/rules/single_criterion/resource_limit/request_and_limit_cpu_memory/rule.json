@@ -1,0 +1,53 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "resourceLimit",
+          "op": "",
+          "path": "resourceLi20mit",
+          "sub_criteria": [
+            {
+              "name": "cpuLimit",
+              "op": "<=",
+              "path": "cpuLimit",
+              "value": "7"
+            },
+            {
+              "name": "cpuRequest",
+              "op": ">",
+              "path": "cpuRequest",
+              "value": "5"
+            },
+            {
+              "name": "memoryLimit",
+              "op": "<=",
+              "path": "memoryLimit",
+              "value": "8589934592"
+            },
+            {
+              "name": "memoryRequest",
+              "op": ">",
+              "path": "memoryRequest",
+              "value": "2147483648"
+            }
+          ],
+          "value": ""
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "protect",
+      "rule_type": "deny"
+    }
+  ]
+}
+
+
