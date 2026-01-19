@@ -141,3 +141,16 @@ func TestConvertSingleCriterion_MedCVECount(t *testing.T) {
 	ruleDir := "../rules/single_criterion/med_cve_count"
 	testRuleConversion(t, ruleDir)
 }
+
+func TestConvertSingleCriterion_ResourceLimit(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../rules/single_criterion/resource_limit/cpu_min_req",
+		"../rules/single_criterion/resource_limit/cpu_min_limit",
+		"../rules/single_criterion/resource_limit/cpu_max_req",
+		"../rules/single_criterion/resource_limit/cpu_max_limit",
+		"../rules/single_criterion/resource_limit/memory_max_request",
+		"../rules/single_criterion/resource_limit/request_and_limit_cpu_memory",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}

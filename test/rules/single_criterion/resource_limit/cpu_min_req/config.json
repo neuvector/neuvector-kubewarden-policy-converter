@@ -1,0 +1,13 @@
+{
+  "description": "Deny workloads whose container CPU request is less than 1 core",
+  "runKwctl": true,
+  "testWorkspace": "../fixtures/",
+  "accept": [
+    "deployments/resource_cpu_request_1.yaml",
+    "deployments/resource_cpu_request_2.yaml"
+  ],
+  "reject": [
+    "deployments/resource_cpu_request_500m.yaml"
+  ]
+}
+

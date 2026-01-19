@@ -92,6 +92,7 @@ func (r *RuleConverter) initHandlers() {
 		handlers.RuleHighRiskServiceAccount:    handlers.NewHighRiskServiceAccountHandler(),
 		handlers.RuleLabels:                    handlers.NewLabelsPolicyHandler(),
 		handlers.RuleAnnotations:               handlers.NewAnnotationsPolicyHandler(),
+		handlers.RuleResourceLimit:             handlers.NewContainerResourceHandler(),
 		handlers.RuleImageScanned: handlers.NewImageCVEHandler(
 			r.config.VulReportNamespace,
 			r.config.Platform,
@@ -270,6 +271,12 @@ func (r *RuleConverter) validateRule(rule *nvapis.RESTAdmissionRule) error {
 
 		if !handler.GetSupportedOps()[criterion.Op] {
 			return fmt.Errorf("%s: %s", share.MsgUnsupportedCriteriaOperator, criterion.Op)
+		}
+
+		for _, subCriterion := range criterion.SubCriteria {
+			if !handler.GetSupportedOps()[subCriterion.Op] {
+				return fmt.Errorf("%s: %s", share.MsgUnsupportedCriteriaOperator, subCriterion.Op)
+			}
 		}
 	}
 
