@@ -30,7 +30,7 @@ This document details the support matrix, including the available operators, acc
 | [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.2` |
 | [Modules](#modules)            |  ❌ Not Support  |                                    |
 | [Mount Volumes](#mount-volumes) |            |                                    |
-| [Namespace](#namespace)        |  ✅ Completed   | `cel-policy:v1.3.4` |
+| [Namespace](#namespace)        |  ✅ Completed   | Implemented using Kubewarden Policy CR built-in namespace selector. |
 | [PSP best practice](#psp-best-practice) |     ✅ Completed       | `allow-privilege-escalation-psp:v1.0.0`, `container-running-as-user:v1.0.4`, `host-namespaces-psp:v1.1.0`, `pod-privileged:v1.0.3` |
 | [Resource Limit Configuration](#resource-limit-configuration) |            |                                    |
 | [Run as privileged](#run-as-privileged) |  ✅ Completed   | `pod-privileged:v1.0.3`            |
@@ -341,7 +341,9 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 ## Namespace
 
-**Status:** ✅ Completed | **Kubewarden Module:** `cel-policy:v1.3.4`
+**Status:** ✅ Completed
+
+Implemented using Kubewarden Policy CR built-in namespace selector.
 
 | Operator         | Values | Notes |
 | ---------------- | ------ | ----- |
