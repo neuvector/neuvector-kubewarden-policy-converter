@@ -211,7 +211,7 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 | Operator | Values          | Notes |
 | -------- | --------------- | ----- |
-| `=`      | `true`, `false` |       |
+| `=`      | `false` |       |
 
 ---
 
