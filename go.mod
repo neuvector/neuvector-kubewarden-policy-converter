@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/charmbracelet/glamour v0.10.0
 	github.com/kubewarden/kubewarden-controller v1.31.0
-	github.com/neuvector/neuvector v0.0.0-20251217082449-d56442cccfad
+	github.com/neuvector/neuvector v5.0.0-preview.1+incompatible
 	github.com/olekukonko/tablewriter v1.1.3
 	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v3 v3.6.2
@@ -77,7 +77,6 @@ require (
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
