@@ -13,6 +13,21 @@ This tool simplifies the migration from NeuVector's admission control model to [
 - Optionally enable audit/background enforcement
 - Display a summary table showing the status of each rule conversion
 
+## System Requirements
+
+### Runtime Requirements
+
+- **No additional dependencies required** — applies whether the binary is downloaded from [Releases](https://github.com/neuvector/neuvector-kubewarden-policy-converter/releases) or built manually, the binary is statically linked and runs standalone
+- **Supported platforms**: Linux, macOS, Windows
+
+
+### Build Requirements
+
+If you're building from source, you'll need:
+
+- **Go**: Version 1.24.0 or later
+- **Make**: For building using the provided Makefile
+
 ## Quick Start
 
 This guide provides step-by-step instructions to set up and execute **`nvrules2kw`**, help you convert NeuVector Admission Control Rules into Kubewarden Policies within your environment.
