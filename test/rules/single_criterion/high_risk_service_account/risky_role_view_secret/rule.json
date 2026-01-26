@@ -10,7 +10,7 @@
             "criteria": [
                 {
                     "name": "saBindRiskyRole",
-                    "op": "containsAny",
+                    "op": "containsTagAny",
                     "path": "saBindRiskyRole",
                     "value": "risky_role_view_secret"
                 }

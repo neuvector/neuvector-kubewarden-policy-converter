@@ -27,7 +27,7 @@ func NewHighRiskServiceAccountHandler() *HighRiskServiceAccountHandler {
 		BasePolicyHandler: BasePolicyHandler{
 			Unsupported: false,
 			SupportedOps: map[string]bool{
-				nvdata.CriteriaOpContainsAny: true,
+				nvdata.CriteriaOpContainsTagAny: true,
 			},
 			Name:               share.ExtractModuleName(PolicyHighRiskServiceAccountURI),
 			ApplicableResource: ResourceWorkload,
