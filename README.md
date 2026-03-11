@@ -25,7 +25,7 @@ This tool simplifies the migration from NeuVector's admission control model to [
 
 If you're building from source, you'll need:
 
-- **Go**: Version 1.24.0 or later
+- **Go**: Version 1.26.0 or later
 - **Make**: For building using the provided Makefile
 
 ## Quick Start
