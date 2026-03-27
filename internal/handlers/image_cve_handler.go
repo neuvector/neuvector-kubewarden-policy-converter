@@ -99,6 +99,7 @@ func NewImageCVEHandler(vulReportNamespace string, platform string) *ImageCVEHan
 	}
 }
 
+//nolint:gocognit // This function intentionally centralizes criterion-to-settings translation for image-cve policy.
 func (h *ImageCVEHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCriterion) ([]byte, error) {
 	settings := CVESettings{}
 	settings.VulnerabilityReportNamespace = h.vulReportNamespace
@@ -146,9 +147,17 @@ func (h *ImageCVEHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCrit
 			}
 			count, err := strconv.Atoi(criterion.SubCriteria[0].Value)
 			if err != nil {
-				return nil, fmt.Errorf("invalid %s subcriteria value %q: %w", criterion.Name, criterion.SubCriteria[0].Value, err)
+				return nil, fmt.Errorf(
+					"invalid %s subcriteria value %q: %w",
+					criterion.Name,
+					criterion.SubCriteria[0].Value,
+					err,
+				)
 			}
-			settings.CVSSScore = &CVSSScoreSettings{Threshold: &threshold, MaxCount: &count}
+			// NeuVector interprets "count >= X" to reject once X matching CVEs are found.
+			// Kubewarden's maxCount is the maximum tolerated amount, so we allow only 0..(X-1).
+			maxAccepted := count - 1
+			settings.CVSSScore = &CVSSScoreSettings{Threshold: &threshold, MaxCount: &maxAccepted}
 		case RuleCVENames:
 			negationCriteria, ok := h.criteriaNegationMap[criterion.Op]
 			if !ok {
