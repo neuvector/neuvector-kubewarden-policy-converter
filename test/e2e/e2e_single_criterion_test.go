@@ -160,3 +160,7 @@ func TestConvertSingleCriterion_CVEScoreCount(t *testing.T) {
 	testRuleConversion(t, ruleDir)
 }
 
+func TestConvertSingleCriterion_CVENames(t *testing.T) {
+	ruleDir := "../rules/single_criterion/cve_names"
+	testRuleConversion(t, ruleDir)
+}

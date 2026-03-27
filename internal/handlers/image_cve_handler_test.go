@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"testing"
 
 	nvapis "github.com/neuvector/neuvector/controller/api"
@@ -149,6 +150,27 @@ func TestBuildImageCvePolicySettings(t *testing.T) {
 				},
 			},
 			expectedError: fmt.Errorf("missing subcriteria for %s", RuleCVEScoreCount),
+		},
+		{
+			name: "CVE names maps criterion operator to the negated Kubewarden matcher",
+			criterion: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleCVENames,
+					Op:    nvdata.CriteriaOpContainsAll,
+					Value: "CVE-2021-36159,CVE-2021-4321",
+				},
+			},
+			expectedSettings: []byte(`{
+				"vulnerabilityReportNamespace": "sbomscanner",
+				"platform": {
+					"arch": "arm64",
+					"os": "linux"
+				},
+				"cveName": {
+					"criteria": "doesNotContainAllOf",
+					"values": ["CVE-2021-36159", "CVE-2021-4321"]
+				}
+			}`),
 		},
 	}
 
