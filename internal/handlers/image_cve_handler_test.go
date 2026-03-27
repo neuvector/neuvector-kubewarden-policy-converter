@@ -111,13 +111,56 @@ func TestBuildImageCvePolicySettings(t *testing.T) {
 				}
 			}`),
 		},
+		{
+			name: "CVE score count maps threshold from the criterion and max count from the subcriteria",
+			criterion: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleCVEScoreCount,
+					Op:    nvdata.CriteriaOpBiggerEqualThan,
+					Value: "7",
+					SubCriteria: []*nvapis.RESTAdmRuleCriterion{
+						{
+							Name:  nvdata.SubCriteriaCount,
+							Op:    nvdata.CriteriaOpBiggerEqualThan,
+							Value: "3",
+						},
+					},
+				},
+			},
+			expectedSettings: []byte(`{
+				"vulnerabilityReportNamespace": "sbomscanner",
+				"platform": {
+					"arch": "arm64",
+					"os": "linux"
+				},
+				"cvssScore": {
+					"threshold": 7,
+					"maxCount": 2
+				}
+			}`),
+		},
+		{
+			name: "CVE score count without subcriteria returns an error",
+			criterion: []*nvapis.RESTAdmRuleCriterion{
+				{
+					Name:  RuleCVEScoreCount,
+					Op:    nvdata.CriteriaOpBiggerEqualThan,
+					Value: "7",
+				},
+			},
+			expectedError: fmt.Errorf("missing subcriteria for %s", RuleCVEScoreCount),
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			generatedSettings, err := handler.BuildPolicySettings(tt.criterion)
-			require.JSONEq(t, string(tt.expectedSettings), string(generatedSettings))
 			require.Equal(t, tt.expectedError, err)
+			if tt.expectedError != nil {
+				require.Nil(t, generatedSettings)
+				return
+			}
+			require.JSONEq(t, string(tt.expectedSettings), string(generatedSettings))
 		})
 	}
 }

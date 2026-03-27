@@ -105,6 +105,10 @@ func (r *RuleConverter) initHandlers() {
 			r.config.VulReportNamespace,
 			r.config.Platform,
 		),
+		handlers.RuleCVEScoreCount: handlers.NewImageCVEHandler(
+			r.config.VulReportNamespace,
+			r.config.Platform,
+		),
 	}
 }
 

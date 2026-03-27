@@ -1,0 +1,32 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Deny workloads when CVE score >= 3 appears at least 4 times",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "cveScoreCount",
+          "op": ">=",
+          "path": "cveScoreCount",
+          "sub_criteria": [
+            {
+              "name": "count",
+              "op": ">=",
+              "value": "4"
+            }
+          ],
+          "value": "3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "protect",
+      "rule_type": "deny"
+    }
+  ]
+}

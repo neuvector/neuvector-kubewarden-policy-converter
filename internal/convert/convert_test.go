@@ -471,6 +471,14 @@ func TestConvertSingleCriterion_MedCVECount(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_CVEScoreCount(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/cve_score_count",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 func TestConvertSingleCriterion_ResourceLimit(t *testing.T) {
 	for _, ruleDir := range []string{
 		"../../test/rules/single_criterion/resource_limit/cpu_limit_only",
