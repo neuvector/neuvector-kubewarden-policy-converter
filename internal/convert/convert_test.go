@@ -479,6 +479,14 @@ func TestConvertSingleCriterion_CVEScoreCount(t *testing.T) {
 	}
 }
 
+func TestConvertSingleCriterion_CVENames(t *testing.T) {
+	for _, ruleDir := range []string{
+		"../../test/rules/single_criterion/cve_names",
+	} {
+		testRuleConversion(t, ruleDir)
+	}
+}
+
 func TestConvertSingleCriterion_ResourceLimit(t *testing.T) {
 	for _, ruleDir := range []string{
 		"../../test/rules/single_criterion/resource_limit/cpu_limit_only",

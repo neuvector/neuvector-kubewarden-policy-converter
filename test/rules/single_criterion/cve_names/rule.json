@@ -1,0 +1,25 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Deny workloads when image vulnerabilities contain CVE-2021-36159",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "cveNames",
+          "op": "containsAll",
+          "path": "cveNames",
+          "value": "CVE-2021-36159,CVE-2022-37434"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "protect",
+      "rule_type": "deny"
+    }
+  ]
+}

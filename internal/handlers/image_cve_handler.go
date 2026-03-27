@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
@@ -41,11 +42,17 @@ type CVESettings struct {
 	MaxSeverity                      *MaxSeveritySettings `json:"maxSeverity,omitempty"`
 	Platform                         *PlatformSettings    `json:"platform,omitempty"`
 	CVSSScore                        *CVSSScoreSettings   `json:"cvssScore,omitempty"`
+	CVEName                          *CVENameSettings     `json:"cveName,omitempty"`
+}
+
 type CVSSScoreSettings struct {
 	Threshold *float64 `json:"threshold,omitempty"`
 	MaxCount  *int     `json:"maxCount,omitempty"`
 }
 
+type CVENameSettings struct {
+	Criteria string   `json:"criteria,omitempty"`
+	Values   []string `json:"values,omitempty"`
 }
 
 const (
@@ -55,6 +62,7 @@ const (
 	RuleHighCVECount  = "cveHighCount"
 	RuleMedCVECount   = "cveMediumCount"
 	RuleCVEScoreCount = "cveScoreCount"
+	RuleCVENames      = "cveNames"
 )
 
 func NewImageCVEHandler(vulReportNamespace string, platform string) *ImageCVEHandler {
@@ -62,8 +70,13 @@ func NewImageCVEHandler(vulReportNamespace string, platform string) *ImageCVEHan
 		BasePolicyHandler: BasePolicyHandler{
 			Unsupported: false,
 			SupportedOps: map[string]bool{
-				nvdata.CriteriaOpBiggerEqualThan: true,
-				nvdata.CriteriaOpEqual:           true,
+				nvdata.CriteriaOpBiggerEqualThan:   true,
+				nvdata.CriteriaOpEqual:             true,
+				nvdata.CriteriaOpLessEqualThan:     true,
+				nvdata.CriteriaOpContainsAll:       true,
+				nvdata.CriteriaOpContainsAny:       true,
+				nvdata.CriteriaOpContainsOtherThan: true,
+				nvdata.CriteriaOpNotContainsAny:    true,
 			},
 			Name:               share.ExtractModuleName(ImageCVEPolicyURI),
 			Module:             ImageCVEPolicyURI,
@@ -136,6 +149,24 @@ func (h *ImageCVEHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCrit
 				return nil, fmt.Errorf("invalid %s subcriteria value %q: %w", criterion.Name, criterion.SubCriteria[0].Value, err)
 			}
 			settings.CVSSScore = &CVSSScoreSettings{Threshold: &threshold, MaxCount: &count}
+		case RuleCVENames:
+			negationCriteria, ok := h.criteriaNegationMap[criterion.Op]
+			if !ok {
+				return nil, fmt.Errorf("unsupported criteria operator: %s", criterion.Op)
+			}
+
+			values := make([]string, 0)
+			for _, value := range strings.Split(criterion.Value, ",") {
+				trimmed := strings.TrimSpace(value)
+				if trimmed != "" {
+					values = append(values, trimmed)
+				}
+			}
+
+			settings.CVEName = &CVENameSettings{
+				Criteria: negationCriteria,
+				Values:   values,
+			}
 		default:
 			return nil, fmt.Errorf("unsupported criterion: %s", criterion.Name)
 		}
