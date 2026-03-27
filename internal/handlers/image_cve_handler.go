@@ -40,14 +40,21 @@ type CVESettings struct {
 	VulnerabilityReportNamespace     string               `json:"vulnerabilityReportNamespace,omitempty"`
 	MaxSeverity                      *MaxSeveritySettings `json:"maxSeverity,omitempty"`
 	Platform                         *PlatformSettings    `json:"platform,omitempty"`
+	CVSSScore                        *CVSSScoreSettings   `json:"cvssScore,omitempty"`
+type CVSSScoreSettings struct {
+	Threshold *float64 `json:"threshold,omitempty"`
+	MaxCount  *int     `json:"maxCount,omitempty"`
+}
+
 }
 
 const (
-	ImageCVEPolicyURI = "registry://ghcr.io/kubewarden/policies/image-cve-policy:v0.5.0"
+	ImageCVEPolicyURI = "registry://ghcr.io/kubewarden/policies/image-cve-policy:v0.5.8"
 
-	RuleImageScanned = "imageScanned"
-	RuleHighCVECount = "cveHighCount"
-	RuleMedCVECount  = "cveMediumCount"
+	RuleImageScanned  = "imageScanned"
+	RuleHighCVECount  = "cveHighCount"
+	RuleMedCVECount   = "cveMediumCount"
+	RuleCVEScoreCount = "cveScoreCount"
 )
 
 func NewImageCVEHandler(vulReportNamespace string, platform string) *ImageCVEHandler {
@@ -115,6 +122,20 @@ func (h *ImageCVEHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCrit
 			}
 			maxAccepted := threshold - 1
 			settings.MaxSeverity.Medium = &CVESeveritySettings{Total: &maxAccepted}
+		case RuleCVEScoreCount:
+			if len(criterion.SubCriteria) == 0 {
+				return nil, fmt.Errorf("missing subcriteria for %s", criterion.Name)
+			}
+
+			threshold, err := strconv.ParseFloat(criterion.Value, 64)
+			if err != nil {
+				return nil, fmt.Errorf("invalid %s value %q: %w", criterion.Name, criterion.Value, err)
+			}
+			count, err := strconv.Atoi(criterion.SubCriteria[0].Value)
+			if err != nil {
+				return nil, fmt.Errorf("invalid %s subcriteria value %q: %w", criterion.Name, criterion.SubCriteria[0].Value, err)
+			}
+			settings.CVSSScore = &CVSSScoreSettings{Threshold: &threshold, MaxCount: &count}
 		default:
 			return nil, fmt.Errorf("unsupported criterion: %s", criterion.Name)
 		}

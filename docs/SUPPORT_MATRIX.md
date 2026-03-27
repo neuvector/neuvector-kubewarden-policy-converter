@@ -17,7 +17,7 @@ This document details the support matrix, including the available operators, acc
 | [Count high severity CVE with fix](#count-high-severity-cve-with-fix) |          |                                    |
 | [Count medium severity CVE](#count-medium-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.0` |
 | [CVE names](#cve-names)        |            |                                    |
-| [CVE score](#cve-score)        |  ❌ Not Support  |                                    |
+| [CVE score](#cve-score)        |  ✅ Completed   | `image-cve-policy:v0.5.8` |
 | [Environment variables with secrets](#environment-variables-with-secrets) |  ⚠️ Partial   | `env-variable-secrets-scanner:v1.0.5` |
 | [Environment variables](#environment-variables) |  ✅ Completed   | `environment-variable-policy:v3.0.2` |
 | [Image](#image)                |  ✅ Completed   | `trusted-repos:v2.0.1` |

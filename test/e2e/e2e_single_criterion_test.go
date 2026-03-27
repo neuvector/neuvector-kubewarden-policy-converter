@@ -154,3 +154,9 @@ func TestConvertSingleCriterion_ResourceLimit(t *testing.T) {
 		testRuleConversion(t, ruleDir)
 	}
 }
+
+func TestConvertSingleCriterion_CVEScoreCount(t *testing.T) {
+	ruleDir := "../rules/single_criterion/cve_score_count"
+	testRuleConversion(t, ruleDir)
+}
+
