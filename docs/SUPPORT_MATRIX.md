@@ -13,9 +13,9 @@ This document details the support matrix, including the available operators, acc
 | [Add customized criterion](#add-customized-criterion) | ⚠️ Partial | None |
 | [Allow privilege escalation](#allow-privilege-escalation) |  ✅ Completed   | `allow-privilege-escalation-psp:v1.0.0` |
 | [Annotations](#annotations)    |  ✅ Completed   | `annotations:v0.1.2` |
-| [Count high severity CVE](#count-high-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.0` |
+| [Count high severity CVE](#count-high-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.8` |
 | [Count high severity CVE with fix](#count-high-severity-cve-with-fix) |          |                                    |
-| [Count medium severity CVE](#count-medium-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.0` |
+| [Count medium severity CVE](#count-medium-severity-cve) |  ✅ Completed   | `image-cve-policy:v0.5.8` |
 | [CVE names](#cve-names)        |  ✅ Completed   | `image-cve-policy:v0.5.8` |
 | [CVE score](#cve-score)        |  ✅ Completed   | `image-cve-policy:v0.5.8` |
 | [Environment variables with secrets](#environment-variables-with-secrets) |  ⚠️ Partial   | `env-variable-secrets-scanner:v1.0.5` |
@@ -24,7 +24,7 @@ This document details the support matrix, including the available operators, acc
 | [Image compliance violations](#image-compliance-violations) |            |                                    |
 | [Image without OS information](#image-without-os-information) | ❌ Not Support |                                    |
 | [Image registry](#image-registry) |  ✅ Completed   | `trusted-repos:v2.0.1` |
-| [Image scanned](#image-scanned) | ✅ Completed | `image-cve-policy:v0.5.0` |
+| [Image scanned](#image-scanned) | ✅ Completed | `image-cve-policy:v0.5.8` |
 | [Image signed](#image-signed)  |            |                                    |
 | [Image sigstore verifiers](#image-sigstore-verifiers) | ❌ Not Support |                                    |
 | [Labels](#labels)              |  ✅ Completed   | `labels:v0.1.2` |
@@ -129,7 +129,7 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 ## Count high severity CVE
 
-**Status:** ✅ Completed  | **Kubewarden Module:** `image-cve-policy:v0.5.0`
+**Status:** ✅ Completed  | **Kubewarden Module:** `image-cve-policy:v0.5.8`
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
@@ -160,7 +160,7 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 ## Count medium severity CVE
 
-**Status:** ✅ Completed  | **Kubewarden Module:** `image-cve-policy:v0.5.0`
+**Status:** ✅ Completed  | **Kubewarden Module:** `image-cve-policy:v0.5.8`
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
@@ -174,7 +174,7 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 ## CVE names
 
-**Status:** TBD | **Kubewarden Module:**
+**Status:** ✅ Completed | **Kubewarden Module:** `image-cve-policy:v0.5.8`
 
 | Operator            | Values | Notes |
 | ------------------- | ------ | ----- |
@@ -187,9 +187,7 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 ## CVE score
 
-**Status:** ❌ Not Support
-
-**Note**: Current critical/high/medium settings should be enough, postpone this until we have some actual requests
+**Status:** ✅ Completed | **Kubewarden Module:** `image-cve-policy:v0.5.8`
 
 | Operator | Values | Notes |
 | -------- | ------ | ----- |
@@ -269,7 +267,7 @@ With these steps, you end up with a working Kubewarden policy that enforces your
 
 ## Image scanned
 
-**Status:** ✅ Completed | **Kubewarden Module:** `image-cve-policy:v0.5.0`
+**Status:** ✅ Completed | **Kubewarden Module:** `image-cve-policy:v0.5.8`
 
 
 **Note:** In NeuVector, setting image scanned to true allows not scanned images to deploy. Set `ignoreMissingVulnerabilityReport` to  true to have the same behavior. By default, not scanned images are rejected.
