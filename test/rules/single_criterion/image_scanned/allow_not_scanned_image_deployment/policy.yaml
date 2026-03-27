@@ -5,7 +5,7 @@ metadata:
 spec:
   backgroundAudit: true
   mode: protect
-  module: registry://ghcr.io/kubewarden/policies/image-cve-policy:v0.5.0
+  module: registry://ghcr.io/kubewarden/policies/image-cve-policy:v0.5.8
   mutating: false
   contextAwareResources:
     - apiVersion: storage.sbomscanner.kubewarden.io/v1alpha1
