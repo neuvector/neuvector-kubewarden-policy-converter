@@ -134,7 +134,7 @@ func (h *ImageCVEHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCrit
 			if err != nil {
 				return nil, fmt.Errorf("invalid %s value %q: %w", criterion.Name, criterion.Value, err)
 			}
-			maxAccepted := threshold - 1
+			maxAccepted := max(threshold-1, 0)
 			settings.MaxSeverity.Medium = &CVESeveritySettings{Total: &maxAccepted}
 		case RuleCVEScoreCount:
 			if len(criterion.SubCriteria) == 0 {
@@ -159,8 +159,8 @@ func (h *ImageCVEHandler) BuildPolicySettings(criteria []*nvapis.RESTAdmRuleCrit
 			maxAccepted := count - 1
 			settings.CVSSScore = &CVSSScoreSettings{Threshold: &threshold, MaxCount: &maxAccepted}
 		case RuleCVENames:
-			negationCriteria, ok := h.criteriaNegationMap[criterion.Op]
-			if !ok {
+			negationCriteria, criteriaKnown := h.criteriaNegationMap[criterion.Op]
+			if !criteriaKnown {
 				return nil, fmt.Errorf("unsupported criteria operator: %s", criterion.Op)
 			}
 
