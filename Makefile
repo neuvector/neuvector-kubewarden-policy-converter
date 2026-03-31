@@ -99,7 +99,7 @@ KWCTL := $(LOCALBIN)/kwctl
 
 ## Tool Versions
 GOLANGCI_LINT_VERSION ?= v2.8.0
-KWCTL_VERSION := v1.29.1
+KWCTL_VERSION := v1.33.1
 
 .PHONY: golangci-lint
 golangci-lint: $(GOLANGCI_LINT) ## Download golangci-lint locally if necessary.
@@ -120,13 +120,16 @@ mv "$$(echo "$(1)" | sed "s/-$(3)$$//")" $(1) ;\
 }
 endef
 
+KWCTL_SHA256 := b1f0b18a9f538bba7677f32832bfd964eceefca8cdf8e9e9ecaa5398655d2c49
 .PHONY: kwctl
 kwctl: $(KWCTL) ## Download kwctl locally if necessary
 $(KWCTL): $(LOCALBIN)
 	@[ -f $(KWCTL) ] || { \
+	    set -e; \
 		echo "Installing kwctl..."; \
 		mkdir -p $(LOCALBIN); \
-		curl -sSLf https://github.com/kubewarden/kwctl/releases/download/$(KWCTL_VERSION)/kwctl-linux-x86_64.zip -o $(KWCTL).zip; \
+		curl -sSLf https://github.com/kubewarden/kubewarden-controller/releases/download/$(KWCTL_VERSION)/kwctl-linux-x86_64.zip -o $(KWCTL).zip; \
+		echo "$(KWCTL_SHA256)  $(KWCTL).zip" | sha256sum --check --strict; \
 		unzip -o $(KWCTL).zip -d $(LOCALBIN)/; \
 		rm $(KWCTL).zip; \
 		mv $(LOCALBIN)/kwctl-linux-x86_64 $(KWCTL); \
