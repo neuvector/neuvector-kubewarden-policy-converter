@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	v1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	v1 "github.com/kubewarden/adm-controller/api/policies/v1"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"

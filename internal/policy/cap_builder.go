@@ -7,7 +7,7 @@ import (
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/handlers"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 
-	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	policiesv1 "github.com/kubewarden/adm-controller/api/policies/v1"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
