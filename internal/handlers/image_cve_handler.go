@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	policiesv1 "github.com/kubewarden/kubewarden-controller/api/policies/v1"
+	policiesv1 "github.com/kubewarden/adm-controller/api/policies/v1"
 	"github.com/neuvector/neuvector-kubewarden-policy-converter/internal/share"
 	nvapis "github.com/neuvector/neuvector/controller/api"
 	nvdata "github.com/neuvector/neuvector/share"
