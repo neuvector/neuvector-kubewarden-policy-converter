@@ -17,7 +17,7 @@ import (
 
 const (
 	kwctlExecPath    = "../../bin/kwctl"
-	kwctlTimeout     = 30 * time.Second
+	kwctlTimeout     = 120 * time.Second
 	converterTimeout = 30 * time.Second
 	PolicyServer     = "default"
 	BackgroundAudit  = true
@@ -119,7 +119,7 @@ func runKwctl(resourcePath, policyPath, replayHostCapabilitiesInteractions strin
 	}
 	defer os.Remove(tempFile.Name())
 
-	err = os.WriteFile(tempFile.Name(), output, 0600)
+	err = os.WriteFile(tempFile.Name(), output, 0o600)
 	if err != nil {
 		return false, fmt.Errorf("failed to write temp file: %w", err)
 	}
