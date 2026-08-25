@@ -48,50 +48,50 @@ func (h *HighRiskServiceAccountHandler) BuildPolicySettings(criteria []*nvapis.R
 		switch riskType {
 		case "risky_role_view_secret":
 			settings = append(settings, highRiskSASettingsDetail{
-				"apiGroups": []string{""},
-				"resources": []string{"secrets"},
-				"verbs":     []string{"list", "get"},
+				share.RBACFieldAPIGroups: []string{""},
+				share.RBACFieldResources: []string{"secrets"},
+				share.RBACFieldVerbs:     []string{"list", "get"},
 			})
 		case "risky_role_any_action_workload":
 			settings = append(settings,
 				highRiskSASettingsDetail{
-					"apiGroups": []string{""},
-					"resources": []string{"pods", "pods/log"},
-					"verbs":     []string{"*"},
+					share.RBACFieldAPIGroups: []string{""},
+					share.RBACFieldResources: []string{"pods", "pods/log"},
+					share.RBACFieldVerbs:     []string{"*"},
 				},
 				highRiskSASettingsDetail{
-					"apiGroups": []string{"apps"},
-					"resources": []string{"deployments", "statefulsets", "daemonsets", "replicasets"},
-					"verbs":     []string{"*"},
+					share.RBACFieldAPIGroups: []string{"apps"},
+					share.RBACFieldResources: []string{"deployments", "statefulsets", "daemonsets", "replicasets"},
+					share.RBACFieldVerbs:     []string{"*"},
 				},
 				highRiskSASettingsDetail{
-					"apiGroups": []string{"batch"},
-					"resources": []string{"jobs", "cronjobs"},
-					"verbs":     []string{"*"},
+					share.RBACFieldAPIGroups: []string{"batch"},
+					share.RBACFieldResources: []string{"jobs", "cronjobs"},
+					share.RBACFieldVerbs:     []string{"*"},
 				},
 				highRiskSASettingsDetail{
-					"apiGroups": []string{"autoscaling"},
-					"resources": []string{"horizontalpodautoscalers"},
-					"verbs":     []string{"*"},
+					share.RBACFieldAPIGroups: []string{"autoscaling"},
+					share.RBACFieldResources: []string{"horizontalpodautoscalers"},
+					share.RBACFieldVerbs:     []string{"*"},
 				},
 			)
 		case "risky_role_any_action_rbac":
 			settings = append(settings, highRiskSASettingsDetail{
-				"apiGroups": []string{"rbac.authorization.k8s.io"},
-				"resources": []string{"roles", "rolebindings"},
-				"verbs":     []string{"*"},
+				share.RBACFieldAPIGroups: []string{"rbac.authorization.k8s.io"},
+				share.RBACFieldResources: []string{"roles", "rolebindings"},
+				share.RBACFieldVerbs:     []string{"*"},
 			})
 		case "risky_role_create_pod":
 			settings = append(settings, highRiskSASettingsDetail{
-				"apiGroups": []string{""},
-				"resources": []string{"pods"},
-				"verbs":     []string{"create"},
+				share.RBACFieldAPIGroups: []string{""},
+				share.RBACFieldResources: []string{"pods"},
+				share.RBACFieldVerbs:     []string{"create"},
 			})
 		case "risky_role_exec_into_container":
 			settings = append(settings, highRiskSASettingsDetail{
-				"apiGroups": []string{""},
-				"resources": []string{"pods/exec"},
-				"verbs":     []string{"create"},
+				share.RBACFieldAPIGroups: []string{""},
+				share.RBACFieldResources: []string{"pods/exec"},
+				share.RBACFieldVerbs:     []string{"create"},
 			})
 		}
 	}

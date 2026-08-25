@@ -40,10 +40,10 @@ func NewLabelsPolicyHandler() *LabelsPolicyHandler {
 			ApplicableResource: ResourceWorkload,
 		},
 		criteriaNegationMap: map[string]string{
-			nvdata.CriteriaOpContainsAll:       "doesNotContainAllOf",
-			nvdata.CriteriaOpContainsAny:       "doesNotContainAnyOf",
-			nvdata.CriteriaOpContainsOtherThan: "doesNotContainOtherThan",
-			nvdata.CriteriaOpNotContainsAny:    "containsAnyOf",
+			nvdata.CriteriaOpContainsAll:       share.CriteriaDoesNotContainAllOf,
+			nvdata.CriteriaOpContainsAny:       share.CriteriaDoesNotContainAnyOf,
+			nvdata.CriteriaOpContainsOtherThan: share.CriteriaDoesNotContainOtherThan,
+			nvdata.CriteriaOpNotContainsAny:    share.CriteriaContainsAnyOf,
 		},
 	}
 }
