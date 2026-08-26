@@ -6,3 +6,5 @@ scm:
   repository: neuvector-kubewarden-policy-converter
   user: "updatecli-bot"
   branch: main
+  commitmessage:
+    footers: "Signed-off-by: NeuVectorKubewardenPolicyConverter bot <neuvector-kubewarden-policy-converter-bot@users.noreply.github.com>"
