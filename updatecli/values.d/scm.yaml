@@ -1,0 +1,8 @@
+scm:
+  commitusingapi: true
+  enabled: true
+  email: "neuvector-kubewarden-policy-converter-bot@users.noreply.github.com"
+  owner: neuvector
+  repository: neuvector-kubewarden-policy-converter
+  user: "updatecli-bot"
+  branch: main
