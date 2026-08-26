@@ -1,0 +1,50 @@
+name: Update Commitlint version
+pipelineid: commitlint
+
+sources:
+  commitlint:
+    name: Get latest commitlint version
+    kind: npm
+    spec:
+      name: commitlint
+      versionfilter:
+        kind: semver
+      age:
+        minimum: 7d
+
+targets:
+  workflows:
+    name: 'update commitlint version to {{ source "commitlint" }}'
+    scmid: default
+    kind: yaml
+    spec:
+      file: .github/workflows/ci.yml
+      key: "$.jobs.commitlint.env.COMMITLINT_VERSION"
+
+actions:
+  default:
+    title: 'deps(go): update commitlint version to {{ source "commitlint" }} version'
+    kind: github/pullrequest
+    scmid: default
+    spec:
+      automerge: false
+      mergemethod: squash
+      draft: false
+      labels:
+        - "chore"
+        - "dependencies"
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .scm.user }}"
+      email: "{{ .scm.email }}"
+      owner: "{{ .scm.owner }}"
+      repository: "{{ .scm.repository }}"
+      branch: "{{ .scm.branch }}"
+      commitusingapi: true
+      commitmessage:
+        type: "chore"
+        scope: deps
+        hidecredit: true
