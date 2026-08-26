@@ -1,14 +1,26 @@
 ---
-name: Updatecli
+name: Updatecli - Update
 on:
-  release:
   workflow_dispatch:
+  push:
+    branches:
+      - main
   schedule:
-    - cron: "0 12 */14 * *"
+    - cron: "0 3 * * *"
 permissions: {}
 jobs:
   updatecli:
+    name: "Updatecli - ${{ matrix.target_name }}"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - target_name: "existing pipelines"
+            apply_args: "--existing-only=true"
+          - target_name: "monitored pipelines"
+            apply_args: "--labels=monitor:active"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" # v7.0.1
@@ -25,7 +37,7 @@ jobs:
           cache: false
         id: go
       - name: "Run updatecli"
-        run: updatecli compose apply --clean-git-branches=true --experimental
+        run: updatecli compose apply --clean-git-branches=true ${{ matrix.apply_args }} --experimental
         env:
           UPDATECLI_GITHUB_APP_CLIENT_ID: ${{ secrets.UPDATECLIBOT_APP_ID }}
           UPDATECLI_GITHUB_APP_PRIVATE_KEY: ${{ secrets.UPDATECLIBOT_APP_PRIVKEY }}
