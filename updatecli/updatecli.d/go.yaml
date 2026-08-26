@@ -58,6 +58,4 @@ scms:
       commitmessage:
         type: "chore"
         scope: deps
-        title: "update Golang version"
         hidecredit: true
-        footers: "Signed-off-by: NeuVectorKubewardenPolicyConverter bot <neuvector-kubewarden-policy-converter-bot@users.noreply.github.com>"
