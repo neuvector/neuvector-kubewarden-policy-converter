@@ -1,7 +1,7 @@
 name: Default Updatecli policies
 
-#values:
-#  - updatecli/values.d/scm.yaml
+values:
+  - updatecli/values.d/scm.yaml
 
 policies:
   - name: Local Policies
