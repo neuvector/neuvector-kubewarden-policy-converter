@@ -1,0 +1,62 @@
+name: Default Updatecli policies
+
+#values:
+#  - updatecli/values.d/scm.yaml
+
+policies:
+  - name: Local Policies
+    id: local
+    config:
+      - "updatecli/updatecli.d"
+
+  - name: Update golangci-lint
+    id: golangci-lint
+    policy: ghcr.io/updatecli/policies/golangci-lint/githubaction:0.8.1@sha256:7fb34ae17a84641f02c3ff2aa0f8156a7108f32f21282b0070b8883c86ba6e67
+
+  - name: Configure Updatecli workflows
+    id: updatecli
+    policy: ghcr.io/updatecli/policies/updatecli/githubaction/scaffold:0.1.0
+    valuesinline:
+      gha:
+        golang:
+          enabled: true
+        udash:
+          # Requires Udash credentials to be configured, see https://github.com/updatecli/udash
+          enabled: true
+        update:
+          cron: "0 3 * * *"
+          matrix:
+            - target_name: "existing pipelines"
+              apply_args: "--existing-only=true"
+            - target_name: "monitored pipelines"
+              apply_args: "--labels=monitor:active"
+      pipeline:
+        labels:
+          ecosystem: "updatecli"
+          policy: scaffold
+          monitor: active
+
+  - name: Update Updatecli policies
+    id: root_updatecli_policies
+    policy: ghcr.io/updatecli/policies/updatecli/autodiscovery:0.8.1@sha256:f8edda1a6cbf0d7274e2b847ede29fc4dc70dd5302ccb8575ae21b069cc0d8a0
+    valuesinline:
+      pipeline:
+        labels:
+          ecosystem: updatecli
+          monitor: active
+
+  - name: Install Zizmor
+    id: zizmor
+    policy: ghcr.io/updatecli/policies/zizmor/githubaction/scaffold:0.8.0@sha256:bacfadbe8803346402b059bc265e6c9d989d25143ed92a5dedf6012b0183650a
+    valuesinline:
+      config:
+        rules:
+          secrets-outside-env:
+            disable: true
+      autofix:
+        enabled: true
+        mode: all
+
+  - name: Install Typos everywhere
+    id: typos
+    policy: ghcr.io/updatecli/policies/typos/githubaction:0.1.2@sha256:bd052609cded659c90dd1d3a60ebc5f1368b0f93aac5adf8ff13c3250e97f161

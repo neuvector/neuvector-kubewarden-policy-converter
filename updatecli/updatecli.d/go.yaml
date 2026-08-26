@@ -1,6 +1,10 @@
 name: Update Golang version
-
 pipelineid: golang/version
+
+labels:
+  # Used by the Updatecli GitHub action workflow to actively monitor this pipeline
+  monitor: active
+  ecosystem: golang
 
 sources:
   go:
@@ -45,13 +49,11 @@ scms:
   default:
     kind: github
     spec:
-      user: "{{ .github.author }}"
-      email: "{{ .github.email }}"
-      owner: "{{ requiredEnv .github.owner }}"
-      repository: "neuvector-kubewarden-policy-converter"
-      token: "{{ requiredEnv .github.token }}"
-      username: "{{ requiredEnv .github.user }}"
-      branch: "{{ .github.branch }}"
+      user: "{{ .scm.user }}"
+      email: "{{ .scm.email }}"
+      owner: "{{ .scm.owner }}"
+      repository: "{{ .scm.repository }}"
+      branch: "{{ .scm.branch }}"
       commitusingapi: true
       commitmessage:
         type: "chore"
