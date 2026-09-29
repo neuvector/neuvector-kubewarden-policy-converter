@@ -13,29 +13,6 @@ policies:
     id: golangci-lint
     policy: ghcr.io/updatecli/policies/golangci-lint/githubaction:0.8.1@sha256:7fb34ae17a84641f02c3ff2aa0f8156a7108f32f21282b0070b8883c86ba6e67
 
-  - name: Configure Updatecli workflows
-    id: updatecli
-    policy: ghcr.io/updatecli/policies/updatecli/githubaction/scaffold:0.1.1@sha256:121dfef5a33bc5cad4eced09ae1fd2305319ce2fd6d23ff661b5c99d11d0d9d2
-    valuesinline:
-      gha:
-        golang:
-          enabled: true
-        udash:
-          # Requires Udash credentials to be configured, see https://github.com/updatecli/udash
-          enabled: true
-        update:
-          cron: "0 3 * * *"
-          matrix:
-            - target_name: "existing pipelines"
-              apply_args: "--existing-only=true"
-            - target_name: "monitored pipelines"
-              apply_args: "--labels=monitor:active"
-      pipeline:
-        labels:
-          ecosystem: "updatecli"
-          policy: scaffold
-          monitor: active
-
   - name: Update Updatecli policies
     id: root_updatecli_policies
     policy: ghcr.io/updatecli/policies/updatecli/autodiscovery:0.8.1@sha256:f8edda1a6cbf0d7274e2b847ede29fc4dc70dd5302ccb8575ae21b069cc0d8a0
