@@ -39,9 +39,9 @@ jobs:
       - name: "Run updatecli"
         run: updatecli compose apply --clean-git-branches=true ${{ matrix.apply_args }} --experimental
         env:
-          UPDATECLI_GITHUB_APP_CLIENT_ID: ${{ secrets.UPDATECLI_GITHUB_APP_CLIENT_ID }}
-          UPDATECLI_GITHUB_APP_PRIVATE_KEY: ${{ secrets.UPDATECLI_GITHUB_APP_PRIVATE_KEY }}
-          UPDATECLI_GITHUB_APP_INSTALLATION_ID: ${{ secrets.UPDATECLI_GITHUB_APP_INSTALLATION_ID }}
+          UPDATECLI_GITHUB_APP_CLIENT_ID: ${{ secrets.UPDATECLIBOT_APP_ID }}
+          UPDATECLI_GITHUB_APP_PRIVATE_KEY: ${{ secrets.UPDATECLIBOT_APP_PRIVKEY }}
+          UPDATECLI_GITHUB_APP_INSTALLATION_ID: ${{ secrets.UPDATECLIBOT_APP_INSTALLATION_ID }}
           UPDATECLI_UDASH_API_URL: ${{ secrets.UPDATECLI_UDASH_API_URL }}
           UPDATECLI_UDASH_ACCESS_TOKEN: ${{ secrets.UPDATECLI_UDASH_ACCESS_TOKEN }}
           UPDATECLI_UDASH_URL: ${{ secrets.UPDATECLI_UDASH_URL }}
