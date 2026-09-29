@@ -1,6 +1,6 @@
 module github.com/neuvector/neuvector-kubewarden-policy-converter
 
-go 1.27.0
+go 1.27.1
 
 require (
 	github.com/charmbracelet/glamour v1.0.0
