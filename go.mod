@@ -3,7 +3,7 @@ module github.com/neuvector/neuvector-kubewarden-policy-converter
 go 1.27.1
 
 require (
-	github.com/charmbracelet/glamour v1.0.0
+	github.com/charmbracelet/glamour/v2 v2.0.1
 	github.com/kubewarden/adm-controller v1.38.2
 	github.com/neuvector/neuvector v0.0.0-20251217082449-d56442cccfad
 	github.com/olekukonko/tablewriter v1.1.4
