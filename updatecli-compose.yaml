@@ -42,4 +42,4 @@ policies:
 
   - name: Install Typos
     id: typos
-    policy: ghcr.io/updatecli/policies/typos/githubaction:0.1.2@sha256:bd052609cded659c90dd1d3a60ebc5f1368b0f93aac5adf8ff13c3250e97f161
+    policy: ghcr.io/updatecli/policies/typos/githubaction:0.2.0@sha256:95dc62b5a9205df58c39f4070af488d74e757fcf9df4c99a9bd22ce8b95e1b11
