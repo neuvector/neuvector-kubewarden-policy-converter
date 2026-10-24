@@ -33,7 +33,7 @@ policies:
 
   - name: Install Zizmor
     id: zizmor
-    policy: ghcr.io/updatecli/policies/zizmor/githubaction/scaffold:0.8.0@sha256:bacfadbe8803346402b059bc265e6c9d989d25143ed92a5dedf6012b0183650a
+    policy: ghcr.io/updatecli/policies/zizmor/githubaction/scaffold:0.9.0@sha256:8e9864db4f9eed64be25ec24ead1570b7a28074ecbe4e5e6dccba8d2dbd3752a
     valuesinline:
       config:
         rules:
