@@ -11,11 +11,11 @@ policies:
 
   - name: Update golangci-lint
     id: golangci-lint
-    policy: ghcr.io/updatecli/policies/golangci-lint/githubaction:0.8.1@sha256:7fb34ae17a84641f02c3ff2aa0f8156a7108f32f21282b0070b8883c86ba6e67
+    policy: ghcr.io/updatecli/policies/golangci-lint/githubaction:0.9.0@sha256:caccf9fe8fd42ffb113bf949cdf00f0bace80df1e59eadbd3cfcfbbfe5271161
 
   - name: Update Updatecli policies
     id: root_updatecli_policies
-    policy: ghcr.io/updatecli/policies/updatecli/autodiscovery:0.8.1@sha256:f8edda1a6cbf0d7274e2b847ede29fc4dc70dd5302ccb8575ae21b069cc0d8a0
+    policy: ghcr.io/updatecli/policies/updatecli/autodiscovery:0.9.0@sha256:67026697434a99f6e01a662caa662e8ed02e39e8abf8f7399ab673d113abb360
     valuesinline:
       pipeline:
         labels:
@@ -24,7 +24,7 @@ policies:
 
   - name: Handle Updatecli version in GitHub action
     id: updatecli
-    policy: ghcr.io/updatecli/policies/updatecli/githubaction:0.9.1@sha256:49c07d724474ff7976f7ad5ecb0db9aa46448b456d08f82717913b403a0f02d8
+    policy: ghcr.io/updatecli/policies/updatecli/githubaction:0.10.0@sha256:666a807c7e1f260fa3d9357fd2b60c57f5dedbd6f29f97b6f82d882ed4058608
     valuesinline:
       pipeline:
         labels:
@@ -33,7 +33,7 @@ policies:
 
   - name: Install Zizmor
     id: zizmor
-    policy: ghcr.io/updatecli/policies/zizmor/githubaction/scaffold:0.8.0@sha256:bacfadbe8803346402b059bc265e6c9d989d25143ed92a5dedf6012b0183650a
+    policy: ghcr.io/updatecli/policies/zizmor/githubaction/scaffold:0.9.0@sha256:8e9864db4f9eed64be25ec24ead1570b7a28074ecbe4e5e6dccba8d2dbd3752a
     valuesinline:
       config:
         rules:
@@ -42,4 +42,4 @@ policies:
 
   - name: Install Typos
     id: typos
-    policy: ghcr.io/updatecli/policies/typos/githubaction:0.1.2@sha256:bd052609cded659c90dd1d3a60ebc5f1368b0f93aac5adf8ff13c3250e97f161
+    policy: ghcr.io/updatecli/policies/typos/githubaction:0.2.0@sha256:95dc62b5a9205df58c39f4070af488d74e757fcf9df4c99a9bd22ce8b95e1b11
